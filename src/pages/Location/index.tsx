@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, Image } from 'react-native'
+import { Text, View, Image, Platform } from 'react-native'
 import * as ExpoLocation from 'expo-location'
 import MapView, { Marker } from 'react-native-maps'
 
@@ -122,23 +122,31 @@ const Location = () => {
     return (
         <>
             <View style={Styles.container} >
-                <Text style={{ maxWidth: '80%', textAlign: 'center' }} >{`${geoLocation.formatted} ${flag}`}</Text>
-                <Text>{`${currency?.name} (${currency?.symbol})`}</Text>
-                {/* {!!weather && <Image source={require(GetWeatherIcon(weather.weather.icon))} />} */}
-                {!!weather && <Text>{weather.temp} ºC - {weather.weather.description}</Text>}
-                {!!weather && <Image source={logoWeather} style={{ width: 80, height: 80, borderRadius: 25 }} />}
+                <View style={Styles.weatherContainer} >
+                    <Text style={{ maxWidth: '80%', textAlign: 'center' }} >{`${geoLocation.formatted} ${flag}`}</Text>
+                    <Text>{`${currency?.name} (${currency?.symbol})`}</Text>
+                    {/* {!!weather && <Image source={require(GetWeatherIcon(weather.weather.icon))} />} */}
+                    {!!weather && <Text>{weather.temp} ºC - {weather.weather.description}</Text>}
+                    {!!weather && <Image source={logoWeather} style={{ width: 80, height: 80, borderRadius: 25 }} />}
+                </View>
 
                 <View style={Styles.mapContainer} >
-                    <MapView
-                        style={Styles.map}
-                        loadingEnabled={coords.latitude === 0}
-                        initialRegion={{
-                            latitude: coords.latitude,
-                            longitude: coords.longitude,
-                            latitudeDelta: 0.014,
-                            longitudeDelta: 0.014
-                        }}
-                    ></MapView>
+                    {Platform.OS === 'web' ?
+
+                        <Text >Run the app in your device in order to see the map</Text>
+                        :
+                        <Text >Map</Text>
+                        // <MapView
+                        //     style={Styles.map}
+                        //     loadingEnabled={coords.latitude === 0}
+                        //     initialRegion={{
+                        //         latitude: coords.latitude,
+                        //         longitude: coords.longitude,
+                        //         latitudeDelta: 0.014,
+                        //         longitudeDelta: 0.014
+                        //     }}
+                        // ></MapView>
+                    }
                 </View>
             </View>
         </>
