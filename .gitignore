@@ -346,7 +346,3 @@ typings/
 /*.gcno
 
 # End of https://www.gitignore.io/api/reactnative,intellij,android,osx,xcode
-
-node_modules/**/*
-.expo/*
-npm-debug.*

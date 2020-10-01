@@ -1,7 +1,8 @@
-
 import React, { useEffect, useState } from 'react'
 import { Text, View, Image } from 'react-native'
 import * as ExpoLocation from 'expo-location'
+import MapView, { Marker } from 'react-native-maps'
+
 import { getLocationPermission } from './../../services/Permissions'
 import { GetGeo } from '../../services/GeoApi'
 import { GetWeather, GetWeatherIcon } from '../../services/WeatherApi'
@@ -77,8 +78,8 @@ const Location = () => {
                 accuracy: ExpoLocation.Accuracy.Highest
             })
                 .then(data => {
-                    //setCoords(data.coords)
-                    setCoords({latitude: -29.737645, longitude: -51.137464})
+                    setCoords(data.coords)
+                    //setCoords({ latitude: -29.737645, longitude: -51.137464 })
                 })
         }
     }, [hasPermission])
@@ -89,7 +90,7 @@ const Location = () => {
                 // GetGeo({latitude: -29.737645, longitude: -51.137464})
                 .then(data => {
                     setGeoLocation(data.components)
-                    setGeoLocation({...data.components, formatted: data.formatted})
+                    setGeoLocation({ ...data.components, formatted: data.formatted })
                     setFlag(data.annotations.flag)
                     setCurrency(data.annotations.currency)
 
@@ -111,21 +112,34 @@ const Location = () => {
         console.log(logoWeather)
     }, [weather])
 
-    function getWeatherIcon () {
+    function getWeatherIcon() {
         return logoWeather
     }
 
-    if (!!!geoLocation)
+    if (!!!geoLocation || !!!coords)
         return <Text>Loading</Text>
 
     return (
         <>
             <View style={Styles.container} >
-                <Text style={{maxWidth: '80%', textAlign: 'center'}} >{`${geoLocation.formatted} ${flag}`}</Text>
+                <Text style={{ maxWidth: '80%', textAlign: 'center' }} >{`${geoLocation.formatted} ${flag}`}</Text>
                 <Text>{`${currency?.name} (${currency?.symbol})`}</Text>
                 {/* {!!weather && <Image source={require(GetWeatherIcon(weather.weather.icon))} />} */}
                 {!!weather && <Text>{weather.temp} ºC - {weather.weather.description}</Text>}
-                {!!weather && <Image source={logoWeather} style={{width: 80, height: 80, borderRadius: 25}} />}
+                {!!weather && <Image source={logoWeather} style={{ width: 80, height: 80, borderRadius: 25 }} />}
+
+                <View style={Styles.mapContainer} >
+                    <MapView
+                        style={Styles.map}
+                        loadingEnabled={coords.latitude === 0}
+                        initialRegion={{
+                            latitude: coords.latitude,
+                            longitude: coords.longitude,
+                            latitudeDelta: 0.014,
+                            longitudeDelta: 0.014
+                        }}
+                    ></MapView>
+                </View>
             </View>
         </>
     )
