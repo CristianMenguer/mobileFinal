@@ -55,7 +55,7 @@ const Routes = () => {
     return (
         <>
             <NavigationContainer >
-                <Tab.Navigator initialRouteName="Location"
+                <Tab.Navigator initialRouteName="Home"
                     tabBarOptions={{
                         activeTintColor: '#7a7a7a',
                         inactiveTintColor: '#C5C5C5',

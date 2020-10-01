@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, Image, Platform } from 'react-native'
+import { Text, View, Image, Platform, AsyncStorage } from 'react-native'
 import * as ExpoLocation from 'expo-location'
 import MapView, { Marker } from 'react-native-maps'
 
@@ -57,6 +57,29 @@ interface Weather {
 }
 
 const Location = () => {
+
+    const _storeData = async () => {
+        try {
+            await AsyncStorage.setItem('@MySuperStore:key', 'I like to save it.');
+        } catch (error) {
+            // Error saving data
+        }
+    }
+
+    const _retrieveData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('@MySuperStore:key');
+            if (value !== null) {
+                // We have data!!
+                console.log(value);
+            }
+        } catch (error) {
+            // Error retrieving data
+        }
+    }
+
+    _storeData()
+    _retrieveData()
 
     const [hasPermission, setHasPermission] = useState(false)
     const [coords, setCoords] = useState<Coordinates>()
