@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, Image, Platform } from 'react-native'
+import { Text, View, Image, Platform, SafeAreaView } from 'react-native'
 import * as ExpoLocation from 'expo-location'
 import * as SecureStore from 'expo-secure-store'
 import MapView, { Marker } from 'react-native-maps'
@@ -7,6 +7,8 @@ import MapView, { Marker } from 'react-native-maps'
 import { getLocationPermission } from './../../services/Permissions'
 import { GetGeo } from '../../services/GeoApi'
 import { GetWeather, GetWeatherIcon } from '../../services/WeatherApi'
+
+import Loader from '../../components/Loader'
 
 import Styles from './style'
 
@@ -160,40 +162,29 @@ const Location = () => {
         return logoWeather
     }
 
-    if (!!!geoLocation || !!!coords)
-        return <Text>Loading</Text>
+    if (!!!geoLocation || !!!coords || !!!logoWeather)
+        return <Loader />
 
     return (
-        <>
-            <View style={Styles.container} >
-                <View style={Styles.weatherContainer} >
-                    <Text style={{ maxWidth: '80%', textAlign: 'center' }} >{`${geoLocation.formatted} ${flag}`}</Text>
-                    <Text>{`${currency?.name} (${currency?.symbol})`}</Text>
-                    {/* {!!weather && <Image source={require(GetWeatherIcon(weather.weather.icon))} />} */}
-                    {!!weather && <Text>{weather.temp} ºC - {weather.weather.description}</Text>}
-                    {!!weather && <Image source={logoWeather} style={{ width: 80, height: 80, borderRadius: 25 }} />}
-                </View>
-
-                <View style={Styles.mapContainer} >
-                    {Platform.OS === 'web' ?
-
-                        <Text >Run the app in your device in order to see the map</Text>
-                        :
-                        <Text >Map</Text>
-                        // <MapView
-                        //     style={Styles.map}
-                        //     loadingEnabled={coords.latitude === 0}
-                        //     initialRegion={{
-                        //         latitude: coords.latitude,
-                        //         longitude: coords.longitude,
-                        //         latitudeDelta: 0.014,
-                        //         longitudeDelta: 0.014
-                        //     }}
-                        // ></MapView>
-                    }
-                </View>
+        <View style={Styles.container} >
+            <View style={Styles.weatherContainer} >
+                <Text style={{ maxWidth: '80%', textAlign: 'center' }} >{`${geoLocation.formatted} ${flag}`}</Text>
+                <Text>{`${currency?.name} (${currency?.symbol})`}</Text>
+                {/* {!!weather && <Image source={require(GetWeatherIcon(weather.weather.icon))} />} */}
+                {!!weather && <Text>{weather.temp} ºC - {weather.weather.description}</Text>}
+                {!!weather && <Image source={logoWeather} style={{ width: 80, height: 80, borderRadius: 25 }} />}
             </View>
-        </>
+
+            <View style={Styles.mapContainer} >
+                {Platform.OS === 'web' ?
+
+                    <Text >Run the app in your device in order to see the map</Text>
+                    :
+                    <Text >Map</Text>
+
+                }
+            </View>
+        </View>
     )
 }
 

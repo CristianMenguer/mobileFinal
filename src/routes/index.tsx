@@ -1,4 +1,5 @@
 import React from 'react'
+import { View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Feather as Icon } from '@expo/vector-icons'
@@ -53,28 +54,27 @@ const myPageOptions = {
 
 const Routes = () => {
     return (
-        <>
-            <NavigationContainer >
-                <Tab.Navigator initialRouteName="Home"
-                    tabBarOptions={{
-                        activeTintColor: '#7a7a7a',
-                        inactiveTintColor: '#C5C5C5',
-                        //inactiveBackgroundColor: '#EBEEF2',
-                        labelPosition: 'below-icon',
-                    }} >
-                    <Tab.Screen name="Location"
-                        component={Location} options={locationOptions} />
-                    <Tab.Screen name="Weather"
+
+        <NavigationContainer  >
+            <Tab.Navigator initialRouteName="Home"
+                tabBarOptions={{
+                    activeTintColor: '#7a7a7a',
+                    inactiveTintColor: '#C5C5C5',
+                    //inactiveBackgroundColor: '#EBEEF2',
+                    labelPosition: 'below-icon',
+                }} >
+                <Tab.Screen name="Location"
+                    component={Location} options={locationOptions} />
+                <Tab.Screen name="Weather"
                     component={Weather} options={weatherOptions} />
-                    <Tab.Screen name="Home"
+                <Tab.Screen name="Home"
                     component={Home} options={homeOptions} />
-                    <Tab.Screen name="Currency"
+                <Tab.Screen name="Currency"
                     component={Currency} options={currencyOptions} />
-                    <Tab.Screen name="MyPage"
+                <Tab.Screen name="MyPage"
                     component={MyPage} options={myPageOptions} />
-                </Tab.Navigator>
-            </NavigationContainer>
-        </>
+            </Tab.Navigator>
+        </NavigationContainer>
     )
 }
 

@@ -8,7 +8,7 @@ const Styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
-        flex: 1
+        flex: 1,
     },
     weatherContainer: {
         flex: 1,
