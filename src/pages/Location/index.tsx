@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, Image, Platform, AsyncStorage } from 'react-native'
+import { Text, View, Image, Platform } from 'react-native'
 import * as ExpoLocation from 'expo-location'
+import * as SecureStore from 'expo-secure-store'
 import MapView, { Marker } from 'react-native-maps'
 
 import { getLocationPermission } from './../../services/Permissions'
@@ -60,26 +61,46 @@ const Location = () => {
 
     const _storeData = async () => {
         try {
-            await AsyncStorage.setItem('@MySuperStore:key', 'I like to save it.');
+            await SecureStore.setItemAsync('-mobileFinal-test', 'I like to save it.')
         } catch (error) {
-            // Error saving data
+            console.log(error)
         }
     }
 
     const _retrieveData = async () => {
         try {
-            const value = await AsyncStorage.getItem('@MySuperStore:key');
+            const value = await SecureStore.getItemAsync('-mobileFinal-test')
             if (value !== null) {
                 // We have data!!
-                console.log(value);
+                console.log(value)
             }
         } catch (error) {
-            // Error retrieving data
+            console.log(error)
         }
     }
 
-    _storeData()
-    _retrieveData()
+    const _deleteData = async () => {
+        try {
+            const value = await SecureStore.deleteItemAsync('-mobileFinal-test')
+            if (value !== null) {
+                // We have data!!
+                console.log(value)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    if (Platform.OS !== 'web') {
+        _storeData()
+        _retrieveData()
+        _deleteData()
+    } else {
+        localStorage.setItem('@mobileFinal:test', 'I like to save it in web.')
+        console.log(localStorage.getItem('@mobileFinal:test'))
+        localStorage.removeItem('@mobileFinal:test')
+    }
+
 
     const [hasPermission, setHasPermission] = useState(false)
     const [coords, setCoords] = useState<Coordinates>()
