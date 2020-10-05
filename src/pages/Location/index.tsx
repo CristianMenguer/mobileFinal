@@ -61,6 +61,9 @@ interface Weather {
 
 const Location = () => {
 
+    //import path from 'path'
+    //const tmpFolder = path.resolve(__dirname, '..', '..', 'tmp')
+
     const _storeData = async () => {
         try {
             await SecureStore.setItemAsync('-mobileFinal-test', 'I like to save it.')
@@ -172,7 +175,7 @@ const Location = () => {
                 <Text>{`${currency?.name} (${currency?.symbol})`}</Text>
                 {/* {!!weather && <Image source={require(GetWeatherIcon(weather.weather.icon))} />} */}
                 {!!weather && <Text>{weather.temp} ºC - {weather.weather.description}</Text>}
-                {!!weather && <Image source={logoWeather} style={{ width: 80, height: 80, borderRadius: 25 }} />}
+                {/* {!!weather && <Image source={logoWeather} style={{ width: 80, height: 80, borderRadius: 25 }} />} */}
             </View>
 
             <View style={Styles.mapContainer} >
