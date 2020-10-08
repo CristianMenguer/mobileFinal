@@ -3,16 +3,14 @@ import { Text, View, Image } from 'react-native'
 
 import { LocationContext } from '../../hooks/location'
 
-import logoImg from '../../../assets/logo.jpg'
-
 import Styles from './style'
 
 const MyPage = () => {
 
-    const { data, getCoords } = useContext(LocationContext)
+    const { data, getCoordsDevice } = useContext(LocationContext)
 
     useEffect(() => {
-        getCoords()
+        getCoordsDevice()
         console.log(data)
     }, [])
 
@@ -20,7 +18,7 @@ const MyPage = () => {
         <>
         <View style={Styles.container} >
             <Image
-                source={logoImg}
+                source={require('../../../assets/logo.jpg')}
                 style={Styles.logo}
             />
             <Text>MyPage =D</Text>

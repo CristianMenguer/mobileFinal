@@ -5,7 +5,6 @@ import * as SecureStore from 'expo-secure-store'
 import MapView, { Marker } from 'react-native-maps'
 
 import { getLocationPermission } from './../../services/Permissions'
-import { GetGeo } from '../../services/GeoApi'
 import { GetWeather, GetWeatherIcon } from '../../services/WeatherApi'
 
 import Loader from '../../components/Loader'
@@ -135,17 +134,6 @@ const Location = () => {
 
     useEffect(() => {
         if (coords) {
-            GetGeo(coords)
-                // GetGeo({latitude: -29.737645, longitude: -51.137464})
-                .then(data => {
-                    setGeoLocation(data.components)
-                    setGeoLocation({ ...data.components, formatted: data.formatted })
-                    setFlag(data.annotations.flag)
-                    setCurrency(data.annotations.currency)
-
-                    //console.log(data)
-                })
-            //
             GetWeather(coords)
                 .then(data => {
                     setWeather(data)

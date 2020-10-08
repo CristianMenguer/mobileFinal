@@ -2,24 +2,54 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Text, View, Image, TouchableOpacity } from 'react-native'
 import Toast from 'react-native-tiny-toast'
 
-//import { getLocationPermission } from './../../services/Permissions'
+import { getLocationPermission } from './../../services/Permissions'
 import { LocationContext } from '../../hooks/location'
 import Loader from '../../components/Loader'
 import Styles from './style'
 
 const Home = () => {
 
-    const { data, getCoords } = useContext(LocationContext)
+    Toast.show('hi')
+
+    console.log('a')
+    const { data, getCoordsDevice, setCoords } = useContext(LocationContext)
+    console.log('b')
 
     // Video Fase 04 - 02 - 02 - 03 - 9min45
-    useEffect(() => {
-        getCoords()
-        console.log(data)
-    }, [getCoords])
 
     const [hasPermission, setHasPermission] = useState(false)
     const [location, setLocation] = useState('')
     const [temperature, setTemperature] = useState(-500)
+
+    useEffect(() => {
+        console.log('1')
+        getLocationPermission()
+        .then(response => {
+            console.log('2')
+            setHasPermission(response)
+        })
+    }, [])
+
+    useEffect(() => {
+        console.log('3')
+        if (!hasPermission)
+            return
+        //
+        console.log('4')
+        getCoordsDevice()
+        .then(response => {
+            console.log('5')
+            setCoords(response)
+        })
+
+    }, [hasPermission])
+
+    useEffect(() => {
+        console.log('useEffect data')
+        if (data)
+            setCoords(data)
+        //
+    }, [data])
 
     if (location === '' || temperature <= -500)
         return <Loader />
