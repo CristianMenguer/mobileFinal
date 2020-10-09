@@ -19,10 +19,9 @@ interface GeoLocation {
 }
 
 interface LocationContextData {
-    setCoords(coords: Coordinates): Promise<void>
+    setGeoCoords(coords: Coordinates): Promise<void>
     getCoordsDevice(): Promise<Coordinates>
-    GetDataApi(): Promise<void>
-    GetData(): GeoLocation
+    GetGeoData(): GeoLocation
 }
 
 const LocationContext = createContext<LocationContextData>({} as LocationContextData)
@@ -53,13 +52,15 @@ export const LocationProvider: React.FC = ({ children }) => {
         loadStorageData()
     }, [])
 
-    const setCoords = useCallback(async (props: Coordinates) => {
+    const setGeoCoords = useCallback(async (props: Coordinates) => {
         let newData = data
         data.coords = props
         setData(newData)
         //
         const value = JSON.stringify(props)
         await SetInfo({ key, value })
+        //
+        await GetGeoDataApi()
     }, [])
 
     const getCoordsDevice = useCallback(async () => {
@@ -75,7 +76,7 @@ export const LocationProvider: React.FC = ({ children }) => {
 
     }, [])
 
-    const GetDataApi = useCallback(async () => {
+    const GetGeoDataApi = useCallback(async () => {
 
         const response = await GetGeo({ ...data.coords })
         //
@@ -88,14 +89,13 @@ export const LocationProvider: React.FC = ({ children }) => {
         newData.county = response.components.county
         newData.country = response.components.country
         setData(newData)
-
         //
     }, [])
 
-    const GetData = useCallback(() => data, [])
+    const GetGeoData = useCallback(() => data, [])
 
     return (
-        <LocationContext.Provider value={{ getCoordsDevice, setCoords, GetDataApi, GetData }} >
+        <LocationContext.Provider value={{ getCoordsDevice, setGeoCoords, GetGeoData }} >
             {children}
         </LocationContext.Provider>
     )

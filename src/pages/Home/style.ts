@@ -11,7 +11,7 @@ const Styles = StyleSheet.create({
     container: {
         justifyContent: 'space-evenly',
         alignItems: 'center',
-        height: 400,
+        height: 600,
     },
     logo: {
         width: 300,
@@ -21,6 +21,11 @@ const Styles = StyleSheet.create({
         textAlign: 'center',
         maxWidth: '70%',
 
+    },
+    logoWeather: {
+        width: 80,
+        height: 80,
+        borderRadius: 25
     }
 })
 

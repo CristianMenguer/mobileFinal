@@ -10,11 +10,19 @@ interface GetWeatherProps {
 }
 
 export const GetWeather = async (coords: GetWeatherProps) => {
+    if (isNaN(coords.latitude) || isNaN(coords.longitude))
+        return null
+    //
     const url = `${baseURL}?lat=${coords.latitude}&lon=${coords.longitude}&key=${key}`
     //
-    const response = await axios.get(url)
-    //
-    return response.data.data[0]
+    try {
+        const response = await axios.get(url)
+        return response.data.data[0]
+    } catch (e) {
+        console.log('GetGeo: ' + e)
+        console.log('url: ' + url)
+    }
+    return null
 }
 
 export const GetWeatherIcon = (code: string) => {
