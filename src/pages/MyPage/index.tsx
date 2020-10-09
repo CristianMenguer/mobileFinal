@@ -1,17 +1,24 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect, useContext, useState } from 'react'
 import { Text, View, Image } from 'react-native'
 
-import { LocationContext } from '../../hooks/location'
+import useLocation from '../../hooks/location'
+import { GetInfo } from '../../services/InfoStorage'
 
 import Styles from './style'
 
-const MyPage = () => {
+interface Coordinates {
+    latitude: string
+    longitude: string
+}
 
-    const { data, getCoordsDevice } = useContext(LocationContext)
+const MyPage: React.FC = () => {
+
+    const { GetData } = useLocation()
+
+    const [msg, setMsg] = useState('')
 
     useEffect(() => {
-        getCoordsDevice()
-        console.log(data)
+        setMsg((GetData().coords as Coordinates).latitude)
     }, [])
 
     return (
@@ -22,6 +29,7 @@ const MyPage = () => {
                 style={Styles.logo}
             />
             <Text>MyPage =D</Text>
+            <Text>{msg}</Text>
             </View>
         </>
     )

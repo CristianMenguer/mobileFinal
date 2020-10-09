@@ -52,7 +52,7 @@ const myPageOptions = {
     ),
 }
 
-const Routes = () => {
+const Routes: React.FC = () => {
     return (
 
         <NavigationContainer  >

@@ -10,9 +10,18 @@ interface GetGeoProps {
 }
 
 export const GetGeo = async (coords: GetGeoProps) => {
+    if (isNaN(coords.latitude) || isNaN(coords.longitude))
+        return null
+    //
     const url = `${baseURL}?q=${coords.latitude}%2C${coords.longitude}&key=${key}&language=en&pretty=1`
     //
-    const response = await axios.get(url)
+    try {
+        const response = await axios.get(url)
+        return response.data.results[0]
+    } catch(e) {
+        console.log('GetGeo: ' + e)
+        console.log('url: ' + url)
+    }
     //
-    return response.data.results[0]
+    return null
 }

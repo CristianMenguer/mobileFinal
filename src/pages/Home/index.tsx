@@ -3,53 +3,52 @@ import { Text, View, Image, TouchableOpacity } from 'react-native'
 import Toast from 'react-native-tiny-toast'
 
 import { getLocationPermission } from './../../services/Permissions'
-import { LocationContext } from '../../hooks/location'
+import useLocation from '../../hooks/location'
 import Loader from '../../components/Loader'
 import Styles from './style'
+import { GetInfo } from '../../services/InfoStorage'
 
-const Home = () => {
+const Home: React.FC = () => {
 
-    Toast.show('hi')
+    const { data, getCoordsDevice, setCoords, GetDataApi, GetData } = useLocation()
 
-    console.log('a')
-    const { data, getCoordsDevice, setCoords } = useContext(LocationContext)
-    console.log('b')
-
-    // Video Fase 04 - 02 - 02 - 03 - 9min45
+    // Video Fase 04 - 02 - 02 - 03 - 10min35
 
     const [hasPermission, setHasPermission] = useState(false)
     const [location, setLocation] = useState('')
     const [temperature, setTemperature] = useState(-500)
 
     useEffect(() => {
-        console.log('1')
+        async function LoadStorage() {
+            const response = await GetInfo('CurrentLocation')
+            if (!!response)
+                setCoords(JSON.parse(response))
+        }
+        //
+        LoadStorage()
+        //
         getLocationPermission()
-        .then(response => {
-            console.log('2')
-            setHasPermission(response)
-        })
+            .then(response => {
+                setHasPermission(response)
+            })
+        //
     }, [])
 
     useEffect(() => {
-        console.log('3')
         if (!hasPermission)
             return
         //
-        console.log('4')
-        getCoordsDevice()
-        .then(response => {
-            console.log('5')
-            setCoords(response)
-        })
+        async function loadCoords() {
+            const response = await getCoordsDevice()
+            await setCoords(response)
+            await GetDataApi()
+            setLocation(`${GetData().city}, ${GetData().country}`)
+            setTemperature(23)
+        }
+
+        loadCoords()
 
     }, [hasPermission])
-
-    useEffect(() => {
-        console.log('useEffect data')
-        if (data)
-            setCoords(data)
-        //
-    }, [data])
 
     if (location === '' || temperature <= -500)
         return <Loader />

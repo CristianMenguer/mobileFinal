@@ -6,7 +6,7 @@ import Routes from './src/routes'
 
 import Styles from './src/style/global'
 
-export default function App() {
+const App: React.FC = () => {
     return (
         <View style={Styles.container} >
             <AppProvider >
@@ -15,3 +15,5 @@ export default function App() {
         </View>
     )
 }
+
+export default App

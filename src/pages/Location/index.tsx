@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Text, View, Image, Platform, SafeAreaView } from 'react-native'
 import * as ExpoLocation from 'expo-location'
-import * as SecureStore from 'expo-secure-store'
 import MapView, { Marker } from 'react-native-maps'
 
 import { getLocationPermission } from './../../services/Permissions'
@@ -63,49 +62,6 @@ const Location = () => {
     //import path from 'path'
     //const tmpFolder = path.resolve(__dirname, '..', '..', 'tmp')
 
-    const _storeData = async () => {
-        try {
-            await SecureStore.setItemAsync('-mobileFinal-test', 'I like to save it.')
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const _retrieveData = async () => {
-        try {
-            const value = await SecureStore.getItemAsync('-mobileFinal-test')
-            if (value !== null) {
-                // We have data!!
-                console.log(value)
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const _deleteData = async () => {
-        try {
-            const value = await SecureStore.deleteItemAsync('-mobileFinal-test')
-            if (value !== null) {
-                // We have data!!
-                console.log(value)
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    if (Platform.OS !== 'web') {
-        _storeData()
-        _retrieveData()
-        _deleteData()
-    } else {
-        localStorage.setItem('@mobileFinal:test', 'I like to save it in web.')
-        console.log(localStorage.getItem('@mobileFinal:test'))
-        localStorage.removeItem('@mobileFinal:test')
-    }
-
-
     const [hasPermission, setHasPermission] = useState(false)
     const [coords, setCoords] = useState<Coordinates>()
     const [geoLocation, setGeoLocation] = useState<GeoLocation>()
@@ -126,7 +82,7 @@ const Location = () => {
                 accuracy: ExpoLocation.Accuracy.Highest
             })
                 .then(data => {
-                    setCoords(data.coords)
+                    //setCoords(data.coords)
                     //setCoords({ latitude: -29.737645, longitude: -51.137464 })
                 })
         }
