@@ -13,6 +13,7 @@ interface GeoLocation {
     city_district: string
     place: string
     city: string
+    county: string
     country: string
     formatted: string
 }
@@ -21,7 +22,7 @@ interface LocationContextData {
     setCoords(coords: Coordinates): Promise<void>
     getCoordsDevice(): Promise<Coordinates>
     GetDataApi(): Promise<void>
-    GetData(): void
+    GetData(): GeoLocation
 }
 
 const LocationContext = createContext<LocationContextData>({} as LocationContextData)
@@ -84,6 +85,7 @@ export const LocationProvider: React.FC = ({ children }) => {
         let newData = data
         newData.formatted = response.formatted
         newData.city = response.components.city
+        newData.county = response.components.county
         newData.country = response.components.country
         setData(newData)
 

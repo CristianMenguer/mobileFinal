@@ -2,15 +2,25 @@ import React from 'react'
 import { StyleSheet } from 'react-native'
 
 const Styles = StyleSheet.create({
+    fullContainer: {
+        backgroundColor: '#FAFAFA',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex: 1,
+    },
     container: {
-        backgroundColor: '#F3F4F4',
-        justifyContent: "center",
-        alignItems: "center",
-        flex: 1
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        height: 400,
     },
     logo: {
         width: 300,
         height: 79
+    },
+    text: {
+        textAlign: 'center',
+        maxWidth: '70%',
+
     }
 })
 
