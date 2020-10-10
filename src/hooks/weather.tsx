@@ -19,6 +19,7 @@ interface Weather {
 }
 
 interface Forecast {
+    id: number
     valid_date: string
     temp: number
     min_temp: number
@@ -88,6 +89,7 @@ export const WeatherProvider: React.FC = ({ children }) => {
         //
         for (let i = 0; i < response.length; i++) {
             const newForecast = {
+                id: i + 1,
                 valid_date: response[i].valid_date,
                 temp: response[i].temp,
                 min_temp: response[i].min_temp,

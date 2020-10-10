@@ -8,6 +8,7 @@ import useWeather from '../../hooks/weather'
 import Styles from './style'
 
 interface Forecast {
+    id: number
     valid_date: string
     temp: number
     min_temp: number
@@ -56,7 +57,7 @@ const Weather: React.FC = () => {
                 >
                     {
                         forecast.map(item => (
-                            <View key={item.valid_date} style={Styles.item} >
+                            <View key={item.id} style={Styles.item} >
                                 <Text style={Styles.itemText} >{item.valid_date}</Text>
                                 <Image source={{ uri: item.iconUri }} style={Styles.itemIcon} />
                                 <View style={Styles.itemPerc} >

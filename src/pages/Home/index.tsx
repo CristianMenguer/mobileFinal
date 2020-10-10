@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Text, View, Image } from 'react-native'
 
-import { getLocationPermission } from './../../services/Permissions'
+import { getLocationPermission, getStoragePermission } from './../../services/Permissions'
 import useLocation from '../../hooks/location'
 import useWeather from '../../hooks/weather'
 import Loader from '../../components/Loader'
@@ -45,6 +45,7 @@ const Home: React.FC = () => {
 
     useEffect(() => {
         async function LoadStorage() {
+            await getStoragePermission()
             const response = await GetInfo('CurrentLocation')
             if (!!response) {
                 setGeoCoords(JSON.parse(response))
