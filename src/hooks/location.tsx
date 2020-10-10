@@ -22,6 +22,7 @@ interface LocationContextData {
     setGeoCoords(coords: Coordinates): Promise<void>
     getCoordsDevice(): Promise<Coordinates>
     GetGeoData(): GeoLocation
+    getLoading(): boolean
 }
 
 const LocationContext = createContext<LocationContextData>({} as LocationContextData)
@@ -48,7 +49,7 @@ export const LocationProvider: React.FC = ({ children }) => {
 
             setLoading(false)
         }
-
+        //
         loadStorageData()
     }, [])
 
@@ -94,8 +95,10 @@ export const LocationProvider: React.FC = ({ children }) => {
 
     const GetGeoData = useCallback(() => data, [])
 
+    const getLoading = useCallback(() => isLoading, [])
+
     return (
-        <LocationContext.Provider value={{ getCoordsDevice, setGeoCoords, GetGeoData }} >
+        <LocationContext.Provider value={{ getCoordsDevice, setGeoCoords, GetGeoData, getLoading }} >
             {children}
         </LocationContext.Provider>
     )

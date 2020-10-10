@@ -82,7 +82,6 @@ const Home: React.FC = () => {
             setGeoData(newGeoData)
             setLocation(`${geoData.city ? geoData.city : geoData.county}, ${geoData.country}`)
             //
-            //
             const newWeatherData = weatherData
             newWeatherData.temperature = GetWeatherData().temperature
             newWeatherData.description = GetWeatherData().description
