@@ -3,8 +3,8 @@ import { StyleSheet } from 'react-native'
 const Styles = StyleSheet.create({
     container: {
         backgroundColor: '#F3F4F4',
-        justifyContent: "center",
-        alignItems: "center",
+        justifyContent: 'center',
+        alignItems: 'center',
         flex: 1
     },
     location: {
@@ -53,7 +53,7 @@ const Styles = StyleSheet.create({
         marginRight: 8,
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: 160,
+        height: 190,
         width: 160,
     },
     itemText: {

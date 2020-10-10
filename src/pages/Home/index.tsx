@@ -45,7 +45,6 @@ const Home: React.FC = () => {
 
     useEffect(() => {
         async function LoadStorage() {
-            await getStoragePermission()
             const response = await GetInfo('CurrentLocation')
             if (!!response) {
                 setGeoCoords(JSON.parse(response))

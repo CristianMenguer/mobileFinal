@@ -90,7 +90,7 @@ export const WeatherProvider: React.FC = ({ children }) => {
         for (let i = 0; i < response.length; i++) {
             const newForecast = {
                 id: i + 1,
-                valid_date: response[i].valid_date,
+                valid_date: (i === 0 ? 'Today' : (i === 1 ? 'Tomorrow' : response[i].valid_date.substring(8, 10) + '/' + response[i].valid_date.substring(5, 7))),
                 temp: response[i].temp,
                 min_temp: response[i].min_temp,
                 max_temp: response[i].max_temp,

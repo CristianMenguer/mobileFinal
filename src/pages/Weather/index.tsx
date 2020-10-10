@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Text, View, Image, ScrollView } from 'react-native'
-import { FontAwesome5 as Icon, Fontisto } from '@expo/vector-icons'
+import { FontAwesome5 as Icon } from '@expo/vector-icons'
 
 import useLocation from '../../hooks/location'
 import useWeather from '../../hooks/weather'
@@ -61,9 +61,10 @@ const Weather: React.FC = () => {
                                 <Text style={Styles.itemText} >{item.valid_date}</Text>
                                 <Image source={{ uri: item.iconUri }} style={Styles.itemIcon} />
                                 <View style={Styles.itemPerc} >
-                                    <Fontisto name='blood-drop' size={18} />
+                                    <Icon name='cloud-rain' size={18} />
                                     <Text style={Styles.itemPercText} > {item.pop}%</Text>
                                 </View>
+                                <Text style={Styles.descriptionText} >{item.min_temp}℃ / {item.max_temp}℃</Text>
                             </View>
                         ))
                     }

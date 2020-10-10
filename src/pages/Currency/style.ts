@@ -8,8 +8,8 @@ const Styles = StyleSheet.create({
         flex: 1
     },
     logo: {
-        width: 300,
-        height: 79
+        width: 200,
+        height: 200
     }
 })
 
