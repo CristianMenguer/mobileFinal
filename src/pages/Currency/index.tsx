@@ -1,11 +1,11 @@
 import React from 'react'
-import { Text, View, Image } from 'react-native'
+import { Text, View, Image, ViewPropTypes } from 'react-native'
 
-import Select  from '../../components/Select'
+import { CURRENCY_TYPES } from '../../constants/Currency'
 
 import Styles from './style'
 
-const Currency = () => {
+const Currency: React.FC = () => {
     return (
         <>
             <View style={Styles.container} >
@@ -13,9 +13,9 @@ const Currency = () => {
                     source={require('../../../assets/moneyIcon.png')}
                     style={Styles.logo}
                 />
-                <Text>Currency =D</Text>
-                <Select  />
-                <Select  />
+                <Text >You are in Ireland</Text>
+                <Text >Your currency is Euro (EUR)</Text>
+
             </View>
         </>
     )
