@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, Image, ScrollView } from 'react-native'
+import { Text, View, Image, ScrollView, TouchableOpacity } from 'react-native'
 import { FontAwesome5 as Icon } from '@expo/vector-icons'
 
 import useLocation from '../../hooks/location'
@@ -35,68 +35,70 @@ const Weather: React.FC = () => {
 
     return (
         <>
-            <View style={Styles.container} >
-                <View style={Styles.location} >
-                    <Icon name='map-marker-alt' size={20} />
-                    <Text style={Styles.locationText} >  {GetGeoData().city ? GetGeoData().city : GetGeoData().county}</Text>
+            <ScrollView >
+                <View style={Styles.container} >
+                    <View style={Styles.location} >
+                        <Icon name='map-marker-alt' size={20} />
+                        <Text style={Styles.locationText} >  {GetGeoData().city ? GetGeoData().city : GetGeoData().county}</Text>
+                    </View>
+                    <Text style={Styles.dateText} >{currentDate}</Text>
+                    <View style={Styles.currentTemp} >
+                        <Image style={Styles.currentTempIcon} source={{ uri: GetWeatherData().iconUri }} />
+                        <Text style={Styles.currentTempText} >{GetWeatherData().temperature}℃</Text>
+                    </View>
+                    <Text style={Styles.feelLikeText} >{GetWeatherData().temp_min}℃ / {GetWeatherData().temp_max}℃ Feels like {GetWeatherData().feel_like}℃</Text>
+                    <Text style={Styles.descriptionText} >{GetWeatherData().description}</Text>
+
                 </View>
-                <Text style={Styles.dateText} >{currentDate}</Text>
-                <View style={Styles.currentTemp} >
-                    <Image style={Styles.currentTempIcon} source={{ uri: GetWeatherData().iconUri }} />
-                    <Text style={Styles.currentTempText} >{GetWeatherData().temperature}℃</Text>
+
+                <View style={Styles.itemsContainer} >
+                    <Text style={Styles.itemTitle} >Hourly</Text>
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={{ paddingHorizontal: 20 }}
+                    >
+                        {
+                            forecastHourly.map(item => (
+                                <View key={item.id} style={Styles.item}  >
+                                    <Text style={Styles.itemText} >{item.valid_date}</Text>
+                                    <Image source={{ uri: item.iconUri }} style={Styles.itemIcon} />
+                                    <View style={Styles.itemPerc} >
+                                        <Icon name='cloud-rain' size={18} />
+                                        <Text style={Styles.itemPercText} > {item.pop}%</Text>
+                                    </View>
+                                    <Text style={Styles.descriptionText} >{item.temp}℃</Text>
+                                </View>
+                            ))
+                        }
+
+                    </ScrollView>
                 </View>
-                <Text style={Styles.feelLikeText} >{GetWeatherData().temp_min}℃ / {GetWeatherData().temp_max}℃ Feels like {GetWeatherData().feel_like}℃</Text>
-                <Text style={Styles.descriptionText} >{GetWeatherData().description}</Text>
 
-            </View>
-
-            <View style={Styles.itemsContainer} >
-                <Text >Hourly</Text>
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{ paddingHorizontal: 20 }}
-                >
-                    {
-                        forecastHourly.map(item => (
-                            <View key={item.id} style={Styles.item} >
-                                <Text style={Styles.itemText} >{item.valid_date}</Text>
-                                <Image source={{ uri: item.iconUri }} style={Styles.itemIcon} />
-                                <View style={Styles.itemPerc} >
-                                    <Icon name='cloud-rain' size={18} />
-                                    <Text style={Styles.itemPercText} > {item.pop}%</Text>
+                <View style={Styles.itemsContainer} >
+                    <Text style={Styles.itemTitle} >Daily</Text>
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={{ paddingHorizontal: 20 }}
+                    >
+                        {
+                            forecastDaily.map(item => (
+                                <View key={item.id} style={Styles.item} >
+                                    <Text style={Styles.itemText} >{item.valid_date}</Text>
+                                    <Image source={{ uri: item.iconUri }} style={Styles.itemIcon} />
+                                    <View style={Styles.itemPerc} >
+                                        <Icon name='cloud-rain' size={18} />
+                                        <Text style={Styles.itemPercText} > {item.pop}%</Text>
+                                    </View>
+                                    <Text style={Styles.descriptionText} >{item.min_temp}℃ / {item.max_temp}℃</Text>
                                 </View>
-                                <Text style={Styles.descriptionText} >{item.temp}℃</Text>
-                            </View>
-                        ))
-                    }
+                            ))
+                        }
 
-                </ScrollView>
-            </View>
-
-            <View style={Styles.itemsContainer} >
-                <Text >Daily</Text>
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{ paddingHorizontal: 20 }}
-                >
-                    {
-                        forecastDaily.map(item => (
-                            <View key={item.id} style={Styles.item} >
-                                <Text style={Styles.itemText} >{item.valid_date}</Text>
-                                <Image source={{ uri: item.iconUri }} style={Styles.itemIcon} />
-                                <View style={Styles.itemPerc} >
-                                    <Icon name='cloud-rain' size={18} />
-                                    <Text style={Styles.itemPercText} > {item.pop}%</Text>
-                                </View>
-                                <Text style={Styles.descriptionText} >{item.min_temp}℃ / {item.max_temp}℃</Text>
-                            </View>
-                        ))
-                    }
-
-                </ScrollView>
-            </View>
+                    </ScrollView>
+                </View>
+            </ScrollView>
         </>
     )
 }

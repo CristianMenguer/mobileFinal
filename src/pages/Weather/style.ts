@@ -5,7 +5,8 @@ const Styles = StyleSheet.create({
         backgroundColor: '#F3F4F4',
         justifyContent: 'center',
         alignItems: 'center',
-        flex: 1
+        marginTop: 24,
+        height: 350,
     },
     location: {
         flexDirection: 'row',
@@ -56,6 +57,13 @@ const Styles = StyleSheet.create({
         height: 190,
         width: 160,
     },
+    itemTitle: {
+        marginLeft: 16,
+        marginBottom: 16,
+        fontWeight: '700',
+        fontSize: 16,
+        letterSpacing: 1,
+    },
     itemText: {
         fontSize: 20,
     },
@@ -69,6 +77,7 @@ const Styles = StyleSheet.create({
     },
     itemPercText: {
         fontSize: 16,
+        marginLeft: 4,
     },
 })
 

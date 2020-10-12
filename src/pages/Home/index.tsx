@@ -110,7 +110,7 @@ const Home: React.FC = () => {
                     />
                     <Text style={Styles.text} >This React Native prototype was developed by Cristian Menguer using TypeScript.</Text>
                     <Text style={Styles.text} >The purpose of this project is apply all the acquired knowledge in class
-                and further researches about the Mobile Development.</Text>
+                and further researches about Mobile Development.</Text>
                     <Text style={Styles.text} >Lecture: Mobile Development</Text>
                     <Text style={Styles.text} >Lecturer: Amilcar Aponte</Text>
                     <Text style={Styles.text} >{location}</Text>
