@@ -38,7 +38,7 @@ const Styles = StyleSheet.create({
         fontSize: 16,
     },
     itemsContainer: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         marginTop: 16,
         marginBottom: 32,
     },

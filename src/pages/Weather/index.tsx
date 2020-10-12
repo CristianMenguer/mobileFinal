@@ -24,9 +24,10 @@ interface Forecast {
 const Weather: React.FC = () => {
 
     const { GetGeoData } = useLocation()
-    const { GetWeatherData, GetForecastData } = useWeather()
+    const { GetWeatherData, GetDailyData, GetHourlyData } = useWeather()
     const [currentDate, setCurrentDate] = useState('')
-    const [forecast, setForecast] = useState<Forecast[]>(GetForecastData())
+    const [forecastDaily, setForecastDaily] = useState<Forecast[]>(GetDailyData())
+    const [forecastHourly, setForecastHourly] = useState<Forecast[]>(GetHourlyData())
 
     useEffect(() => {
         setCurrentDate(new Date().toLocaleDateString())
@@ -50,13 +51,38 @@ const Weather: React.FC = () => {
             </View>
 
             <View style={Styles.itemsContainer} >
+                <Text >Hourly</Text>
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={{ paddingHorizontal: 20 }}
                 >
                     {
-                        forecast.map(item => (
+                        forecastHourly.map(item => (
+                            <View key={item.id} style={Styles.item} >
+                                <Text style={Styles.itemText} >{item.valid_date}</Text>
+                                <Image source={{ uri: item.iconUri }} style={Styles.itemIcon} />
+                                <View style={Styles.itemPerc} >
+                                    <Icon name='cloud-rain' size={18} />
+                                    <Text style={Styles.itemPercText} > {item.pop}%</Text>
+                                </View>
+                                <Text style={Styles.descriptionText} >{item.temp}℃</Text>
+                            </View>
+                        ))
+                    }
+
+                </ScrollView>
+            </View>
+
+            <View style={Styles.itemsContainer} >
+                <Text >Daily</Text>
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ paddingHorizontal: 20 }}
+                >
+                    {
+                        forecastDaily.map(item => (
                             <View key={item.id} style={Styles.item} >
                                 <Text style={Styles.itemText} >{item.valid_date}</Text>
                                 <Image source={{ uri: item.iconUri }} style={Styles.itemIcon} />

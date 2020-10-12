@@ -31,7 +31,7 @@ export const GetWeatherIcon = (code: string) => {
     return url
 }
 
-export const GetWeatherForecast = async (coords: GetWeatherProps) => {
+export const GetWeatherDaily = async (coords: GetWeatherProps) => {
     const baseURL = 'https://api.weatherbit.io/v2.0/forecast/daily'
 
     if (isNaN(coords.latitude) || isNaN(coords.longitude))
@@ -43,7 +43,25 @@ export const GetWeatherForecast = async (coords: GetWeatherProps) => {
         const response = await axios.get(url)
         return response.data.data
     } catch (e) {
-        console.log('GetGeo: ' + e)
+        console.log('GetGeoDaily: ' + e)
+        console.log('url: ' + url)
+    }
+    return null
+}
+
+export const GetWeatherHourly = async (coords: GetWeatherProps) => {
+    const baseURL = 'https://api.weatherbit.io/v2.0/forecast/hourly'
+
+    if (isNaN(coords.latitude) || isNaN(coords.longitude))
+        return null
+    //
+    const url = `${baseURL}?lat=${coords.latitude}&lon=${coords.longitude}&key=${key}`
+    //
+    try {
+        const response = await axios.get(url)
+        return response.data.data
+    } catch (e) {
+        console.log('GetGeoHourly: ' + e)
         console.log('url: ' + url)
     }
     return null
