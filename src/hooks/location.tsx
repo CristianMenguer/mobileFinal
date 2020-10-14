@@ -16,6 +16,8 @@ interface GeoLocation {
     county: string
     country: string
     formatted: string
+    currency_name: string
+    currency_code: string
 }
 
 interface LocationContextData {
@@ -89,6 +91,8 @@ export const LocationProvider: React.FC = ({ children }) => {
         newData.city = response.components.city
         newData.county = response.components.county
         newData.country = response.components.country
+        newData.currency_name = response.annotations.currency.name
+        newData.currency_code = response.annotations.currency.iso_code
         setData(newData)
         //
     }, [])

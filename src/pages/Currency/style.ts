@@ -7,6 +7,18 @@ const Styles = StyleSheet.create({
         alignItems: "center",
         flex: 1
     },
+    input: {
+        width: 200,
+        maxWidth: '80%',
+        height: 60,
+        borderRadius: 10,
+        borderWidth: 2,
+        backgroundColor: '#FFF',
+        borderColor: '#232129',
+        color: 'black',
+        fontSize: 16,
+        textAlign: 'center',
+    },
     logo: {
         width: 200,
         height: 200

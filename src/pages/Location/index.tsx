@@ -131,6 +131,26 @@ const Location = () => {
 
                 }
             </View>
+            {/* <TouchableOpacity onPress={() => {
+                const response = {
+                    latitude: -29.74,
+                    longitude: -51.15
+                }
+                setGeoCoords(response)
+                setWeatherCoords(response)
+            }} >
+                <Text >Change to Brazil</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => {
+                const response = {
+                    latitude: 53.36,
+                    longitude: -6.26
+                }
+                setGeoCoords(response)
+                setWeatherCoords(response)
+            }} >
+                <Text >Change to Ireland</Text>
+            </TouchableOpacity> */}
         </View>
     )
 }

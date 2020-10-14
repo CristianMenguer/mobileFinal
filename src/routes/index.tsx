@@ -2,12 +2,12 @@ import React from 'react'
 import { View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { Feather as Icon } from '@expo/vector-icons'
+import { Feather as Icon, AntDesign } from '@expo/vector-icons'
 
 import Home from './../pages/Home'
 import Location from './../pages/Location'
 import Currency from './../pages/Currency'
-import MyPage from './../pages/MyPage'
+import Github from './../pages/Github'
 import Weather from './../pages/Weather'
 
 interface TabBarIconProps {
@@ -45,10 +45,10 @@ const currencyOptions = {
     ),
 }
 
-const myPageOptions = {
-    tabBarLabel: 'MyPage',
+const githubOptions = {
+    tabBarLabel: 'Github',
     tabBarIcon: ({ color, size }: TabBarIconProps) => (
-        <Icon name="map-pin" color={color} size={size} ></Icon>
+        <AntDesign name="github" color={color} size={size} ></AntDesign>
     ),
 }
 
@@ -57,13 +57,15 @@ const Routes: React.FC = () => {
     return (
 
         <NavigationContainer  >
-            <Tab.Navigator initialRouteName="Home"
+            <Tab.Navigator
+                initialRouteName="Currency"
                 tabBarOptions={{
                     activeTintColor: '#7a7a7a',
                     inactiveTintColor: '#C5C5C5',
                     //inactiveBackgroundColor: '#EBEEF2',
                     labelPosition: 'below-icon',
-                }} >
+                }}
+            >
                 <Tab.Screen name="Location"
                     component={Location} options={locationOptions} />
                 <Tab.Screen name="Weather"
@@ -72,8 +74,8 @@ const Routes: React.FC = () => {
                     component={Home} options={homeOptions} />
                 <Tab.Screen name="Currency"
                     component={Currency} options={currencyOptions} />
-                <Tab.Screen name="MyPage"
-                    component={MyPage} options={myPageOptions} />
+                <Tab.Screen name="Github"
+                    component={Github} options={githubOptions} />
             </Tab.Navigator>
         </NavigationContainer>
     )
