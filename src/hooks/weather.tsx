@@ -2,41 +2,13 @@ import React, { createContext, useCallback, useState, useContext, useEffect } fr
 import { GetWeather, GetWeatherDaily, GetWeatherHourly, GetWeatherIcon } from '../services/WeatherApi'
 import { GetInfo, SetInfo } from '../services/InfoStorage'
 
-interface Coordinates {
-    latitude: number
-    longitude: number
-}
-
-interface Weather {
-    coords: Coordinates
-    temperature: number
-    temp_min: number
-    temp_max: number
-    feel_like: number
-    description: string
-    iconCode: string
-    iconUri: string
-}
-
-interface Forecast {
-    id: number
-    valid_date: string
-    temp: number
-    min_temp: number
-    max_temp: number
-    min_feel_like: number
-    max_feel_like: number
-    pop: number
-    description: string
-    iconCode: string
-    iconUri: string
-}
-
 interface WeatherContextData {
-    setWeatherCoords(coords: Coordinates): Promise<void>
-    GetWeatherData(): Weather
-    GetHourlyData(): Forecast[]
-    GetDailyData(): Forecast[]
+    setWeatherCoords(coords: Coordinate): void
+    getWeatherData(): Weather
+    setWeatherData(props: Weather): void
+    getWeatherDataApi(): Promise<Weather>
+    getHourlyData(): Forecast[]
+    getDailyData(): Forecast[]
 
 }
 
@@ -48,14 +20,27 @@ export const WeatherProvider: React.FC = ({ children }) => {
     const [forecastDaily, setForecastDaily] = useState<Forecast[]>([] as Forecast[])
     const [forecastHourly, setForecastHourly] = useState<Forecast[]>([] as Forecast[])
 
-    const setWeatherCoords = useCallback(async (props: Coordinates) => {
+    const setWeatherCoords = useCallback(async (props: Coordinate) => {
         const newData = data
         newData.coords = props
+        setData(newData)
         //
-        await GetWeatherDataApi()
     }, [])
 
-    const GetWeatherDataApi = useCallback(async () => {
+    const setWeatherData = useCallback((props: Weather) => {
+        const newData = data
+        newData.temperature = props.temperature
+        newData.feel_like = props.feel_like
+        newData.description = props.description
+        newData.iconCode = props.iconCode
+        newData.iconUri = props.iconUri
+        newData.temp_max = props.temp_max
+        newData.temp_min = props.temp_min
+        newData.timeAPI = props.timeAPI
+        setData(newData)
+    }, [])
+
+    const getWeatherDataApi = useCallback(async () => {
 
         const response = await GetWeather({ ...data.coords })
         //
@@ -68,13 +53,16 @@ export const WeatherProvider: React.FC = ({ children }) => {
         newData.description = response.weather.description
         newData.iconCode = response.weather.icon
         newData.iconUri = GetWeatherIcon(response.weather.icon)
-        setData(newData)
-        await GetForecastHourlyApi()
-        await GetForecastDailyApi()
+        newData.timeAPI = new Date().getTime()
+        setWeatherData(newData)
+        //
+        getForecastDailyApi()
+        getForecastHourlyApi()
+        return newData
         //
     }, [])
 
-    const GetForecastDailyApi = useCallback(async () => {
+    const getForecastDailyApi = useCallback(async () => {
 
         const response = await GetWeatherDaily({ ...data.coords })
         //
@@ -107,10 +95,12 @@ export const WeatherProvider: React.FC = ({ children }) => {
             //
             predict.push(newForecast)
         }
+        console.log(predict)
         setForecastDaily(predict)
+        console.log(forecastDaily)
     }, [])
 
-    const GetForecastHourlyApi = useCallback(async () => {
+    const getForecastHourlyApi = useCallback(async () => {
 
         const response = await GetWeatherHourly({ ...data.coords })
         //
@@ -141,14 +131,14 @@ export const WeatherProvider: React.FC = ({ children }) => {
         setForecastHourly(predict)
     }, [])
 
-    const GetWeatherData = useCallback(() => data, [])
+    const getWeatherData = useCallback(() => data, [])
 
-    const GetDailyData = useCallback(() => forecastDaily, [])
+    const getDailyData = useCallback(() => forecastDaily, [])
 
-    const GetHourlyData = useCallback(() => forecastHourly, [])
+    const getHourlyData = useCallback(() => forecastHourly, [])
 
     return (
-        <WeatherContext.Provider value={{ setWeatherCoords, GetWeatherData, GetDailyData, GetHourlyData }} >
+        <WeatherContext.Provider value={{ setWeatherCoords, getWeatherData, setWeatherData, getWeatherDataApi, getDailyData, getHourlyData }} >
             {children}
         </WeatherContext.Provider>
     )

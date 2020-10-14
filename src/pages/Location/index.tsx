@@ -10,19 +10,6 @@ import Loader from '../../components/Loader'
 
 import Styles from './style'
 
-interface Coordinates {
-    latitude: number
-    longitude: number
-}
-
-interface GeoLocation {
-    road: string
-    city_district: string
-    place: string
-    city: string
-    country: string
-    formatted: string
-}
 
 interface Currency {
     decimal_mark: string
@@ -63,7 +50,7 @@ const Location = () => {
     //const tmpFolder = path.resolve(__dirname, '..', '..', 'tmp')
 
     const [hasPermission, setHasPermission] = useState(false)
-    const [coords, setCoords] = useState<Coordinates>()
+    const [coords, setCoords] = useState<Coordinate>()
     const [geoLocation, setGeoLocation] = useState<GeoLocation>()
     const [flag, setFlag] = useState()
     const [currency, setCurrency] = useState<Currency>()
@@ -102,7 +89,7 @@ const Location = () => {
         if (!!weather)
             setLogoWeather(GetWeatherIcon(weather.weather.icon))
         //
-        console.log(logoWeather)
+        //console.log(logoWeather)
     }, [weather])
 
     function getWeatherIcon() {

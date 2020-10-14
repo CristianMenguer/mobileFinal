@@ -8,7 +8,7 @@ export const GetGurrencyRates = async (currencyCode: string) => {
     //
     const url = `${baseURL}?base=${currencyCode}`
     //
-    console.log('url currency: ' + url)
+    // console.log('url currency: ' + url)
     try {
         const response = await axios.get(url)
         return response

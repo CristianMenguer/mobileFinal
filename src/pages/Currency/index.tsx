@@ -9,12 +9,16 @@ import { CURRENCY_TYPES } from '../../constants/Currency'
 import Styles from './style'
 import { GetGurrencyRates } from '../../services/CurrencyApi'
 
+interface DataInterface {
+    [key: string]: number
+}
+
 const Currency: React.FC = () => {
 
     const isFocused = useIsFocused()
 
     const { GetGeoData } = useLocation()
-    const { SetCurrencyBase, GetCurrencyRate } = useCurrency()
+    const { SetCurrencyBase, GetCurrencyRate, GetRate, data } = useCurrency()
 
     const [firstValue, setFirstValue] = useState('0')
     const [secondValue, setSecondValue] = useState('0')
@@ -59,8 +63,9 @@ const Currency: React.FC = () => {
     async function setBase() {
         //await SetCurrencyBase(GetGeoData().currency_code)
         await SetCurrencyBase('BRL')
-        setRateToUSD(GetCurrencyRate()['USD'])
+
     }
+
 
     useEffect(() => {
         if (!isFocused)
@@ -69,6 +74,12 @@ const Currency: React.FC = () => {
         setBase()
         //
     }, [isFocused])
+
+    useEffect(() => {
+        const temp = GetRate('EUR')
+        //console.log(temp)
+        //setRateToUSD(GetCurrencyRate()['EUR'])
+    }, [data])
 
     return (
         <>

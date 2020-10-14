@@ -24,14 +24,19 @@ interface Forecast {
 const Weather: React.FC = () => {
 
     const { GetGeoData } = useLocation()
-    const { GetWeatherData, GetDailyData, GetHourlyData } = useWeather()
+    const { getWeatherData, getDailyData, getHourlyData } = useWeather()
     const [currentDate, setCurrentDate] = useState('')
-    const [forecastDaily, setForecastDaily] = useState<Forecast[]>(GetDailyData())
-    const [forecastHourly, setForecastHourly] = useState<Forecast[]>(GetHourlyData())
+    const [forecastDaily, setForecastDaily] = useState<Forecast[]>(getDailyData())
+    const [forecastHourly, setForecastHourly] = useState<Forecast[]>(getHourlyData())
 
     useEffect(() => {
         setCurrentDate(new Date().toLocaleDateString())
     }, [])
+
+    useEffect(() => {
+        setForecastDaily(getDailyData())
+        setForecastHourly(getHourlyData())
+    }, [getDailyData(), getHourlyData()])
 
     return (
         <>
@@ -43,11 +48,11 @@ const Weather: React.FC = () => {
                     </View>
                     <Text style={Styles.dateText} >{currentDate}</Text>
                     <View style={Styles.currentTemp} >
-                        <Image style={Styles.currentTempIcon} source={{ uri: GetWeatherData().iconUri }} />
-                        <Text style={Styles.currentTempText} >{GetWeatherData().temperature}℃</Text>
+                        <Image style={Styles.currentTempIcon} source={{ uri: getWeatherData().iconUri }} />
+                        <Text style={Styles.currentTempText} >{getWeatherData().temperature}℃</Text>
                     </View>
-                    <Text style={Styles.feelLikeText} >{GetWeatherData().temp_min}℃ / {GetWeatherData().temp_max}℃ Feels like {GetWeatherData().feel_like}℃</Text>
-                    <Text style={Styles.descriptionText} >{GetWeatherData().description}</Text>
+                    <Text style={Styles.feelLikeText} >{getWeatherData().temp_min}℃ / {getWeatherData().temp_max}℃ Feels like {getWeatherData().feel_like}℃</Text>
+                    <Text style={Styles.descriptionText} >{getWeatherData().description}</Text>
 
                 </View>
 

@@ -1,28 +1,12 @@
 import React, { createContext, useCallback, useState, useContext, useEffect } from 'react'
-import * as ExpoLocation from 'expo-location'
 import { GetGeo } from '../services/GeoApi'
 import { GetInfo, SetInfo } from '../services/InfoStorage'
-
-interface Coordinates {
-    latitude: number
-    longitude: number
-}
-interface GeoLocation {
-    coords: Coordinates
-    road: string
-    city_district: string
-    place: string
-    city: string
-    county: string
-    country: string
-    formatted: string
-    currency_name: string
-    currency_code: string
-}
+import { getLocationPermission } from '../services/Permissions'
 
 interface LocationContextData {
-    setGeoCoords(coords: Coordinates): Promise<void>
-    getCoordsDevice(): Promise<Coordinates>
+    setCoords(coords: Coordinate): Promise<void>
+    setGeoData(props: GeoLocation): void
+    getGeoDataApi(): Promise<GeoLocation>
     GetGeoData(): GeoLocation
     getLoading(): boolean
 }
@@ -32,54 +16,15 @@ const LocationContext = createContext<LocationContextData>({} as LocationContext
 export const LocationProvider: React.FC = ({ children }) => {
 
     const [data, setData] = useState<GeoLocation>({} as GeoLocation)
-    const [isLoading, setLoading] = useState(true)
 
-    const key = 'CurrentLocation'
-
-    useEffect(() => {
-        async function loadStorageData(): Promise<void> {
-            const response = await GetInfo(key)
-            if (!!response) {
-                const responseObj = JSON.parse(response) as Coordinates
-                setData(prevData => {
-                    return {
-                        ...prevData,
-                        coords: responseObj
-                    }
-                })
-            }
-
-            setLoading(false)
-        }
-        //
-        loadStorageData()
-    }, [])
-
-    const setGeoCoords = useCallback(async (props: Coordinates) => {
+    const setCoords = useCallback(async (props: Coordinate) => {
         let newData = data
         data.coords = props
         setData(newData)
         //
-        const value = JSON.stringify(props)
-        await SetInfo({ key, value })
-        //
-        await GetGeoDataApi()
     }, [])
 
-    const getCoordsDevice = useCallback(async () => {
-        const response = await ExpoLocation.getCurrentPositionAsync({
-            accuracy: ExpoLocation.Accuracy.Highest
-        })
-
-        const { latitude, longitude } = response.coords
-
-        const coords: Coordinates = { latitude, longitude }
-
-        return coords
-
-    }, [])
-
-    const GetGeoDataApi = useCallback(async () => {
+    const getGeoDataApi = useCallback(async () => {
 
         const response = await GetGeo({ ...data.coords })
         //
@@ -93,16 +38,27 @@ export const LocationProvider: React.FC = ({ children }) => {
         newData.country = response.components.country
         newData.currency_name = response.annotations.currency.name
         newData.currency_code = response.annotations.currency.iso_code
-        setData(newData)
+        setGeoData(newData)
         //
+        return newData
     }, [])
 
     const GetGeoData = useCallback(() => data, [])
 
-    const getLoading = useCallback(() => isLoading, [])
+    const setGeoData = useCallback((props: GeoLocation) => {
+        let newData = data
+        newData.formatted = props.formatted
+        newData.city = props.city
+        newData.county = props.county
+        newData.country = props.country
+        newData.currency_name = props.currency_name
+        newData.currency_code = props.currency_code
+        setData(newData)
+        // setData(props)
+    }, [])
 
     return (
-        <LocationContext.Provider value={{ getCoordsDevice, setGeoCoords, GetGeoData, getLoading }} >
+        <LocationContext.Provider value={{ setCoords, setGeoData, getGeoDataApi, GetGeoData }} >
             {children}
         </LocationContext.Provider>
     )

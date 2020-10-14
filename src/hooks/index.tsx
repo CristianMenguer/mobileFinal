@@ -3,12 +3,15 @@ import React from 'react'
 import { LocationProvider } from './location'
 import { WeatherProvider } from './weather'
 import { CurrencyProvider } from './currency'
+import { AllDataProvider } from './allData'
 
 const AppProvider: React.FC = ({ children }) => (
     <LocationProvider >
         <WeatherProvider >
             <CurrencyProvider >
-                {children}
+                <AllDataProvider >
+                    {children}
+                </AllDataProvider>
             </CurrencyProvider>
         </WeatherProvider>
     </LocationProvider>

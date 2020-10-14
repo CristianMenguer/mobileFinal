@@ -1,14 +1,17 @@
-import React from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { View } from 'react-native'
-import { NavigationContainer } from '@react-navigation/native'
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Feather as Icon, AntDesign } from '@expo/vector-icons'
+
+import useAllData from './../hooks/allData'
 
 import Home from './../pages/Home'
 import Location from './../pages/Location'
 import Currency from './../pages/Currency'
 import Github from './../pages/Github'
 import Weather from './../pages/Weather'
+import Loading from './../pages/Loading'
 
 interface TabBarIconProps {
     color: string
@@ -52,13 +55,32 @@ const githubOptions = {
     ),
 }
 
+const loadingOptions = {
+    tabBarVisible: false,
+    tabBarLabel: 'Loading',
+    tabBarIcon: ({ color, size }: TabBarIconProps) => (
+        <Icon name="download" color={color} size={size} ></Icon>
+    ),
+}
+
 const Routes: React.FC = () => {
 
+    const navigationRef = useRef<NavigationContainerRef>(null)
+
+    const { isLoading } = useAllData()
+
+    useEffect(() => {
+        if (!isLoading && navigationRef)
+            navigationRef?.current?.navigate('Home')
+        //
+    }, [isLoading, navigationRef])
+
+    //
     return (
 
-        <NavigationContainer  >
+        <NavigationContainer ref={navigationRef} >
             <Tab.Navigator
-                initialRouteName="Currency"
+                initialRouteName={!isLoading ? 'Home' : 'Loading'}
                 tabBarOptions={{
                     activeTintColor: '#7a7a7a',
                     inactiveTintColor: '#C5C5C5',
@@ -66,6 +88,7 @@ const Routes: React.FC = () => {
                     labelPosition: 'below-icon',
                 }}
             >
+
                 <Tab.Screen name="Location"
                     component={Location} options={locationOptions} />
                 <Tab.Screen name="Weather"
@@ -76,6 +99,12 @@ const Routes: React.FC = () => {
                     component={Currency} options={currencyOptions} />
                 <Tab.Screen name="Github"
                     component={Github} options={githubOptions} />
+
+                {isLoading &&
+                    <Tab.Screen name="Loading"
+                        component={Loading} options={loadingOptions} />
+                }
+
             </Tab.Navigator>
         </NavigationContainer>
     )

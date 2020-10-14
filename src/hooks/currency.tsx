@@ -1,9 +1,17 @@
 import React, { createContext, useCallback, useState, useContext, useEffect } from 'react'
 import { GetGurrencyRates } from '../services/CurrencyApi'
+import { CURRENCY_TYPES } from '../constants/Currency'
+
+interface DataInterface {
+    [key: string]: number
+}
 
 interface CurrencyContextData {
     SetCurrencyBase(currencyBase: string): Promise<void>
-    GetCurrencyRate(): number[]
+    GetCurrencyRate(): DataInterface
+    GetBase(): string
+    GetRate(currencyTo: String): number
+    data: DataInterface
 }
 
 const CurrencyContext = createContext<CurrencyContextData>({} as CurrencyContextData)
@@ -11,42 +19,53 @@ const CurrencyContext = createContext<CurrencyContextData>({} as CurrencyContext
 export const CurrencyProvider: React.FC = ({ children }) => {
 
     const [base, setBase] = useState<string>('')
-    const [data, setData] = useState<number[] | any>([])
+    const [data, setData] = useState<DataInterface>(() => {
+        var newArray: DataInterface = [] as unknown as DataInterface
+        CURRENCY_TYPES.map(type => {
+            newArray[type] = 0
+        })
+        return newArray
+    })
+
+    useEffect(() => {
+        GetCurrencyDataApi(base)
+    }, [base])
 
     const SetCurrencyBase = useCallback(async (currencyBase: string) => {
         if (!currencyBase)
             return
         //
-        let newBase = base
-        newBase = currencyBase
-        setBase(newBase)
         setBase(currencyBase)
-        console.log(newBase + '-' + GetBase())
-        await GetCurrencyDataApi()
     }, [])
 
-    const GetCurrencyDataApi = useCallback(async () => {
-
-        console.log('base: ' + base)
-        const response = await GetGurrencyRates(base)
+    const GetCurrencyDataApi = useCallback(async (currencyBase: string) => {
+        if (!currencyBase)
+            return
+        //
+        const response = await GetGurrencyRates(currencyBase)
         //
         if (!response)
             return
         //
-        let newData = data
+        var newData = data
+
         for (const key in response.data.rates) {
-            newData[key] = response.data.rates[key]
+            newData[key as string] = response.data.rates[key]
         }
         //
         setData(newData)
         //
     }, [])
 
+    const GetRate = useCallback((currencyTo: string) => {
+        return data[currencyTo]
+    }, [])
+
     const GetCurrencyRate = useCallback(() => data, [])
     const GetBase = useCallback(() => base, [])
 
     return (
-        <CurrencyContext.Provider value={{ SetCurrencyBase, GetCurrencyRate }} >
+        <CurrencyContext.Provider value={{ SetCurrencyBase, GetCurrencyRate, GetBase, GetRate, data }} >
             {children}
         </CurrencyContext.Provider>
     )

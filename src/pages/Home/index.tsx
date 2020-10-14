@@ -9,20 +9,6 @@ import Loader from '../../components/Loader'
 import Styles from './style'
 import { GetInfo } from '../../services/InfoStorage'
 
-interface Coordinates {
-    latitude: number
-    longitude: number
-}
-
-interface GeoLocationData {
-    coords: Coordinates
-    city: string
-    county: string
-    country: string
-    formatted: string
-    currency_name: string
-    currency_code: string
-}
 
 interface WeatherData {
     temperature: number
@@ -35,36 +21,24 @@ const Home: React.FC = () => {
 
     const isFocused = useIsFocused()
 
-    const { getCoordsDevice, setGeoCoords, GetGeoData } = useLocation()
-    const { setWeatherCoords, GetWeatherData } = useWeather()
+    const { GetGeoData } = useLocation()
+    const { setWeatherCoords, getWeatherData } = useWeather()
 
     // Video Fase 04 - 02 - 02 - 03 - 10min35
 
     const [hasPermission, setHasPermission] = useState(false)
     const [location, setLocation] = useState('')
     const [temperature, setTemperature] = useState('')
-    const [geoData, setGeoData] = useState({} as GeoLocationData)
+    const [geoData, setGeoData] = useState({} as GeoLocation)
     const [weatherData, setWeatherData] = useState({} as WeatherData)
     const [logoWeather, setLogoWeather] = useState('https://icons.iconarchive.com/icons/dakirby309/windows-8-metro/128/Web-The-Weather-Channel-Metro-icon.png')
 
-    async function setCoords(props: Coordinates) {
-        if (isFocused && !!props) {
-            setGeoCoords(props)
-            setWeatherCoords(props)
-        }
-    }
-
-    async function LoadStorage() {
-        const response = await GetInfo('CurrentLocation')
-        if (!!response) {
-            setCoords(JSON.parse(response))
-            // setCoords({
-            //     latitude: -29.74,
-            //     longitude: -51.14
-            // })
-            LoadAPI()
-        }
-    }
+    useEffect(() => {
+        if (!isFocused)
+            return
+        //
+        LoadAPI()
+    }, [isFocused, GetGeoData(), getWeatherData()])
 
     async function LoadAPI() {
         const newGeoData = geoData
@@ -77,44 +51,15 @@ const Home: React.FC = () => {
         setLocation(`${geoData.city ? geoData.city : geoData.county}, ${geoData.country}`)
         //
         const newWeatherData = weatherData
-        newWeatherData.temperature = GetWeatherData().temperature
-        newWeatherData.description = GetWeatherData().description
-        newWeatherData.iconCode = GetWeatherData().iconCode
-        newWeatherData.iconUri = GetWeatherData().iconUri
+        newWeatherData.temperature = getWeatherData().temperature
+        newWeatherData.description = getWeatherData().description
+        newWeatherData.iconCode = getWeatherData().iconCode
+        newWeatherData.iconUri = getWeatherData().iconUri
         setWeatherData(newWeatherData)
         setTemperature(`${weatherData.description} - ${weatherData.temperature}`)
         //
         setLogoWeather(weatherData.iconUri)
     }
-
-    async function loadDeviceCoords() {
-        const response = await getCoordsDevice()
-        //
-        if (!!response) {
-            await setCoords(response)
-            LoadAPI()
-        }
-    }
-
-    useEffect(() => {
-        getLocationPermission()
-            .then(response => {
-                setHasPermission(response)
-            })
-        //
-    }, [])
-
-    useEffect(() => {
-        if (!isFocused)
-            return
-        //
-        if (hasPermission)
-            loadDeviceCoords()
-        else
-            LoadStorage()
-        //
-
-    }, [hasPermission, isFocused])
 
     if (location === '' || temperature === '')
         return <Loader />
