@@ -65,11 +65,11 @@ export const WeatherProvider: React.FC = ({ children }) => {
     }, [])
 
     const setDaily = useCallback(async (props: Forecast[]) => {
-        setForecastDaily({...props})
+        setForecastDaily(props)
     }, [])
 
     const setHourly = useCallback(async (props: Forecast[]) => {
-        setForecastHourly({...props})
+        setForecastHourly(props)
     }, [])
 
     const getForecastDailyApi = useCallback(async () => {

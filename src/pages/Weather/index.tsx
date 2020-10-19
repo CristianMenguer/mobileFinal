@@ -12,14 +12,19 @@ const Weather: React.FC = () => {
 
     const { locationData } = useLocation()
     const { weatherData, forecastDaily, forecastHourly } = useWeather()
+
     const [currentDate, setCurrentDate] = useState('')
 
+    useEffect(() => setCurrentDate(new Date().toLocaleDateString()), [])
+
     useEffect(() => {
-        setCurrentDate(new Date().toLocaleDateString())
-        console.log(forecastDaily)
+        //
+        // let hourly: Forecast[] = forecastHourly.concat([forecastHourly])
+        console.log(forecastHourly.length)
+        //
     }, [])
 
-    if (currentDate === '')
+    if (currentDate === '' || forecastHourly.length < 1 || forecastDaily.length < 1)
         return <Loader message='Loading Weather Information' />
     //
     return (
