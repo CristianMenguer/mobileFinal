@@ -6,53 +6,37 @@ import useLocation from '../../hooks/location'
 import useWeather from '../../hooks/weather'
 
 import Styles from './style'
-
-interface Forecast {
-    id: number
-    valid_date: string
-    temp: number
-    min_temp: number
-    max_temp: number
-    min_feel_like: number
-    max_feel_like: number
-    pop: number
-    description: string
-    iconCode: string
-    iconUri: string
-}
+import Loader from '../../components/Loader'
 
 const Weather: React.FC = () => {
 
-    const { GetGeoData } = useLocation()
-    const { getWeatherData, getDailyData, getHourlyData } = useWeather()
+    const { locationData } = useLocation()
+    const { weatherData, forecastDaily, forecastHourly } = useWeather()
     const [currentDate, setCurrentDate] = useState('')
-    const [forecastDaily, setForecastDaily] = useState<Forecast[]>(getDailyData())
-    const [forecastHourly, setForecastHourly] = useState<Forecast[]>(getHourlyData())
 
     useEffect(() => {
         setCurrentDate(new Date().toLocaleDateString())
+        console.log(forecastDaily)
     }, [])
 
-    useEffect(() => {
-        setForecastDaily(getDailyData())
-        setForecastHourly(getHourlyData())
-    }, [getDailyData(), getHourlyData()])
-
+    if (currentDate === '')
+        return <Loader message='Loading Weather Information' />
+    //
     return (
         <>
             <ScrollView >
                 <View style={Styles.container} >
                     <View style={Styles.location} >
                         <Icon name='map-marker-alt' size={20} />
-                        <Text style={Styles.locationText} >  {GetGeoData().city ? GetGeoData().city : GetGeoData().county}</Text>
+                        <Text style={Styles.locationText} >  {locationData.city ? locationData.city : locationData.county}</Text>
                     </View>
                     <Text style={Styles.dateText} >{currentDate}</Text>
                     <View style={Styles.currentTemp} >
-                        <Image style={Styles.currentTempIcon} source={{ uri: getWeatherData().iconUri }} />
-                        <Text style={Styles.currentTempText} >{getWeatherData().temperature}℃</Text>
+                        <Image style={Styles.currentTempIcon} source={{ uri: weatherData.iconUri }} />
+                        <Text style={Styles.currentTempText} >{weatherData.temperature}℃</Text>
                     </View>
-                    <Text style={Styles.feelLikeText} >{getWeatherData().temp_min}℃ / {getWeatherData().temp_max}℃ Feels like {getWeatherData().feel_like}℃</Text>
-                    <Text style={Styles.descriptionText} >{getWeatherData().description}</Text>
+                    <Text style={Styles.feelLikeText} >{weatherData.temp_min}℃ / {weatherData.temp_max}℃ Feels like {weatherData.feel_like}℃</Text>
+                    <Text style={Styles.descriptionText} >{weatherData.description}</Text>
 
                 </View>
 

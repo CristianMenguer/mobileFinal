@@ -11,6 +11,8 @@ interface WeatherContextData {
     getForecastHourlyApi(): Promise<Forecast[]>
     forecastDaily: Forecast[]
     forecastHourly: Forecast[]
+    setHourly(props: Forecast[]): void
+    setDaily(props: Forecast[]): void
 
 }
 
@@ -62,6 +64,14 @@ export const WeatherProvider: React.FC = ({ children }) => {
         //
     }, [])
 
+    const setDaily = useCallback(async (props: Forecast[]) => {
+        setForecastDaily({...props})
+    }, [])
+
+    const setHourly = useCallback(async (props: Forecast[]) => {
+        setForecastHourly({...props})
+    }, [])
+
     const getForecastDailyApi = useCallback(async () => {
 
         const response = await GetWeatherDaily({ ...weatherData.coords })
@@ -95,7 +105,7 @@ export const WeatherProvider: React.FC = ({ children }) => {
             //
             predict.push(newForecast)
         }
-        setForecastDaily(predict)
+        setForecastDaily({...predict})
         return predict
     }, [])
 
@@ -127,12 +137,12 @@ export const WeatherProvider: React.FC = ({ children }) => {
                 break
             //
         }
-        setForecastHourly(predict)
+        setForecastHourly({...predict})
         return predict
     }, [])
 
     return (
-        <WeatherContext.Provider value={{ setWeatherCoords, weatherData, setWeatherData, getWeatherDataApi, getForecastDailyApi, getForecastHourlyApi, forecastDaily, forecastHourly }} >
+        <WeatherContext.Provider value={{ setWeatherCoords, weatherData, setWeatherData, getWeatherDataApi, getForecastDailyApi, getForecastHourlyApi, forecastDaily, forecastHourly, setHourly, setDaily }} >
             {children}
         </WeatherContext.Provider>
     )

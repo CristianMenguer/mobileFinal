@@ -20,7 +20,7 @@ const Loading: React.FC = () => {
     const { setLoading, loadCoord, loadGeoLocation, loadWeather, loadDailyWeather, loadHourlyWeather } = useAllData()
 
     const { setCoords, locationData, setGeoData } = useLocation()
-    const { setWeatherCoords, setWeatherData, getWeatherDataApi, weatherData } = useWeather()
+    const { setWeatherCoords, setWeatherData, getWeatherDataApi, weatherData, setDaily, setHourly } = useWeather()
 
     const [hasPermission, setHasPermission] = useState(false)
 
@@ -100,26 +100,16 @@ const Loading: React.FC = () => {
         loadDailyWeather()
             .then(data => {
                 if (data[0]?.description) {
+                    setDaily(data)
                     setMessage('Loading Hourly Weather!')
                     loadHourlyWeather()
                         .then(data => {
-                            if (data[0]?.description)
+                            if (data[0]?.description) {
+                                setHourly(data)
                                 setLoading(false)
+                            }
                         })
                 }
-            })
-
-    }, [isFocused, weatherData.description])
-
-    useEffect(() => {
-        if (!isFocused || !weatherData.description)
-            return
-        //
-        setMessage('Loading Daily Weather!')
-        //
-        loadDailyWeather()
-            .then(data => {
-                console.log(data)
             })
 
     }, [isFocused, weatherData.description])

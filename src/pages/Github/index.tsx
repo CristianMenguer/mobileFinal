@@ -1,19 +1,10 @@
-import React, { useEffect, useState, TouchEvent } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Text, TextInput, TouchableOpacity, View, Image, ScrollView, Alert, Keyboard } from 'react-native'
 
 import { GetInfo, SetInfo } from '../../services/InfoStorage'
 import GithubApi from '../../services/GithubApi'
 
 import Styles from './style'
-
-interface Repository {
-    full_name: string
-    description: string
-    owner: {
-        login: string
-        avatar_url: string
-    }
-}
 
 const Github: React.FC = () => {
 
@@ -68,7 +59,6 @@ const Github: React.FC = () => {
     }
 
     useEffect(() => {
-        //loadRepos()
         GetInfo('Repositories')
         .then(response => {
             if (!!response)
