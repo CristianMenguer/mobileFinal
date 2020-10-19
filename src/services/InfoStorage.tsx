@@ -8,6 +8,9 @@ interface SetInfoProps {
 const appKey = '@2020087'
 
 export const SetInfo = async (props: SetInfoProps) => {
+    if (!props.key || !props.value)
+        return
+    //
     try {
         await AsyncStorage.setItem(`${appKey}:${props.key}`, props.value)
     } catch (e) {

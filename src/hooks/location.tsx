@@ -7,31 +7,30 @@ interface LocationContextData {
     setCoords(coords: Coordinate): Promise<void>
     setGeoData(props: GeoLocation): void
     getGeoDataApi(): Promise<GeoLocation>
-    GetGeoData(): GeoLocation
-    getLoading(): boolean
+    locationData: GeoLocation
 }
 
 const LocationContext = createContext<LocationContextData>({} as LocationContextData)
 
 export const LocationProvider: React.FC = ({ children }) => {
 
-    const [data, setData] = useState<GeoLocation>({} as GeoLocation)
+    const [locationData, setLocationData] = useState<GeoLocation>({} as GeoLocation)
 
     const setCoords = useCallback(async (props: Coordinate) => {
-        let newData = data
-        data.coords = props
-        setData(newData)
+        let newData = locationData
+        locationData.coords = props
+        setLocationData({...newData})
         //
     }, [])
 
     const getGeoDataApi = useCallback(async () => {
 
-        const response = await GetGeo({ ...data.coords })
+        const response = await GetGeo({ ...locationData.coords })
         //
         if (!response)
-            return
+            return locationData
         //
-        let newData = data
+        let newData = locationData
         newData.formatted = response.formatted
         newData.city = response.components.city
         newData.county = response.components.county
@@ -43,22 +42,20 @@ export const LocationProvider: React.FC = ({ children }) => {
         return newData
     }, [])
 
-    const GetGeoData = useCallback(() => data, [])
-
     const setGeoData = useCallback((props: GeoLocation) => {
-        let newData = data
+        let newData = locationData
         newData.formatted = props.formatted
         newData.city = props.city
         newData.county = props.county
         newData.country = props.country
         newData.currency_name = props.currency_name
         newData.currency_code = props.currency_code
-        setData(newData)
+        setLocationData(newData)
         // setData(props)
     }, [])
 
     return (
-        <LocationContext.Provider value={{ setCoords, setGeoData, getGeoDataApi, GetGeoData }} >
+        <LocationContext.Provider value={{ setCoords, setGeoData, getGeoDataApi, locationData }} >
             {children}
         </LocationContext.Provider>
     )

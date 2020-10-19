@@ -1,12 +1,17 @@
 import React from 'react'
-import { ActivityIndicator, View } from 'react-native'
+import { ActivityIndicator, View, Text } from 'react-native'
 
 import Styles from './style'
 
-const Loader = () => {
+interface LoaderProps {
+    message?: string
+}
+
+const Loader: React.FC<LoaderProps> = ({ message }) => {
     return (
         <View style={Styles.container}  >
-            <ActivityIndicator size='large' color='#00ff00' style={Styles.loader} />
+            <ActivityIndicator size={48} color='#00ff00' style={Styles.loader} />
+            <Text style={Styles.message} >{message}</Text>
         </View>
     )
 }

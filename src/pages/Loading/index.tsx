@@ -9,117 +9,122 @@ import useLocation from '../../hooks/location'
 import useWeather from '../../hooks/weather'
 import Loader from '../../components/Loader'
 import Styles from './style'
-import { GetInfo, SetInfo } from '../../services/InfoStorage'
-import { GetWeather } from '../../services/WeatherApi'
 
 const Loading: React.FC = () => {
 
-    const isFocused = useIsFocused()
 
-    const { isLoading, setLoading } = useAllData()
-    const { setCoords, setGeoData, getGeoDataApi } = useLocation()
-    const { setWeatherCoords, setWeatherData, getWeatherData, getWeatherDataApi } = useWeather()
+    const isFocused = useIsFocused()
+    const [message, setMessage] = useState('')
+    const [coord, setCoord] = useState({} as Coordinate)
+
+    const { setLoading, loadCoord, loadGeoLocation, loadWeather, loadDailyWeather, loadHourlyWeather } = useAllData()
+
+    const { setCoords, locationData, setGeoData } = useLocation()
+    const { setWeatherCoords, setWeatherData, getWeatherDataApi, weatherData } = useWeather()
 
     const [hasPermission, setHasPermission] = useState(false)
 
-    async function loadAllData() {
-        let coords: Coordinate = {} as Coordinate
-        let geoLocation: GeoLocation
-        let weather: Weather = {} as Weather
-        let dailyWeather: Forecast[]
-        let hourlyWeather: Forecast[]
-
-        const locationStorage = await GetInfo('CurrentLocation')
-        //
-        if (!!locationStorage) {
-            const { latitude, longitude } = JSON.parse(locationStorage)
-            coords = {
-                latitude,
-                longitude
-            }
-            setCoords(coords)
-            //
-        } else {
-            const locationDevice = await ExpoLocation.getCurrentPositionAsync({
-                accuracy: ExpoLocation.Accuracy.Highest
-            })
-            //
-            if (!!locationDevice) {
-                const { latitude, longitude } = locationDevice.coords
-                coords = {
-                    latitude,
-                    longitude
-                }
-                setCoords(coords)
-            }
-        }
-        //
-        //if (coords !== {} as Coordinate)
-        {
-            const geoLocationString = await GetInfo('GeoLocation')
-            if (!!geoLocationString) {
-                geoLocation = JSON.parse(geoLocationString)
-                setGeoData(geoLocation)
-                //
-            } else {
-                geoLocation = await getGeoDataApi()
-                await SetInfo({
-                    key: 'GeoLocation',
-                    value: JSON.stringify(geoLocation)
-                })
-                //
-            }
-        }
-        //
-        setWeatherCoords(coords)
-        const weatherString = await GetInfo('Weather')
-        if (!!weatherString) {
-            weather = JSON.parse(weatherString)
-            setWeatherData(weather)
-            //
-        }
-        //
-        if (!weatherString || ((new Date().getTime() - weather.timeAPI) > (60000 * 0.01))) {
-            weather = await getWeatherDataApi()
-            await SetInfo({
-                key: 'Weather',
-                value: JSON.stringify(weather)
-            })
-            //
-        }
-        //
-        // const dailyString = await GetInfo('DailyWeather')
-        // if (!!dailyString) {
-        //     dailyWeather = JSON.parse(dailyString)
-        //     setWeatherData(dailyWeather)
-        //     //
-        // }
-        // //
-        // else {
-        //     dailyWeather = await getWeatherDataApi()
-        //     await SetInfo({
-        //         key: 'DailyWeather',
-        //         value: JSON.stringify(dailyWeather)
-        //     })
-        //     //
-        // }
-        //
-
-        //
-        setLoading(false)
-
-    }
-
     useEffect(() => {
-        if (!isFocused)
+        if (!isFocused || hasPermission)
             return
         //
-        loadAllData()
+        setMessage('Permission is necessary to continue!')
         //
-
+        getLocationPermission().then(data => {
+            setHasPermission(data)
+        })
     }, [isFocused])
 
-    return <Loader />
+    useEffect(() => {
+        if (!isFocused || !hasPermission)
+            return
+        //
+        setMessage('Loading last/current location!')
+        //
+        loadCoord()
+            .then(data => {
+                if (!!data.latitude)
+                    setCoord(data)
+            })
+    }, [isFocused, hasPermission])
+
+    useEffect(() => {
+        if (!isFocused || !coord.latitude)
+            return
+        //
+        setMessage('Location read!')
+        //
+        setCoords(coord)
+    }, [isFocused, coord])
+
+    useEffect(() => {
+        if (!isFocused || !locationData.coords?.latitude)
+            return
+        //
+        setMessage('Coordinates set')
+        loadGeoLocation()
+            .then(data => {
+                if (!!data.country)
+                    setGeoData(data)
+            })
+    }, [isFocused, locationData.coords])
+
+    useEffect(() => {
+        if (!isFocused || !locationData.country)
+            return
+        //
+        setMessage('Geo Location set')
+        setWeatherCoords(coord)
+        //
+    }, [isFocused, locationData.country])
+
+    useEffect(() => {
+        if (!isFocused || !weatherData.coords?.latitude)
+            return
+        //
+        setMessage('Loading Current Weather')
+        loadWeather()
+            .then(data => {
+                if (!!data.description)
+                    setWeatherData({ ...data })
+            })
+        //
+    }, [isFocused, weatherData.coords])
+
+    useEffect(() => {
+        if (!isFocused || !weatherData.description)
+            return
+        //
+        setMessage('Loading Daily Weather!')
+        //
+        loadDailyWeather()
+            .then(data => {
+                if (data[0]?.description) {
+                    setMessage('Loading Hourly Weather!')
+                    loadHourlyWeather()
+                        .then(data => {
+                            if (data[0]?.description)
+                                setLoading(false)
+                        })
+                }
+            })
+
+    }, [isFocused, weatherData.description])
+
+    useEffect(() => {
+        if (!isFocused || !weatherData.description)
+            return
+        //
+        setMessage('Loading Daily Weather!')
+        //
+        loadDailyWeather()
+            .then(data => {
+                console.log(data)
+            })
+
+    }, [isFocused, weatherData.description])
+
+    return <Loader message={message} />
 }
 
 export default Loading
