@@ -17,8 +17,8 @@ const Currency: React.FC = () => {
 
     const isFocused = useIsFocused()
 
-    const { GetGeoData } = useLocation()
-    const { SetCurrencyBase, GetCurrencyRate, GetRate, data } = useCurrency()
+    const { locationData } = useLocation()
+    const { currencyData } = useCurrency()
 
     const [firstValue, setFirstValue] = useState('0')
     const [secondValue, setSecondValue] = useState('0')
@@ -60,26 +60,11 @@ const Currency: React.FC = () => {
             }
     }
 
-    async function setBase() {
-        //await SetCurrencyBase(GetGeoData().currency_code)
-        await SetCurrencyBase('BRL')
-
-    }
-
 
     useEffect(() => {
-        if (!isFocused)
-            return
-        //
-        setBase()
-        //
-    }, [isFocused])
-
-    useEffect(() => {
-        const temp = GetRate('EUR')
-        //console.log(temp)
-        //setRateToUSD(GetCurrencyRate()['EUR'])
-    }, [data])
+        const temp = currencyData['USD']
+        console.log(temp)
+    }, [currencyData])
 
     return (
         <>
@@ -88,8 +73,9 @@ const Currency: React.FC = () => {
                     source={require('../../../assets/moneyIcon.png')}
                     style={Styles.logo}
                 />
-                <Text >You are in Ireland</Text>
-                <Text >Your currency is {GetGeoData().currency_name} ({GetGeoData().currency_code})</Text>
+                <Text >You are in Ireland </Text>
+                <Text >Your currency is {locationData.currency_name} ({locationData.currency_code})</Text>
+                <Text >1 {locationData.currency_code} = {currencyData[locationData.currency_code]} USD </Text>
                 <TextInput
                     style={Styles.input}
                     keyboardType='numeric'

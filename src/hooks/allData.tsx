@@ -3,6 +3,7 @@ import { GetInfo, SetInfo } from '../services/InfoStorage'
 import * as ExpoLocation from 'expo-location'
 import useLocation from './location'
 import useWeather from './weather'
+import useCurrency from './currency'
 
 interface AllDataContextData {
     isLoading: boolean
@@ -12,6 +13,7 @@ interface AllDataContextData {
     loadWeather(): Promise<Weather>
     loadDailyWeather(): Promise<Forecast[]>
     loadHourlyWeather(): Promise<Forecast[]>
+    loadCurrencyData(props: string): Promise<CurrencyData>
 }
 
 const AllDataContext = createContext<AllDataContextData>({} as AllDataContextData)
@@ -22,6 +24,7 @@ export const AllDataProvider: React.FC = ({ children }) => {
 
     const { getGeoDataApi } = useLocation()
     const { getWeatherDataApi, getForecastDailyApi, getForecastHourlyApi } = useWeather()
+    const { GetCurrencyDataApi } = useCurrency()
 
     const loadCoord = useCallback(async () => {
 
@@ -89,6 +92,24 @@ export const AllDataProvider: React.FC = ({ children }) => {
         return weather
     }, [])
 
+    const loadCurrencyData = useCallback(async (props: string) => {
+        let rates: CurrencyData = {} as CurrencyData
+        const ratesString = await GetInfo('CurrencyData')
+        //
+        if (!!ratesString)
+            rates = JSON.parse(ratesString)
+        //
+        if (!rates.timeAPI || ((new Date().getTime() - rates.timeAPI) > (60000 * 1440))) {
+            rates = await GetCurrencyDataApi(props)
+            await SetInfo({
+                key: 'CurrencyData',
+                value: JSON.stringify(rates)
+            })
+        }
+        //
+        return rates
+    }, [])
+
     const loadDailyWeather = useCallback(async () => {
         let dailyWeather: Forecast[] = []
 
@@ -135,7 +156,7 @@ export const AllDataProvider: React.FC = ({ children }) => {
 
 
     return (
-        <AllDataContext.Provider value={{ isLoading, setLoading, loadCoord, loadGeoLocation, loadWeather, loadDailyWeather, loadHourlyWeather }} >
+        <AllDataContext.Provider value={{ isLoading, setLoading, loadCoord, loadGeoLocation, loadWeather, loadDailyWeather, loadHourlyWeather, loadCurrencyData }} >
             {children}
         </AllDataContext.Provider>
     )

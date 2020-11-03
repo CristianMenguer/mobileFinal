@@ -101,7 +101,10 @@ const Github: React.FC = () => {
 
                 {!!inputError && <Text style={Styles.textError} >{inputError}</Text>}
 
-                <ScrollView style={Styles.repositories} >
+                <ScrollView
+                    style={Styles.repositories}
+                    showsHorizontalScrollIndicator={false}
+                >
                     {
                         !!repositories && repositories.map(repo => (
                             <TouchableOpacity

@@ -82,7 +82,7 @@ export const WeatherProvider: React.FC = ({ children }) => {
         const newData = weatherData
         newData.temp_min = response[0].min_temp
         newData.temp_max = response[0].max_temp
-        setWeatherDataa(newData)
+        setWeatherData(newData)
         //
         const predict = forecastDaily
         while (predict.length)

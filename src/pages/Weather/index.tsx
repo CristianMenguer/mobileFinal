@@ -18,10 +18,8 @@ const Weather: React.FC = () => {
     useEffect(() => setCurrentDate(new Date().toLocaleDateString()), [])
 
     useEffect(() => {
-        //
-        // let hourly: Forecast[] = forecastHourly.concat([forecastHourly])
-        console.log(forecastHourly.length)
-        //
+        weatherData.temp_min = forecastDaily[0].min_temp
+        weatherData.temp_max = forecastDaily[0].max_temp
     }, [])
 
     if (currentDate === '' || forecastHourly.length < 1 || forecastDaily.length < 1)

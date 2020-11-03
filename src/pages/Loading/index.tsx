@@ -9,20 +9,27 @@ import useLocation from '../../hooks/location'
 import useWeather from '../../hooks/weather'
 import Loader from '../../components/Loader'
 import Styles from './style'
+import useCurrency from '../../hooks/currency'
 
 const Loading: React.FC = () => {
 
 
     const isFocused = useIsFocused()
-    const [message, setMessage] = useState('')
+    const [message, setMessagee] = useState('')
     const [coord, setCoord] = useState({} as Coordinate)
 
-    const { setLoading, loadCoord, loadGeoLocation, loadWeather, loadDailyWeather, loadHourlyWeather } = useAllData()
+    const { setLoading, loadCoord, loadGeoLocation, loadWeather, loadDailyWeather, loadHourlyWeather, loadCurrencyData } = useAllData()
 
     const { setCoords, locationData, setGeoData } = useLocation()
     const { setWeatherCoords, setWeatherData, getWeatherDataApi, weatherData, setDaily, setHourly } = useWeather()
+    const { SetCurrencyBase, SetCurrencyData, currencyBase, currencyData } = useCurrency()
 
     const [hasPermission, setHasPermission] = useState(false)
+
+    function setMessage(newMessage: string) {
+        // console.log(`> Loading Page => Setting new Message: ${newMessage}`)
+        setMessagee(newMessage)
+    }
 
     useEffect(() => {
         if (!isFocused || hasPermission)
@@ -52,7 +59,7 @@ const Loading: React.FC = () => {
         if (!isFocused || !coord.latitude)
             return
         //
-        setMessage('Location read!')
+        setMessage('Location read. Setting App coordinates!')
         //
         setCoords(coord)
     }, [isFocused, coord])
@@ -61,7 +68,7 @@ const Loading: React.FC = () => {
         if (!isFocused || !locationData.coords?.latitude)
             return
         //
-        setMessage('Coordinates set')
+        setMessage('App Coordinates set. Loading Geo Location info!')
         loadGeoLocation()
             .then(data => {
                 if (!!data.country)
@@ -73,10 +80,31 @@ const Loading: React.FC = () => {
         if (!isFocused || !locationData.country)
             return
         //
-        setMessage('Geo Location set')
-        setWeatherCoords(coord)
+        setMessage('Geo Location set. Reading currency from location!')
+        SetCurrencyBase(locationData.currency_code)
         //
     }, [isFocused, locationData.country])
+
+    useEffect(() => {
+        if (!isFocused || !currencyBase)
+            return
+        //
+        setMessage('Currency Base set. Loading currency rates!')
+        loadCurrencyData(currencyBase)
+            .then(data => {
+                SetCurrencyData({...data})
+            })
+        //
+    }, [isFocused, currencyBase])
+
+    useEffect(() => {
+        if (!isFocused || !currencyData['USD'] || currencyData['USD'] == 0)
+            return
+        //
+        setMessage('Currency Rates set. Starting loading weather info!')
+        setWeatherCoords(coord)
+
+    }, [isFocused, currencyData['USD']])
 
     useEffect(() => {
         if (!isFocused || !weatherData.coords?.latitude)
