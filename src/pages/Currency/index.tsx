@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Dispatch, SetStateAction } from 'react'
 import { Text, View, Image, TextInput } from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
 
@@ -7,7 +7,6 @@ import useCurrency from '../../hooks/currency'
 import { CURRENCY_TYPES } from '../../constants/Currency'
 
 import Styles from './style'
-import { GetGurrencyRates } from '../../services/CurrencyApi'
 
 interface DataInterface {
     [key: string]: number
@@ -22,49 +21,42 @@ const Currency: React.FC = () => {
 
     const [firstValue, setFirstValue] = useState('0')
     const [secondValue, setSecondValue] = useState('0')
-    const [rateToUSD, setRateToUSD] = useState(0)
+    const [rateToUSD, setRateToUSD] = useState<number>(0)
 
-    function handleFirstValueChange(props: string) {
-        let numberFormatted = 0
-        let value = props
-        //
-        if (value === '') {
-            setFirstValue('0')
-        }
-        else
+    function handleInputChange(value: string, setThis: Dispatch<SetStateAction<string>>, setOther: Dispatch<SetStateAction<string>>) {
+
+        if (!value || value === '') {
+            setThis('0')
+            setOther('0')
+        } else
+            //
             if (value[value.length - 1] === '.') {
-                setFirstValue(value)
+                setThis(value)
+            } else
+            //
+            if (value[value.length - 1] === '0' && value.includes('.')) {
+                setThis(value)
             }
-            else {
-                numberFormatted = parseFloat(value)
-                setFirstValue(numberFormatted.toString())
-                setSecondValue((numberFormatted * rateToUSD).toFixed(2).toString())
+            else
+            {
+                const numberFormatted = parseFloat(value)
+                setThis(numberFormatted.toString())
+                setOther((numberFormatted * rateToUSD).toFixed(2).toString())
             }
+
     }
 
-    function handleSecondValueChange(props: string) {
-        let numberFormatted = 0
-        let value = props
-        //
-        if (value === '') {
-            setSecondValue('0')
-        }
-        else
-            if (value[value.length - 1] === '.') {
-                setSecondValue(value)
-            }
-            else {
-                numberFormatted = parseFloat(value)
-                setSecondValue(numberFormatted.toString())
-                setFirstValue((numberFormatted * (1 / rateToUSD)).toFixed(2).toString())
-            }
+    function handleInputBlur(value: string, setThis: Dispatch<SetStateAction<string>>) {
+        setThis(parseFloat(value).toFixed(2))
     }
-
 
     useEffect(() => {
-        const temp = currencyData['USD']
-        console.log(temp)
-    }, [currencyData])
+        const numberFormatted = parseFloat(currencyData['USD'].toFixed(2).toString())
+        setFirstValue('1.00')
+        setSecondValue(numberFormatted.toString())
+        setRateToUSD(numberFormatted)
+        //
+    }, [])
 
     return (
         <>
@@ -73,25 +65,27 @@ const Currency: React.FC = () => {
                     source={require('../../../assets/moneyIcon.png')}
                     style={Styles.logo}
                 />
-                <Text >You are in Ireland </Text>
-                <Text >Your currency is {locationData.currency_name} ({locationData.currency_code})</Text>
-                <Text >1 {locationData.currency_code} = {currencyData[locationData.currency_code]} USD </Text>
+                <Text style={Styles.text} >You are in Ireland </Text>
+                <Text style={Styles.text} >Your currency is {locationData.currency_name} ({locationData.currency_code})</Text>
+                <Text style={Styles.text} >1 {locationData.currency_code} = {rateToUSD} USD </Text>
                 <TextInput
                     style={Styles.input}
                     keyboardType='numeric'
                     textContentType='creditCardNumber'
                     value={firstValue}
-                    onChangeText={props => handleFirstValueChange(props)}
+                    onBlur={props => handleInputBlur((props.target as unknown as HTMLInputElement).value, setFirstValue)}
+                    onChangeText={props => handleInputChange(props, setFirstValue, setSecondValue)}
                     placeholder={'EUR'}
                     placeholderTextColor={'green'}
 
                 />
-                <Text >Converting to USD</Text>
+                <Text style={Styles.text} >Converting to USD</Text>
                 <TextInput
                     style={Styles.input}
                     keyboardType='numeric'
                     value={secondValue}
-                    onChangeText={props => handleSecondValueChange(props)}
+                    onBlur={props => handleInputBlur((props.target as unknown as HTMLInputElement).value, setSecondValue)}
+                    onChangeText={props => handleInputChange(props, setSecondValue, setFirstValue)}
                     placeholder={'USD'}
                     placeholderTextColor={'blue'}
                 />

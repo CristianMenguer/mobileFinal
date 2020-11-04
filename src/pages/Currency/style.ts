@@ -22,6 +22,9 @@ const Styles = StyleSheet.create({
     logo: {
         width: 200,
         height: 200
+    },
+    text: {
+        marginVertical: 8,
     }
 })
 

@@ -81,7 +81,7 @@ export const AllDataProvider: React.FC = ({ children }) => {
         if (!!weatherString)
             weather = JSON.parse(weatherString)
         //
-        if (!weatherString || ((new Date().getTime() - weather.timeAPI) > (60000 * 30))) {
+        if (!weather.timeAPI || ((new Date().getTime() - weather.timeAPI) > (60000 * 30))) {
             weather = await getWeatherDataApi()
             await SetInfo({
                 key: 'Weather',
@@ -117,7 +117,7 @@ export const AllDataProvider: React.FC = ({ children }) => {
         if (!!dailyString)
             dailyWeather = JSON.parse(dailyString)
         //
-        if (dailyWeather.length < 1 || ((new Date().getTime() - dailyWeather[0]?.timeAPI) > (60000 * 30))) {
+        if (dailyWeather.length < 1 || !dailyWeather[0]?.timeAPI || ((new Date().getTime() - dailyWeather[0]?.timeAPI) > (60000 * 30))) {
             dailyWeather = await getForecastDailyApi()
             if (!!dailyWeather)
                 await SetInfo({
@@ -137,7 +137,7 @@ export const AllDataProvider: React.FC = ({ children }) => {
         if (!!hourlyString)
             hourlyWeather = JSON.parse(hourlyString)
         //
-        if (hourlyWeather.length < 1 || ((new Date().getTime() - hourlyWeather[0]?.timeAPI) > (60000 * 30))) {
+        if (hourlyWeather.length < 1 || !hourlyWeather[0]?.timeAPI || ((new Date().getTime() - hourlyWeather[0]?.timeAPI) > (60000 * 30))) {
             hourlyWeather = await getForecastHourlyApi()
             if (!!hourlyWeather)
                 await SetInfo({

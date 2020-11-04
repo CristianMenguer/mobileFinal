@@ -101,6 +101,7 @@ export const WeatherProvider: React.FC = ({ children }) => {
                 description: response[i].weather.description,
                 iconCode: response[i].weather.icon,
                 iconUri: GetWeatherIcon(response[i].weather.icon),
+                timeAPI: new Date().getTime(),
             } as Forecast
             //
             predict.push(newForecast)
@@ -129,6 +130,7 @@ export const WeatherProvider: React.FC = ({ children }) => {
                 description: response[i].weather.description,
                 iconCode: response[i].weather.icon,
                 iconUri: GetWeatherIcon(response[i].weather.icon),
+                timeAPI: new Date().getTime(),
             } as Forecast
             //
             predict.push(newForecast)

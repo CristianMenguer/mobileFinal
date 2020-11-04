@@ -71,7 +71,7 @@ const Routes: React.FC = () => {
 
     useEffect(() => {
         if (!isLoading && navigationRef)
-            navigationRef?.current?.navigate('Home')
+            navigationRef?.current?.navigate('Currency')
         //
     }, [isLoading, navigationRef])
 

@@ -49,7 +49,8 @@ const Home: React.FC = () => {
                     <Text style={Styles.text} >Lecture: Mobile Development</Text>
                     <Text style={Styles.text} >Lecturer: Amilcar Aponte</Text>
                     <Text style={Styles.text} >{location}</Text>
-                    <Text style={Styles.text} >{temperature}℃</Text>
+                    <Text style={Styles.text} >{weatherData.description}</Text>
+                    <Text style={Styles.text} >{weatherData.temperature}℃</Text>
 
                     <Image source={{ uri: logoWeather }} style={Styles.logoWeather} />
 

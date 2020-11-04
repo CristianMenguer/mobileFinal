@@ -51,7 +51,11 @@ const Loading: React.FC = () => {
         loadCoord()
             .then(data => {
                 if (!!data.latitude)
-                    setCoord(data)
+                    // setCoord(data)
+                    setCoord({
+                        latitude: -29.74,
+                        longitude: -51.14
+                    })
             })
     }, [isFocused, hasPermission])
 
@@ -61,6 +65,7 @@ const Loading: React.FC = () => {
         //
         setMessage('Location read. Setting App coordinates!')
         //
+        console.log(coord)
         setCoords(coord)
     }, [isFocused, coord])
 
