@@ -1,143 +1,115 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, Image, Platform, SafeAreaView } from 'react-native'
-import * as ExpoLocation from 'expo-location'
+import { Text, View, Image, Platform, SafeAreaView, TouchableOpacity } from 'react-native'
 import MapView, { Marker } from 'react-native-maps'
-
-import { getLocationPermission } from './../../services/Permissions'
-import { GetWeather, GetWeatherIcon } from '../../services/WeatherApi'
+import Toast from 'react-native-tiny-toast'
 
 import Loader from '../../components/Loader'
+import useLocation from '../../hooks/location'
 
 import Styles from './style'
 
-
-interface Currency {
-    decimal_mark: string
-    iso_code: string
-    name: string
-    subunit: string
-    symbol: string
-    symbol_first: string
-    thousands_separator: string
-}
-
-interface Weather {
-    sunrise: string         // Sunrise time (HH:MM)
-    sunset: string          // Sunset time (HH:MM)
-    pres: string            // Pressure (mb)
-    wind_spd: number        // Wind speed (Default m/s)
-    wind_dir: number        // Wind direction (degrees)
-    temp: number            // Temperature (default Celcius)
-    app_temp: number        // Apparent/"Feels Like" temperature (default Celcius)
-    rh: number              // Relative humidity (%)
-    clouds: number          // Cloud coverage (%)
-    pod: string             // Part of the day (d = day / n = night)
-    weather: {
-        icon: string        // Weather icon code
-        description: string // Text weather description
-        code: number        // Weather code
-    }
-    vis: number             // Visibility
-    precip: number          // Liquid equivalent precipitation rate (default mm/hr)
-    snow: number            // Snowfall (default mm/hr)
-    uv: number              // UV Index (0-11+)
-    aqi: number             // Air Quality Index [US - EPA standard 0 - +500]
-}
-
-const Location = () => {
+const Location: React.FC = () => {
 
     //import path from 'path'
     //const tmpFolder = path.resolve(__dirname, '..', '..', 'tmp')
 
-    const [hasPermission, setHasPermission] = useState(false)
-    const [coords, setCoords] = useState<Coordinate>()
-    const [geoLocation, setGeoLocation] = useState<GeoLocation>()
-    const [flag, setFlag] = useState()
-    const [currency, setCurrency] = useState<Currency>()
-    const [weather, setWeather] = useState<Weather>()
-    const [logoWeather, setLogoWeather] = useState('https://icons.iconarchive.com/icons/dakirby309/windows-8-metro/128/Web-The-Weather-Channel-Metro-icon.png')
+    const { locationData } = useLocation()
+
+    const [coord, setCoord] = useState({} as Coordinate)
+    const [marks, setMarks] = useState<Address[]>([])
+
+    const colors = [
+        'red',
+        'tomato',
+        'orange',
+        'yellow',
+        'green',
+        'gold',
+        'wheat',
+        'linen',
+        'tan',
+        'blue',
+        'aqua',
+        'teal',
+        'violet',
+        'purple',
+        'indigo',
+        'turquoise',
+        'navy',
+        'plum'
+    ]
 
     useEffect(() => {
-        getLocationPermission().then(data => {
-            setHasPermission(data)
-        })
+        setCoord(locationData.coords)
     }, [])
 
-    useEffect(() => {
-        if (hasPermission) {
-            ExpoLocation.getCurrentPositionAsync({
-                accuracy: ExpoLocation.Accuracy.Highest
-            })
-                .then(data => {
-                    //setCoords(data.coords)
-                    //setCoords({ latitude: -29.737645, longitude: -51.137464 })
-                })
+    function addMarker() {
+        // console.log('addMarker')
+        // console.log(marks)
+        const size = marks.length
+        // console.log(size)
+        let newCoord: Address = {
+            id: size + 1,
+            coords: {
+                latitude: locationData.coords.latitude + (size * 0.0005),
+                longitude: (locationData.coords.longitude) + (size * 0.0005)
+            }
         }
-    }, [hasPermission])
-
-    useEffect(() => {
-        if (coords) {
-            GetWeather(coords)
-                .then(data => {
-                    setWeather(data)
-                })
-        }
-
-    }, [coords])
-
-    useEffect(() => {
-        if (!!weather)
-            setLogoWeather(GetWeatherIcon(weather.weather.icon))
+        let newMarks = []
+        for (const item of marks)
+            newMarks.push(item)
         //
-        //console.log(logoWeather)
-    }, [weather])
-
-    function getWeatherIcon() {
-        return logoWeather
+        newMarks.push(newCoord)
+        setMarks(newMarks)
+        Toast.show('Current Location saved!', {
+            duration: Toast.duration.SHORT,
+            animationDuration: 500,
+            containerStyle: {
+                width: '75%',
+                borderRadius: 100,
+                backgroundColor: '#555'
+            }
+        })
     }
 
-    if (!!!geoLocation || !!!coords || !!!logoWeather)
-        return <Loader />
+    if (!coord || !coord.latitude)
+        return <Loader message={'Loading map...'} />
 
     return (
         <View style={Styles.container} >
-            <View style={Styles.weatherContainer} >
-                <Text style={{ maxWidth: '80%', textAlign: 'center' }} >{`${geoLocation.formatted} ${flag}`}</Text>
-                <Text>{`${currency?.name} (${currency?.symbol})`}</Text>
-                {/* {!!weather && <Image source={require(GetWeatherIcon(weather.weather.icon))} />} */}
-                {!!weather && <Text>{weather.temp} ºC - {weather.weather.description}</Text>}
-                {/* {!!weather && <Image source={logoWeather} style={{ width: 80, height: 80, borderRadius: 25 }} />} */}
-            </View>
-
             <View style={Styles.mapContainer} >
-                {Platform.OS === 'web' ?
+                <MapView style={Styles.map}
+                    initialRegion={{
+                        latitude: coord.latitude,
+                        longitude: coord.longitude,
+                        latitudeDelta: 0.014,
+                        longitudeDelta: 0.014
+                    }}
+                    loadingEnabled={!coord.latitude}
+                >
+                    {
+                        marks.map(marker => {
+                            return (
+                                <Marker
+                                    key={marker.id}
+                                    coordinate={{...marker.coords}}
+                                    pinColor={colors[(marker.id - 1) % 18]}
 
-                    <Text >Run the app in your device in order to see the map</Text>
-                    :
-                    <Text >Map</Text>
+                                />
+                            )
+                        }
+                        )
+                    }
 
-                }
+                </MapView>
             </View>
-            {/* <TouchableOpacity onPress={() => {
-                const response = {
-                    latitude: -29.74,
-                    longitude: -51.15
-                }
-                setGeoCoords(response)
-                setWeatherCoords(response)
-            }} >
-                <Text >Change to Brazil</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => {
-                const response = {
-                    latitude: 53.36,
-                    longitude: -6.26
-                }
-                setGeoCoords(response)
-                setWeatherCoords(response)
-            }} >
-                <Text >Change to Ireland</Text>
-            </TouchableOpacity> */}
+
+            <View style={Styles.itemsContainer} >
+                <TouchableOpacity onPress={() => addMarker()} style={Styles.button} >
+                    <Text>Add Current Location</Text>
+                </TouchableOpacity>
+            </View>
+
         </View>
     )
 }

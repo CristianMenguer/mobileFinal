@@ -8,15 +8,8 @@ const Styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
+        height: '100%',
         flex: 1,
-    },
-    weatherContainer: {
-        flex: 1,
-        borderRadius: 10,
-        width: '90%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'red',
     },
     mapContainer: {
         flex: 3,
@@ -25,12 +18,25 @@ const Styles = StyleSheet.create({
         alignItems: 'center',
         overflow: 'hidden',
         marginTop: 16,
-        backgroundColor: 'blue',
+        backgroundColor: 'green',
         width: '90%'
+    },
+    itemsContainer: {
+        flex: 1,
+        justifyContent: 'center',
+    },
+    button: {
+        backgroundColor: 'wheat',
+        borderRadius: 16,
+        height: 48,
+        width: 240,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     map: {
         width: '100%',
-        height: '100%'
+        height: '100%',
+        backgroundColor: 'blue'
     }
 })
 

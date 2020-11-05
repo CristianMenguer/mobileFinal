@@ -31,6 +31,7 @@ const Loading: React.FC = () => {
         setMessagee(newMessage)
     }
 
+    // https://callstack.github.io/react-native-paper/
     useEffect(() => {
         if (!isFocused || hasPermission)
             return
@@ -51,11 +52,11 @@ const Loading: React.FC = () => {
         loadCoord()
             .then(data => {
                 if (!!data.latitude)
-                    // setCoord(data)
-                    setCoord({
-                        latitude: -29.74,
-                        longitude: -51.14
-                    })
+                    setCoord(data)
+                    // setCoord({
+                    //     latitude: -29.74,
+                    //     longitude: -51.14
+                    // })
             })
     }, [isFocused, hasPermission])
 

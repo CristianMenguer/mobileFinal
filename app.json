@@ -23,7 +23,12 @@
             "favicon": "./assets/favicon.png"
         },
         "android": {
-            "package": "menguer.cristian.mobileFinal"
+            "package": "menguer.cristian.mobileFinal",
+            "config": {
+                "googleMaps": {
+                    "apiKey": "AIzaSyAo7Aw8NgtFqTs1ZPoOd58sE5pHGSwrR3Y"
+                }
+            }
         }
     }
 }

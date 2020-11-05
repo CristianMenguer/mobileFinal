@@ -25,6 +25,10 @@ const Styles = StyleSheet.create({
     },
     text: {
         marginVertical: 8,
+    },
+    textLocation: {
+        marginVertical: 16,
+        fontSize: 24
     }
 })
 

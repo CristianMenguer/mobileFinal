@@ -71,7 +71,7 @@ const Routes: React.FC = () => {
 
     useEffect(() => {
         if (!isLoading && navigationRef)
-            navigationRef?.current?.navigate('Currency')
+            navigationRef?.current?.navigate('Location')
         //
     }, [isLoading, navigationRef])
 
@@ -80,7 +80,7 @@ const Routes: React.FC = () => {
 
         <NavigationContainer ref={navigationRef} >
             <Tab.Navigator
-                initialRouteName={!isLoading ? 'Home' : 'Loading'}
+                initialRouteName={'Loading'}
                 tabBarOptions={{
                     activeTintColor: '#7a7a7a',
                     inactiveTintColor: '#C5C5C5',
