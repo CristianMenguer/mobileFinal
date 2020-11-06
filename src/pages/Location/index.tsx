@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, Image, Platform, SafeAreaView, TouchableOpacity } from 'react-native'
+import { Text, View, Image, ScrollView, TouchableOpacity } from 'react-native'
 import MapView, { Marker } from 'react-native-maps'
 import Toast from 'react-native-tiny-toast'
+import { Entypo as Icon } from '@expo/vector-icons'
 
 import Loader from '../../components/Loader'
 import useLocation from '../../hooks/location'
 
 import Styles from './style'
+import { Alert } from 'react-native'
 
 const Location: React.FC = () => {
 
@@ -43,11 +45,36 @@ const Location: React.FC = () => {
         setCoord(locationData.coords)
     }, [])
 
+    function removeMarker(id: number) {
+
+        Alert.alert(
+            'Delete Location',
+            `Are you sure you want to delete ${id}?`,
+            [
+                {
+                    text: 'No',
+                    onPress: () => console.log('No')
+                },
+                {
+                    text: 'Yes',
+                    onPress: () => {
+                        let newMarks = []
+
+                        for (let item of marks)
+                            if (item.id !== id)
+                                newMarks.push(item)
+                        //
+                        setMarks(newMarks)
+                    }
+                }
+            ],
+            { cancelable: false }
+        )
+
+    }
+
     function addMarker() {
-        // console.log('addMarker')
-        // console.log(marks)
         const size = marks.length
-        // console.log(size)
         let newCoord: Address = {
             id: size + 1,
             coords: {
@@ -92,7 +119,7 @@ const Location: React.FC = () => {
                             return (
                                 <Marker
                                     key={marker.id}
-                                    coordinate={{...marker.coords}}
+                                    coordinate={{ ...marker.coords }}
                                     pinColor={colors[(marker.id - 1) % 18]}
 
                                 />
@@ -105,10 +132,41 @@ const Location: React.FC = () => {
             </View>
 
             <View style={Styles.itemsContainer} >
-                <TouchableOpacity onPress={() => addMarker()} style={Styles.button} >
-                    <Text>Add Current Location</Text>
-                </TouchableOpacity>
+                <Text style={Styles.itemTitle} >My Locations</Text>
+                <ScrollView
+                    horizontal
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingHorizontal: 20 }}
+                >
+                    <View style={Styles.item}  >
+                        <TouchableOpacity onPress={() => addMarker()} style={Styles.addButton} >
+                            <Icon name='add-to-list' size={64} color={'#505050'} />
+                            <Text style={Styles.addText} >Add Current Location</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    {
+                        marks.map(mark => {
+                            return (
+                                <TouchableOpacity
+                                    key={mark.id}
+                                    style={Styles.item}
+                                    delayLongPress={750}
+                                    onLongPress={() => removeMarker(mark.id)}
+                                >
+                                    <Text style={Styles.itemText} >Dublin</Text>
+                                    <Text style={Styles.descriptionText} >Lat: 54.43</Text>
+                                    <Text style={Styles.descriptionText} >Lng: -6.96</Text>
+                                </TouchableOpacity>
+                            )
+                        })
+                    }
+
+
+
+                </ScrollView>
             </View>
+
 
         </View>
     )

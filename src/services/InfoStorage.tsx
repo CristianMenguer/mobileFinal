@@ -1,10 +1,5 @@
 import AsyncStorage from '@react-native-community/async-storage'
 
-interface SetInfoProps {
-    key: string
-    value: string
-}
-
 const appKey = '@2020087'
 
 export const SetInfo = async (props: SetInfoProps) => {
@@ -25,4 +20,13 @@ export const GetInfo = async (key: string) => {
         return response
     //
     return null
+}
+
+export const DeleteInfo = async (key: string) => {
+    //
+    try {
+        await AsyncStorage.removeItem(`${appKey}:${key}`)
+    } catch (e) {
+        console.log('Error deleteInfo: ' + e)
+    }
 }

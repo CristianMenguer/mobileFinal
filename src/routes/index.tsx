@@ -70,6 +70,7 @@ const Routes: React.FC = () => {
     const { isLoading } = useAllData()
 
     useEffect(() => {
+        // console.log('isLoading: ' + isLoading)
         if (!isLoading && navigationRef)
             navigationRef?.current?.navigate('Location')
         //

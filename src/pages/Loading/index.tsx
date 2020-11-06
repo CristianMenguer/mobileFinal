@@ -1,15 +1,13 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { Text, View, Image } from 'react-native'
+import React, { useState, useEffect } from 'react'
 import { useIsFocused } from '@react-navigation/native'
-import * as ExpoLocation from 'expo-location'
 
-import { getLocationPermission, getStoragePermission } from './../../services/Permissions'
+import { getLocationPermission } from './../../services/Permissions'
 import useAllData from '../../hooks/allData'
 import useLocation from '../../hooks/location'
 import useWeather from '../../hooks/weather'
 import Loader from '../../components/Loader'
-import Styles from './style'
 import useCurrency from '../../hooks/currency'
+import { openDb } from '../../database'
 
 const Loading: React.FC = () => {
 
@@ -21,14 +19,14 @@ const Loading: React.FC = () => {
     const { setLoading, loadCoord, loadGeoLocation, loadWeather, loadDailyWeather, loadHourlyWeather, loadCurrencyData } = useAllData()
 
     const { setCoords, locationData, setGeoData } = useLocation()
-    const { setWeatherCoords, setWeatherData, getWeatherDataApi, weatherData, setDaily, setHourly } = useWeather()
+    const { setWeatherCoords, setWeatherData, weatherData, setDaily, setHourly } = useWeather()
     const { SetCurrencyBase, SetCurrencyData, currencyBase, currencyData } = useCurrency()
 
     const [hasPermission, setHasPermission] = useState(false)
 
     function setMessage(newMessage: string) {
         // console.log(`> Loading Page => Setting new Message: ${newMessage}`)
-        setMessagee(newMessage)
+        setMessagee(newMessage.replace('. ', '.\n'))
     }
 
     // https://callstack.github.io/react-native-paper/
@@ -51,12 +49,14 @@ const Loading: React.FC = () => {
         //
         loadCoord()
             .then(data => {
-                if (!!data.latitude)
-                    setCoord(data)
-                    // setCoord({
-                    //     latitude: -29.74,
-                    //     longitude: -51.14
-                    // })
+                if (!!data.latitude) {
+                    // setCoord(data)
+                    setCoord({
+                        latitude: -29.74,
+                        longitude: -51.14
+                    })
+                    openDb()
+                }
             })
     }, [isFocused, hasPermission])
 
@@ -66,7 +66,7 @@ const Loading: React.FC = () => {
         //
         setMessage('Location read. Setting App coordinates!')
         //
-        console.log(coord)
+        //console.log(coord)
         setCoords(coord)
     }, [isFocused, coord])
 
@@ -98,7 +98,7 @@ const Loading: React.FC = () => {
         setMessage('Currency Base set. Loading currency rates!')
         loadCurrencyData(currencyBase)
             .then(data => {
-                SetCurrencyData({...data})
+                SetCurrencyData({ ...data })
             })
         //
     }, [isFocused, currencyBase])
@@ -133,12 +133,12 @@ const Loading: React.FC = () => {
         //
         loadDailyWeather()
             .then(data => {
-                if (data[0]?.description) {
+                if (data && data[0]?.description) {
                     setDaily(data)
                     setMessage('Loading Hourly Weather!')
                     loadHourlyWeather()
                         .then(data => {
-                            if (data[0]?.description) {
+                            if (data && data[0]?.description) {
                                 setHourly(data)
                                 setLoading(false)
                             }
