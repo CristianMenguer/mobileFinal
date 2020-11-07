@@ -28,7 +28,6 @@ const Loading: React.FC = () => {
         setMessagee(newMessage.replace('. ', '.\n'))
     }
 
-    // https://callstack.github.io/react-native-paper/
     useEffect(() => {
         if (!isFocused || hasPermission)
             return
@@ -40,111 +39,67 @@ const Loading: React.FC = () => {
         })
     }, [isFocused])
 
+    async function loadData() {
+        setMessage('Loading last/current location!')
+        //
+        const coordResp = await loadCoord()
+
+        if (!coordResp.id || coordResp.id < 1)
+            console.log('save id here')
+
+        setCoord(coordResp)
+
+        setMessage('Location read. Setting App coordinates!')
+
+        setCoords(coord)
+
+        setMessage('App Coordinates set. Loading Geo Location info!')
+
+        const geoResp = await loadGeoLocation()
+
+        setGeoData(geoResp)
+
+        setMessage('Geo Location set. Reading currency from location!')
+
+        SetCurrencyBase(geoResp.currency_code)
+
+        setMessage('Currency Base set. Loading currency rates!')
+
+        const currResp = await loadCurrencyData(currencyBase)
+
+        SetCurrencyData(currResp)
+
+        setMessage('Currency Rates set. Starting loading weather info!')
+
+        setWeatherCoords(coord)
+
+        const weatherResp = await loadWeather()
+
+        setWeatherData(weatherResp)
+
+        setMessage('Loading Daily Weather!')
+
+        const dailyResp = await loadDailyWeather()
+
+        setDaily(dailyResp)
+
+        setMessage('Loading Hourly Weather!')
+
+        const hourlyResp = await loadHourlyWeather()
+
+        setHourly(hourlyResp)
+
+        setLoading(false)
+
+    }
+
     useEffect(() => {
         if (!isFocused || !hasPermission)
             return
         //
-        setMessage('Loading last/current location!')
-        //
-        loadCoord()
-            .then(data => {
-                if (!!data.latitude) {
-                    // setCoord(data)
-                    setCoord({
-                        latitude: -29.74,
-                        longitude: -51.14
-                    })
-                }
-            })
+        loadData()
+
     }, [isFocused, hasPermission])
-
-    useEffect(() => {
-        if (!isFocused || !coord.latitude)
-            return
-        //
-        setMessage('Location read. Setting App coordinates!')
-        //
-        //console.log(coord)
-        setCoords(coord)
-    }, [isFocused, coord])
-
-    useEffect(() => {
-        if (!isFocused || !locationData.coords?.latitude)
-            return
-        //
-        setMessage('App Coordinates set. Loading Geo Location info!')
-        loadGeoLocation()
-            .then(data => {
-                if (!!data.country)
-                    setGeoData(data)
-            })
-    }, [isFocused, locationData.coords])
-
-    useEffect(() => {
-        if (!isFocused || !locationData.country)
-            return
-        //
-        setMessage('Geo Location set. Reading currency from location!')
-        SetCurrencyBase(locationData.currency_code)
-        //
-    }, [isFocused, locationData.country])
-
-    useEffect(() => {
-        if (!isFocused || !currencyBase)
-            return
-        //
-        setMessage('Currency Base set. Loading currency rates!')
-        loadCurrencyData(currencyBase)
-            .then(data => {
-                SetCurrencyData({ ...data })
-            })
-        //
-    }, [isFocused, currencyBase])
-
-    useEffect(() => {
-        if (!isFocused || !currencyData['USD'] || currencyData['USD'] == 0)
-            return
-        //
-        setMessage('Currency Rates set. Starting loading weather info!')
-        setWeatherCoords(coord)
-
-    }, [isFocused, currencyData['USD']])
-
-    useEffect(() => {
-        if (!isFocused || !weatherData.coords?.latitude)
-            return
-        //
-        setMessage('Loading Current Weather')
-        loadWeather()
-            .then(data => {
-                if (!!data.description)
-                    setWeatherData({ ...data })
-            })
-        //
-    }, [isFocused, weatherData.coords])
-
-    useEffect(() => {
-        if (!isFocused || !weatherData.description)
-            return
-        //
-        setMessage('Loading Daily Weather!')
-        //
-        loadDailyWeather()
-            .then(data => {
-                if (data && data[0]?.description) {
-                    setDaily(data)
-                    setMessage('Loading Hourly Weather!')
-                    loadHourlyWeather()
-                        .then(data => {
-                            if (data && data[0]?.description) {
-                                setHourly(data)
-                                setLoading(false)
-                            }
-                        })
-                }
-            })
-
-    }, [isFocused, weatherData.description])
 
     return <Loader message={message} />
 }

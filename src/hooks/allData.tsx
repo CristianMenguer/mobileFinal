@@ -31,8 +31,9 @@ export const AllDataProvider: React.FC = ({ children }) => {
         const locationStorage = await GetInfo('CurrentLocation')
         //
         if (!!locationStorage) {
-            const { latitude, longitude } = JSON.parse(locationStorage)
+            const { id, latitude, longitude } = JSON.parse(locationStorage)
             return {
+                id,
                 latitude,
                 longitude
             } as Coordinate
