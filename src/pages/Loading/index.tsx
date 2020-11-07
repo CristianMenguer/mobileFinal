@@ -7,13 +7,14 @@ import useLocation from '../../hooks/location'
 import useWeather from '../../hooks/weather'
 import Loader from '../../components/Loader'
 import useCurrency from '../../hooks/currency'
+import { AddCoordsDB } from '../../models/Location'
+import { SetInfo } from '../../services/InfoStorage'
 
 const Loading: React.FC = () => {
 
 
     const isFocused = useIsFocused()
     const [message, setMessagee] = useState('')
-    const [coord, setCoord] = useState({} as Coordinate)
 
     const { setLoading, loadCoord, loadGeoLocation, loadWeather, loadDailyWeather, loadHourlyWeather, loadCurrencyData } = useAllData()
 
@@ -42,20 +43,26 @@ const Loading: React.FC = () => {
     async function loadData() {
         setMessage('Loading last/current location!')
         //
-        const coordResp = await loadCoord()
+        let coords = await loadCoord()
 
-        if (!coordResp.id || coordResp.id < 1)
-            console.log('save id here')
-
-        setCoord(coordResp)
+        if (!coords.id || coords.id < 1)
+            coords = await AddCoordsDB(coords)
+        //
+        if (!coords.id)
+            return
+        //
+        await SetInfo({
+            key: 'CurrentCoord',
+            value: JSON.stringify(coords)
+        })
 
         setMessage('Location read. Setting App coordinates!')
 
-        setCoords(coord)
+        setCoords(coords)
 
         setMessage('App Coordinates set. Loading Geo Location info!')
 
-        const geoResp = await loadGeoLocation()
+        const geoResp = await loadGeoLocation(coords.id)
 
         setGeoData(geoResp)
 
@@ -65,13 +72,16 @@ const Loading: React.FC = () => {
 
         setMessage('Currency Base set. Loading currency rates!')
 
+
+
+
         const currResp = await loadCurrencyData(currencyBase)
 
         SetCurrencyData(currResp)
 
         setMessage('Currency Rates set. Starting loading weather info!')
 
-        setWeatherCoords(coord)
+        setWeatherCoords(coords)
 
         const weatherResp = await loadWeather()
 

@@ -1,5 +1,6 @@
 interface Forecast {
     id: number
+    type: string = 'daily' | 'hourly'
     valid_date: string
     temp: number
     min_temp: number

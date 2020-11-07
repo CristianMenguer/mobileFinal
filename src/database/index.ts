@@ -7,14 +7,50 @@ const startDb = async (): Promise<WebSQLDatabase> => {
     return new Promise<WebSQLDatabase>((resolve, reject) => {
         db.transaction((transaction) => {
             //transaction.executeSql('drop table repository')
-            transaction.executeSql('create table if not exists address (id integer primary key, latitude real, longitude real)')
             transaction.executeSql('create table if not exists repository (id integer primary key, description text, full_name text, avatar_url text, login text)')
+            // transaction.executeSql('drop table coord')
+            transaction.executeSql('create table if not exists coord (id integer primary key, latitude real, longitude real)')
+            // transaction.executeSql('drop table geolocation')
+            transaction.executeSql('create table if not exists geolocation (id integer primary key, coordid integer, ' +
+                'road text, city_district text, place text, city text, county text, country text, formatted text, ' +
+                'currency_name text, currency_code text)')
+            //
+            //transaction.executeSql('drop table currencyrate')
+            transaction.executeSql('create table if not exists currencyrate (id integer primary key, currencyBase text, currencyCompare text, value real, timeAPI real)')
+            /**
+    value: number
+    timeAPI
+             */
+
 
         }, (error) => {
             console.log(`> Database.index > startDb: ${error}`)
             reject(error)
         }, () => {
             resolve(db)
+        })
+    })
+}
+
+export const insertDB = async (sql: string): Promise<number> => {
+    const db = await startDb()
+
+    return new Promise<number>((resolve, reject) => {
+        db.transaction((transaction) => {
+            transaction.executeSql(sql, [], (tx, results) => {
+                //
+                if (results.insertId > 0) {
+                    resolve(results.insertId)
+                } else {
+                    console.log('> Database.index > insertDB.insertId == 0')
+                    reject(0)
+                }
+                //
+            })
+
+        }, (error) => {
+            console.log(`> Database.index > insertDB: ${error}`)
+            reject(0)
         })
     })
 }
@@ -47,12 +83,12 @@ export const execSql = async (sql: string): Promise<boolean> => {
     })
 }
 
-export const selectDB = async (tableName: string) => {
+export const selectDB = async (tableName: string, where: string = '') => {
     const db = await startDb()
 
     return new Promise<Object[]>((resolve, reject) => {
         db.transaction((transaction) => {
-            transaction.executeSql(`select * from ${tableName}`, [], (transaction, results) => {
+            transaction.executeSql(`select * from ${tableName} ${where != '' ? 'where ' + where : ''}`, [], (transaction, results) => {
                 let objs: Object[] = []
                 for (let index = 0; index < results.rows.length; index++)
                     objs.push(results.rows.item(index))
@@ -77,7 +113,7 @@ export const selectByIdDB = async (tableName: string, id: number) => {
             transaction.executeSql(`select * from ${tableName} where id = ${id}`, [], (transaction, results) => {
                 if (results.rows.length > 0) {
                     resolve(results.rows.item(0))
-                //
+                    //
                 }
             })
 

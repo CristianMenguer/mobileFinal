@@ -72,7 +72,7 @@ const Routes: React.FC = () => {
     useEffect(() => {
         // console.log('isLoading: ' + isLoading)
         if (!isLoading && navigationRef)
-            navigationRef?.current?.navigate('Github')
+            navigationRef?.current?.navigate('Home')
         //
     }, [isLoading, navigationRef])
 

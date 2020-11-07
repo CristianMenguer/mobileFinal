@@ -1,5 +1,7 @@
 interface GeoLocation {
-    coords: Coordinate
+    id?: number
+    coordsId?: number
+    coords?: Coordinate
     road: string
     city_district: string
     place: string

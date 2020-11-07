@@ -4,12 +4,13 @@ import * as ExpoLocation from 'expo-location'
 import useLocation from './location'
 import useWeather from './weather'
 import useCurrency from './currency'
+import { AddGeoLocationDB, LoadGeoLocationDB } from '../models/Location'
 
 interface AllDataContextData {
     isLoading: boolean
     setLoading(newStatus: boolean): void
     loadCoord(): Promise<Coordinate>
-    loadGeoLocation(): Promise<GeoLocation>
+    loadGeoLocation(props: number): Promise<GeoLocation>
     loadWeather(): Promise<Weather>
     loadDailyWeather(): Promise<Forecast[]>
     loadHourlyWeather(): Promise<Forecast[]>
@@ -28,7 +29,7 @@ export const AllDataProvider: React.FC = ({ children }) => {
 
     const loadCoord = useCallback(async () => {
 
-        const locationStorage = await GetInfo('CurrentLocation')
+        const locationStorage = await GetInfo('CurrentCoord')
         //
         if (!!locationStorage) {
             const { id, latitude, longitude } = JSON.parse(locationStorage)
@@ -56,19 +57,12 @@ export const AllDataProvider: React.FC = ({ children }) => {
         return {} as Coordinate
     }, [])
 
-    const loadGeoLocation = useCallback(async () => {
-        let geoLocation = {} as GeoLocation
-        const geoLocationString = await GetInfo('GeoLocation')
-        if (!!geoLocationString) {
-            geoLocation = JSON.parse(geoLocationString)
-            //
-        } else {
+    const loadGeoLocation = useCallback(async (props: number) => {
+        let geoLocation = await LoadGeoLocationDB(props)
+        if (!geoLocation || !geoLocation.id || geoLocation.id < 1) {
             geoLocation = await getGeoDataApi()
             if (!!geoLocation)
-                await SetInfo({
-                    key: 'GeoLocation',
-                    value: JSON.stringify(geoLocation)
-                })
+                AddGeoLocationDB(geoLocation)
             //
         }
         //
@@ -94,8 +88,7 @@ export const AllDataProvider: React.FC = ({ children }) => {
     }, [])
 
     const loadCurrencyData = useCallback(async (props: string) => {
-        let rates: CurrencyData = {} as CurrencyData
-        const ratesString = await GetInfo('CurrencyData')
+        let rates = await GetInfo('CurrencyData')
         //
         if (!!ratesString)
             rates = JSON.parse(ratesString)

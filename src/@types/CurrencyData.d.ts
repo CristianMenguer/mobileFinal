@@ -1,4 +1,7 @@
 interface CurrencyData {
-    [key: string]: number
+    id: number
+    currencyBase: string
+    currencyCompare: string
+    value: number
     timeAPI: timestamp
 }

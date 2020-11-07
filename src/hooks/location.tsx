@@ -18,7 +18,7 @@ export const LocationProvider: React.FC = ({ children }) => {
 
     const setCoords = useCallback(async (props: Coordinate) => {
         let newData = locationData
-        locationData.coords = props
+        newData.coords = props
         setLocationData({...newData})
         //
     }, [])
@@ -45,6 +45,9 @@ export const LocationProvider: React.FC = ({ children }) => {
     const setGeoData = useCallback((props: GeoLocation) => {
         let newData = locationData
         newData.formatted = props.formatted
+        newData.id = props.id
+        newData.coords = props.coords
+        newData.coordsId = props.coordsId
         newData.city = props.city
         newData.county = props.county
         newData.country = props.country

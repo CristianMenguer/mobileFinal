@@ -1,5 +1,7 @@
 interface Weather {
-    coords: Coordinate
+    id?: number
+    coordsId?: number
+    coords?: Coordinate
     temperature: number
     temp_min: number
     temp_max: number
