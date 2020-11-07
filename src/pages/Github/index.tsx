@@ -5,8 +5,9 @@ import { Text, TextInput, TouchableOpacity, View, Image, ScrollView, Alert, Keyb
 import GithubApi from '../../services/GithubApi'
 
 import Styles from './style'
-import { AddRepository, LoadRepository } from '../../models/Repository'
+import { AddRepository, DeleteRepository, LoadRepository } from '../../models/Repository'
 import { useIsFocused } from '@react-navigation/native'
+import Toast from 'react-native-tiny-toast'
 
 const Github: React.FC = () => {
 
@@ -15,6 +16,19 @@ const Github: React.FC = () => {
     const [repoTyped, setRepoTyped] = useState('')
     const [inputError, setInputError] = useState('')
     const [repositories, setRepositories] = useState<Repository[]>([])
+
+    useEffect(() => {
+        if (!isFocused)
+            return
+        //
+        LoadRepository()
+            .then(response => {
+                if (!!response)
+                    setRepositories(response)
+                //
+            })
+        //
+    }, [isFocused])
 
     async function handleAddRepository() {
         Keyboard.dismiss()
@@ -31,10 +45,18 @@ const Github: React.FC = () => {
 
                 const repository = response.data
 
-                setRepositories([...repositories, repository])
-                setInputError('')
+                const responseAdd = await AddRepository(repository)
 
-                AddRepository(repository)
+                if (responseAdd) {
+                    setRepositories([...repositories, repository])
+                    setInputError('')
+                    Toast.showSuccess(`Repository ${repository.full_name} added!`, {
+                        position: Toast.position.BOTTOM
+                    })
+                } else {
+                    setInputError('Error trying to add. Please try again!')
+                }
+
             }
         } catch (err) {
             setInputError(`Repository "${repoTyped}" not found!`)
@@ -43,13 +65,15 @@ const Github: React.FC = () => {
         setRepoTyped('')
     }
 
-    function handleDeleteRepository(repo_name: string) {
-        if (!repo_name)
+    function handleDeleteRepository(props: Repository) {
+        if (!props || !props.id) {
+            setInputError('Error trying to delete! Plaese try again!')
             return
+        }
         //
         Alert.alert(
             'Delete Repository',
-            `Are you sure you want to delete ${repo_name}?`,
+            `Are you sure you want to delete ${props.full_name}?`,
             [
                 {
                     text: 'No',
@@ -57,25 +81,22 @@ const Github: React.FC = () => {
                 },
                 {
                     text: 'Yes',
-                    onPress: () => setRepositories(repositories.filter(repo => repo.full_name !== repo_name))
+                    onPress: async () => {
+                        // @ts-ignore
+                        if (await DeleteRepository(props.id)) {
+                            setRepositories(repositories.filter(repo => repo.id !== props.id))
+                            Toast.showSuccess(`Repository ${props.full_name} deleted!`, {
+                                position: Toast.position.BOTTOM
+                            })
+                        } else {
+                            setInputError('Error trying to delete! Plaese try again!')
+                        }
+                    }
                 }
             ],
             { cancelable: false }
         )
     }
-
-    useEffect(() => {
-        if (!isFocused)
-            return
-        //
-        LoadRepository()
-        .then(response => {
-            if (!!response)
-                setRepositories(response)
-            //
-        })
-        //
-    }, [isFocused])
 
     return (
         <>
@@ -112,7 +133,7 @@ const Github: React.FC = () => {
                                 key={repo.full_name}
                                 style={Styles.repo}
                                 delayLongPress={750}
-                                onLongPress={() => handleDeleteRepository(repo.full_name)}
+                                onLongPress={() => handleDeleteRepository(repo)}
                             >
                                 <Image
                                     source={{

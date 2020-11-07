@@ -12,6 +12,18 @@ export const AddRepository = async (props: Repository): Promise<boolean> => {
 
 }
 
+export const DeleteRepository = async (id: number): Promise<boolean> => {
+    if (id < 1)
+        return false
+    //
+    const sql = `delete from repository where id = ${id}`
+
+    const response = await execSql(sql)
+
+    return response
+
+}
+
 export const LoadRepository = async (): Promise<Repository[]> => {
 
     const tableName = 'repository'
@@ -36,3 +48,4 @@ export const LoadRepository = async (): Promise<Repository[]> => {
     return repos
 
 }
+
