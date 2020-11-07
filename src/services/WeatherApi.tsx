@@ -2,12 +2,7 @@ import axios from 'axios'
 
 const key = '997183acfd5f458c88bab53c9ccc89d7'
 
-interface GetWeatherProps {
-    latitude: number
-    longitude: number
-}
-
-export const GetWeather = async (coords: GetWeatherProps) => {
+export const GetWeather = async (coords: Omit<Coordinate, 'id'>) => {
     const baseURL = 'https://api.weatherbit.io/v2.0/current'
 
     if (isNaN(coords.latitude) || isNaN(coords.longitude))
@@ -31,7 +26,7 @@ export const GetWeatherIcon = (code: string) => {
     return url
 }
 
-export const GetWeatherDaily = async (coords: GetWeatherProps) => {
+export const GetWeatherDaily = async (coords: Omit<Coordinate, 'id'>) => {
     const baseURL = 'https://api.weatherbit.io/v2.0/forecast/daily'
 
     if (isNaN(coords.latitude) || isNaN(coords.longitude))
@@ -49,7 +44,7 @@ export const GetWeatherDaily = async (coords: GetWeatherProps) => {
     return null
 }
 
-export const GetWeatherHourly = async (coords: GetWeatherProps) => {
+export const GetWeatherHourly = async (coords: Omit<Coordinate, 'id'>) => {
     const baseURL = 'https://api.weatherbit.io/v2.0/forecast/hourly'
 
     if (isNaN(coords.latitude) || isNaN(coords.longitude))

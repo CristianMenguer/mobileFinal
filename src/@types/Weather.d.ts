@@ -1,5 +1,5 @@
 interface Weather {
-    id?: number
+    id: number
     coordsId?: number
     coords?: Coordinate
     temperature: number

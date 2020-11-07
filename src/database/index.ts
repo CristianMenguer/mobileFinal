@@ -6,25 +6,46 @@ const startDb = async (): Promise<WebSQLDatabase> => {
 
     return new Promise<WebSQLDatabase>((resolve, reject) => {
         db.transaction((transaction) => {
-            //transaction.executeSql('drop table repository')
             transaction.executeSql('create table if not exists repository (id integer primary key, description text, full_name text, avatar_url text, login text)')
-            // transaction.executeSql('drop table coord')
+            //
             transaction.executeSql('create table if not exists coord (id integer primary key, latitude real, longitude real)')
-            // transaction.executeSql('drop table geolocation')
+            //
             transaction.executeSql('create table if not exists geolocation (id integer primary key, coordid integer, ' +
                 'road text, city_district text, place text, city text, county text, country text, formatted text, ' +
                 'currency_name text, currency_code text)')
             //
-            //transaction.executeSql('drop table currencyrate')
             transaction.executeSql('create table if not exists currencyrate (id integer primary key, currencyBase text, currencyCompare text, value real, timeAPI real)')
-            /**
-    value: number
-    timeAPI
-             */
-
+            //
+            transaction.executeSql('create table if not exists weather (id integer primary key, coordid integer, temperature real, ' +
+                'temp_min real, temp_max real, feel_like real, description text, iconCode text, iconUri text, timeAPI real)')
+            //
+            transaction.executeSql('create table if not exists forecast (id integer primary key, weatherId integer, type text, ' +
+                'valid_date text, temp real, min_temp real, max_temp real, min_feel_like real, max_feel_like real, pop real, ' +
+                ' description text, iconCode text, iconUri text, timeAPI real)')
+            //
 
         }, (error) => {
             console.log(`> Database.index > startDb: ${error}`)
+            reject(error)
+        }, () => {
+            resolve(db)
+        })
+    })
+}
+
+export const dropTablesDb = async (): Promise<WebSQLDatabase> => {
+    const db = SQLite.openDatabase('./2020087.db')
+
+    return new Promise<WebSQLDatabase>((resolve, reject) => {
+        db.transaction((transaction) => {
+            transaction.executeSql('drop table repository')
+            transaction.executeSql('drop table coord')
+            transaction.executeSql('drop table geolocation')
+            transaction.executeSql('drop table currencyrate')
+            transaction.executeSql('drop table weather')
+            transaction.executeSql('drop table forecast')
+        }, (error) => {
+            console.log(`> Database.index > dropTablesDb: ${error}`)
             reject(error)
         }, () => {
             resolve(db)

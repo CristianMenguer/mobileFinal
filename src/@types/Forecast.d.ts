@@ -1,5 +1,6 @@
 interface Forecast {
-    id: number
+    id?: number
+    weatherId?: number
     type: string = 'daily' | 'hourly'
     valid_date: string
     temp: number

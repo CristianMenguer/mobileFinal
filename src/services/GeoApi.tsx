@@ -3,13 +3,7 @@ import axios from 'axios'
 const baseURL = 'https://api.opencagedata.com/geocode/v1/json'
 const key = '132b1ab916da4e598e23e04fbcf24d74'
 
-
-interface GetGeoProps {
-    latitude: number
-    longitude: number
-}
-
-export const GetGeo = async (coords: GetGeoProps) => {
+export const GetGeo = async (coords: Coordinate) => {
     if (isNaN(coords.latitude) || isNaN(coords.longitude))
         return null
     //

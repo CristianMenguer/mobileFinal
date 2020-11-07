@@ -9,6 +9,7 @@ import Loader from '../../components/Loader'
 import useCurrency from '../../hooks/currency'
 import { AddCoordsDB } from '../../models/Location'
 import { SetInfo } from '../../services/InfoStorage'
+import { dropTablesDb } from '../../database'
 
 const Loading: React.FC = () => {
 
@@ -20,7 +21,7 @@ const Loading: React.FC = () => {
 
     const { setCoords, locationData, setGeoData } = useLocation()
     const { setWeatherCoords, setWeatherData, weatherData, setDaily, setHourly } = useWeather()
-    const { SetCurrencyBase, SetCurrencyData, currencyBase, currencyData } = useCurrency()
+    const { SetCurrencyData } = useCurrency()
 
     const [hasPermission, setHasPermission] = useState(false)
 
@@ -41,6 +42,8 @@ const Loading: React.FC = () => {
     }, [isFocused])
 
     async function loadData() {
+        await dropTablesDb()
+
         setMessage('Loading last/current location!')
         //
         let coords = await loadCoord()
@@ -68,14 +71,9 @@ const Loading: React.FC = () => {
 
         setMessage('Geo Location set. Reading currency from location!')
 
-        SetCurrencyBase(geoResp.currency_code)
-
         setMessage('Currency Base set. Loading currency rates!')
 
-
-
-
-        const currResp = await loadCurrencyData(currencyBase)
+        const currResp = await loadCurrencyData(geoResp.currency_code)
 
         SetCurrencyData(currResp)
 
@@ -83,19 +81,19 @@ const Loading: React.FC = () => {
 
         setWeatherCoords(coords)
 
-        const weatherResp = await loadWeather()
+        const weatherResp = await loadWeather(coords)
 
         setWeatherData(weatherResp)
 
         setMessage('Loading Daily Weather!')
 
-        const dailyResp = await loadDailyWeather()
+        const dailyResp = await loadDailyWeather(weatherResp.id, coords)
 
         setDaily(dailyResp)
 
         setMessage('Loading Hourly Weather!')
 
-        const hourlyResp = await loadHourlyWeather()
+        const hourlyResp = await loadHourlyWeather(weatherResp.id, coords)
 
         setHourly(hourlyResp)
 

@@ -1,4 +1,6 @@
-import { execSql, selectDB, insertDB } from '../database'
+import { selectDB, insertDB } from '../database'
+
+const tableName = 'geolocation'
 
 export const AddCoordsDB = async (props: Coordinate): Promise<Coordinate> => {
     if (!props || !props.latitude || !props.longitude)
@@ -20,8 +22,6 @@ export const AddCoordsDB = async (props: Coordinate): Promise<Coordinate> => {
 
 export const LoadGeoLocationDB = async (idCoord: number): Promise<GeoLocation> => {
 
-    const tableName = 'geolocation'
-
     const response = await selectDB(tableName, `coordid = ${idCoord}`) as GeoLocation[]
 
     if (response.length == 0 || response.length > 1)
@@ -35,13 +35,12 @@ export const AddGeoLocationDB = async (props: GeoLocation): Promise<GeoLocation>
     if (!props || (props.id && props.id > 0))
         return props
     //
-    const sql = `insert into geolocation (' +
-        'coordid, road, city_district, place, city, county, country, formatted, currency_name, currency_code) ' +
-        'values (' +
-        '${props.coords?.id}, '${props.road}', '${props.city_district}', '${props.place}', ' +
-        ' '${props.city}', '${props.county}', '${props.country}', '${props.formatted}', ' +
-        ' '${props.currency_name}', '${props.currency_code}' ' +
-        ')`
+    const sql = `insert into ${tableName} (` +
+        'coordid, road, city_district, place, city, county, country, formatted, currency_name, currency_code ' +
+        ' ) values (' +
+        `  ${props.coordsId}, '${props.road}', '${props.city_district}', '${props.place}', ` +
+        ` '${props.city}', '${props.county}', '${props.country}', '${props.formatted}', ` +
+        ` '${props.currency_name}', '${props.currency_code}' )`
     //
     const idInserted = await insertDB(sql)
 

@@ -5,15 +5,18 @@ import useLocation from './location'
 import useWeather from './weather'
 import useCurrency from './currency'
 import { AddGeoLocationDB, LoadGeoLocationDB } from '../models/Location'
+import { AddCurrencyRateDB, LoadCurrencyRatesDB } from '../models/Currency'
+import { AddWeatherDB, LoadWeatherDB } from '../models/Weather'
+import { AddForecastDB, LoadForecastDB } from '../models/Forecast'
 
 interface AllDataContextData {
     isLoading: boolean
     setLoading(newStatus: boolean): void
     loadCoord(): Promise<Coordinate>
     loadGeoLocation(props: number): Promise<GeoLocation>
-    loadWeather(): Promise<Weather>
-    loadDailyWeather(): Promise<Forecast[]>
-    loadHourlyWeather(): Promise<Forecast[]>
+    loadWeather(props: Coordinate): Promise<Weather>
+    loadDailyWeather(weatherId: number, coords: Coordinate): Promise<Forecast[]>
+    loadHourlyWeather(weatherId: number, coords: Coordinate): Promise<Forecast[]>
     loadCurrencyData(props: string): Promise<CurrencyData>
 }
 
@@ -58,87 +61,71 @@ export const AllDataProvider: React.FC = ({ children }) => {
     }, [])
 
     const loadGeoLocation = useCallback(async (props: number) => {
+
         let geoLocation = await LoadGeoLocationDB(props)
+
         if (!geoLocation || !geoLocation.id || geoLocation.id < 1) {
+
             geoLocation = await getGeoDataApi()
-            if (!!geoLocation)
-                AddGeoLocationDB(geoLocation)
+            if (!!geoLocation) {
+                geoLocation.coordsId = props
+                geoLocation = await AddGeoLocationDB(geoLocation)
+            }
             //
         }
         //
         return geoLocation
     }, [])
 
-    const loadWeather = useCallback(async () => {
-        let weather: Weather = {} as Weather
-        const weatherString = await GetInfo('Weather')
+    const loadWeather = useCallback(async (props: Coordinate) => {
+        let weather = await LoadWeatherDB(props.id ? props.id : 0)
 
-        if (!!weatherString)
-            weather = JSON.parse(weatherString)
-        //
-        if (!weather.timeAPI || ((new Date().getTime() - weather.timeAPI) > (60000 * 30))) {
-            weather = await getWeatherDataApi()
-            await SetInfo({
-                key: 'Weather',
-                value: JSON.stringify(weather)
-            })
+        if (!weather || !weather.id || weather.id < 1 || !weather.timeAPI || ((new Date().getTime() - weather.timeAPI) > (60000 * 30))) {
+            weather = await getWeatherDataApi(props)
+            if (!!weather)
+                weather = await AddWeatherDB(weather)
+            //
         }
         //
         return weather
     }, [])
 
-    const loadCurrencyData = useCallback(async (props: string) => {
-        let rates = await GetInfo('CurrencyData')
-        //
-        if (!!ratesString)
-            rates = JSON.parse(ratesString)
-        //
-        if (!rates.timeAPI || ((new Date().getTime() - rates.timeAPI) > (60000 * 1440))) {
-            rates = await GetCurrencyDataApi(props)
-            await SetInfo({
-                key: 'CurrencyData',
-                value: JSON.stringify(rates)
-            })
+    const loadCurrencyData = useCallback(async (currencyBase: string) => {
+        let rates = await LoadCurrencyRatesDB(currencyBase)
+
+        if (!rates || !rates.id || rates.id < 1 || !rates.timeAPI || ((new Date().getTime() - rates.timeAPI) > (60000 * 1440))) {
+            rates = await GetCurrencyDataApi(currencyBase, 'USD')
+            if (!!rates)
+                rates = await AddCurrencyRateDB(rates)
+            //
         }
         //
         return rates
     }, [])
 
-    const loadDailyWeather = useCallback(async () => {
-        let dailyWeather: Forecast[] = []
+    const loadDailyWeather = useCallback(async (weatherId: number, coords: Coordinate) => {
+        let dailyWeather = await LoadForecastDB(weatherId, 'daily')
 
-        const dailyString = await GetInfo('DailyWeather')
-        if (!!dailyString)
-            dailyWeather = JSON.parse(dailyString)
-        //
         if (dailyWeather.length < 1 || !dailyWeather[0]?.timeAPI || ((new Date().getTime() - dailyWeather[0]?.timeAPI) > (60000 * 30))) {
-            dailyWeather = await getForecastDailyApi()
-            if (!!dailyWeather)
-                await SetInfo({
-                    key: 'DailyWeather',
-                    value: JSON.stringify(dailyWeather)
-                })
-            //
+            dailyWeather = await getForecastDailyApi(coords)
+            dailyWeather.map(async (forecast) => {
+                forecast.weatherId = weatherId
+                await AddForecastDB(forecast)
+            })
         }
         //
         return dailyWeather
     }, [])
 
-    const loadHourlyWeather = useCallback(async () => {
-        let hourlyWeather: Forecast[] = []
+    const loadHourlyWeather = useCallback(async (weatherId: number, coords: Coordinate) => {
+        let hourlyWeather = await LoadForecastDB(weatherId, 'hourly')
 
-        const hourlyString = await GetInfo('HourlyWeather')
-        if (!!hourlyString)
-            hourlyWeather = JSON.parse(hourlyString)
-        //
         if (hourlyWeather.length < 1 || !hourlyWeather[0]?.timeAPI || ((new Date().getTime() - hourlyWeather[0]?.timeAPI) > (60000 * 30))) {
-            hourlyWeather = await getForecastHourlyApi()
-            if (!!hourlyWeather)
-                await SetInfo({
-                    key: 'HourlyWeather',
-                    value: JSON.stringify(hourlyWeather)
-                })
-            //
+            hourlyWeather = await getForecastHourlyApi(coords)
+            hourlyWeather.map(async (forecast) => {
+                forecast.weatherId = weatherId
+                await AddForecastDB(forecast)
+            })
         }
         //
         return hourlyWeather

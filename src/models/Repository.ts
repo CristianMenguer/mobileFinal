@@ -1,10 +1,12 @@
 import { execSql, selectDB } from '../database'
 
+const tableName = 'repository'
+
 export const AddRepository = async (props: Repository): Promise<boolean> => {
     if (!props || !props.description || !props.full_name || !props.owner.avatar_url || !props.owner.login)
         return false
     //
-    const sql = `insert into repository (description, full_name, avatar_url, login) values ('${props.description}', '${props.full_name}', '${props.owner.avatar_url}', '${props.owner.login}')`
+    const sql = `insert into ${tableName} (description, full_name, avatar_url, login) values ('${props.description}', '${props.full_name}', '${props.owner.avatar_url}', '${props.owner.login}')`
 
     const response = await execSql(sql)
 
@@ -16,7 +18,7 @@ export const DeleteRepository = async (id: number): Promise<boolean> => {
     if (id < 1)
         return false
     //
-    const sql = `delete from repository where id = ${id}`
+    const sql = `delete from ${tableName} where id = ${id}`
 
     const response = await execSql(sql)
 
@@ -25,8 +27,6 @@ export const DeleteRepository = async (id: number): Promise<boolean> => {
 }
 
 export const LoadRepository = async (): Promise<Repository[]> => {
-
-    const tableName = 'repository'
 
     const response = await selectDB(tableName) as RepositoryResponse[]
 
