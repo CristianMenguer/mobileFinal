@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { Text, TextInput, TouchableOpacity, View, Image, ScrollView, Alert, Keyboard } from 'react-native'
 
-import { GetInfo, SetInfo } from '../../services/InfoStorage'
+//import { GetInfo, SetInfo } from '../../services/InfoStorage'
 import GithubApi from '../../services/GithubApi'
 
 import Styles from './style'
+import { AddRepository, LoadRepository } from '../../models/Repository'
+import { useIsFocused } from '@react-navigation/native'
 
 const Github: React.FC = () => {
+
+    const isFocused = useIsFocused()
 
     const [repoTyped, setRepoTyped] = useState('')
     const [inputError, setInputError] = useState('')
@@ -29,6 +33,8 @@ const Github: React.FC = () => {
 
                 setRepositories([...repositories, repository])
                 setInputError('')
+
+                AddRepository(repository)
             }
         } catch (err) {
             setInputError(`Repository "${repoTyped}" not found!`)
@@ -59,22 +65,17 @@ const Github: React.FC = () => {
     }
 
     useEffect(() => {
-        GetInfo('Repositories')
+        if (!isFocused)
+            return
+        //
+        LoadRepository()
         .then(response => {
             if (!!response)
-                setRepositories(JSON.parse(response))
+                setRepositories(response)
             //
         })
         //
-    }, [])
-
-    useEffect(() => {
-        SetInfo({
-            key: 'Repositories',
-            value: JSON.stringify(repositories)
-        })
-        //
-    }, [repositories])
+    }, [isFocused])
 
     return (
         <>

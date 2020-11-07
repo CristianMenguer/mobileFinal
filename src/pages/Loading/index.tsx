@@ -7,7 +7,6 @@ import useLocation from '../../hooks/location'
 import useWeather from '../../hooks/weather'
 import Loader from '../../components/Loader'
 import useCurrency from '../../hooks/currency'
-import { openDb } from '../../database'
 
 const Loading: React.FC = () => {
 
@@ -55,7 +54,6 @@ const Loading: React.FC = () => {
                         latitude: -29.74,
                         longitude: -51.14
                     })
-                    openDb()
                 }
             })
     }, [isFocused, hasPermission])

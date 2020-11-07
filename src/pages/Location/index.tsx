@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Text, View, Image, ScrollView, TouchableOpacity } from 'react-native'
-import MapView, { Marker } from 'react-native-maps'
+import MapView, { Marker, MarkerAnimated } from 'react-native-maps'
 import Toast from 'react-native-tiny-toast'
 import { Entypo as Icon } from '@expo/vector-icons'
 
@@ -113,11 +113,29 @@ const Location: React.FC = () => {
                         longitudeDelta: 0.014
                     }}
                     loadingEnabled={!coord.latitude}
+
                 >
+                    <Marker
+                        draggable
+                        title={'Current'}
+                        description={'Drag to'}
+                        onDragEnd={(e) => {
+                            console.log('gradEnd: ')
+                            //console.log(e.nativeEvent.coordinate)
+                        }}
+
+                        onDragStart={(e) => {
+                            console.log('dragStart: ')
+                            //console.log(e.nativeEvent.coordinate)
+                        }}
+                        coordinate={coord}
+                        pinColor={colors[0]}
+                    />
                     {
                         marks.map(marker => {
                             return (
                                 <Marker
+                                    draggable={true}
                                     key={marker.id}
                                     coordinate={{ ...marker.coords }}
                                     pinColor={colors[(marker.id - 1) % 18]}
