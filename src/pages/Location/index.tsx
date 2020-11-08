@@ -42,6 +42,7 @@ const Location: React.FC = () => {
     ]
 
     useEffect(() => {
+        console.log(locationData)
         setCoord(locationData.coords)
     }, [])
 

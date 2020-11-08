@@ -42,7 +42,7 @@ const Loading: React.FC = () => {
     }, [isFocused])
 
     async function loadData() {
-        await dropTablesDb()
+        //await dropTablesDb()
 
         setMessage('Loading last/current location!')
         //

@@ -23,6 +23,7 @@ const Github: React.FC = () => {
         //
         LoadRepository()
             .then(response => {
+
                 if (!!response)
                     setRepositories(response)
                 //

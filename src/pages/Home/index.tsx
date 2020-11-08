@@ -75,7 +75,7 @@ const Home: React.FC = () => {
 
                 </View>
             </View>
-            <TouchableOpacity onPress={() => resetData()} style={{
+            {/* <TouchableOpacity onPress={() => resetData()} style={{
                 width: 210,
                 height: 60,
                 backgroundColor: '#04D361',
@@ -85,7 +85,7 @@ const Home: React.FC = () => {
                 alignItems: 'center',
             }} >
                 <Text >Reset Data</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </>
     )
 }

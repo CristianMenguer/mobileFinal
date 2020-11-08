@@ -4,17 +4,10 @@ import { useIsFocused } from '@react-navigation/native'
 
 import useLocation from '../../hooks/location'
 import useCurrency from '../../hooks/currency'
-import { CURRENCY_TYPES } from '../../constants/Currency'
 
 import Styles from './style'
 
-interface DataInterface {
-    [key: string]: number
-}
-
 const Currency: React.FC = () => {
-
-    const isFocused = useIsFocused()
 
     const { locationData } = useLocation()
     const { currencyData } = useCurrency()
@@ -25,7 +18,7 @@ const Currency: React.FC = () => {
 
     function handleInputChange(value: string, setThis: Dispatch<SetStateAction<string>>, setOther: Dispatch<SetStateAction<string>>, isUSD: boolean = false) {
 
-        value = value.replace(/[^\d.-]/g, '')
+        value = value.replace(/[^\d.]/g, '')
 
         if (!value || value === '') {
             setThis('0')
@@ -49,7 +42,7 @@ const Currency: React.FC = () => {
     }
 
     useEffect(() => {
-        const numberFormatted = parseFloat(currencyData['USD'].toFixed(2).toString())
+        const numberFormatted = parseFloat(currencyData.value.toFixed(2).toString())
         setFirstValue('1.00')
         setSecondValue(numberFormatted.toString())
         setRateToUSD(numberFormatted)
@@ -65,7 +58,7 @@ const Currency: React.FC = () => {
                 />
                 <Text style={Styles.textLocation} >You are in Ireland </Text>
                 <Text style={Styles.text} >Your currency is {locationData.currency_name} ({locationData.currency_code})</Text>
-                <Text style={Styles.text} >1 {locationData.currency_code} = {rateToUSD} USD </Text>
+                <Text style={Styles.text} >1.00 {locationData.currency_code} = {rateToUSD.toFixed(2)} USD </Text>
                 <TextInput
                     style={Styles.input}
                     keyboardType='numeric'
