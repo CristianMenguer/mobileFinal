@@ -3,13 +3,14 @@ import { Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
 import MapView, { Marker, Region } from 'react-native-maps'
 import { Entypo as Icon } from '@expo/vector-icons'
+import * as Updates from 'expo-updates'
 
 import Loader from '../../components/Loader'
 import useLocation from '../../hooks/location'
 import { SetInfo } from '../../services/InfoStorage'
 
 import Styles from './style'
-import { AddCoordsDB, GetCoordByIdDB, LoadAllGeoLocationDB } from '../../models/Location'
+import { AddCoordsDB, DeleteGeoLocationDB, GetCoordByIdDB, LoadAllGeoLocationDB } from '../../models/Location'
 import { showToast } from '../../services/ShowToast'
 import useAllData from '../../hooks/allData'
 
@@ -23,7 +24,6 @@ const Location: React.FC = () => {
     const [currentGeoLocation, setCurrentGeoLocation] = useState({} as GeoLocation)
     const [marks, setMarks] = useState<GeoLocation[]>([])
     const [region, setRegion] = useState<Region>(() => {
-        console.log('initial')
         return {
             longitude: 0,
             latitude: 0,
@@ -121,6 +121,9 @@ const Location: React.FC = () => {
                         for (let item of marks)
                             if (item.id !== id)
                                 newMarks.push(item)
+                            else {
+                                DeleteGeoLocationDB(id)
+                            }
                         //
                         setMarks(newMarks)
                     }
@@ -161,7 +164,8 @@ const Location: React.FC = () => {
                     text: 'Yes',
                     onPress: async () => {
                         showToast('App is reloading...', 'center', 'long')
-                        setTimeout(() => setLoading(true), 1000)
+                        // setTimeout(() => setLoading(true), 1000)
+                        setTimeout(() => Updates.reloadAsync(), 1000)
                     }
                 }
             ],
@@ -170,9 +174,44 @@ const Location: React.FC = () => {
 
     }
 
-    useEffect(() => {
-        console.log(region)
-    }, [region.latitude])
+    function handleLocationSelected(geo: GeoLocation) {
+        setRegion(oldRegion => {
+            const newRegion: Region = {
+                latitude: geo.coords?.latitude,
+                longitude: geo.coords?.longitude,
+                latitudeDelta: oldRegion.latitudeDelta,
+                longitudeDelta: oldRegion.longitudeDelta
+            }
+            //
+            return newRegion
+        })
+        //
+        Alert.alert(
+            'Reload App',
+            'Would you like to reload the app with the new location selected?',
+            [
+                {
+                    text: 'No',
+                    onPress: () => console.log('No')
+                },
+                {
+                    text: 'Yes',
+                    onPress: async () => {
+                        await SetInfo({
+                            key: 'CurrentCoord',
+                            value: JSON.stringify(geo.coords)
+                        })
+                        //
+                        showToast('App is reloading...', 'center', 'long')
+                        //setTimeout(() => setLoading(true), 1000)
+                        setTimeout(() => Updates.reloadAsync(), 1000)
+
+                    }
+                }
+            ],
+            { cancelable: false }
+        )
+    }
 
     if (!currentCoord || !currentCoord.latitude)
         return <Loader message={'Loading map...'} />
@@ -198,6 +237,12 @@ const Location: React.FC = () => {
                         draggable
                         onDragEnd={(e) => {
                             setCurrentCoord({ id: 0, ...e.nativeEvent.coordinate })
+                            const newRegion: Region = {
+                                ...e.nativeEvent.coordinate,
+                                latitudeDelta: region.latitudeDelta,
+                                longitudeDelta: region.longitudeDelta
+                            }
+                            setRegion.bind(newRegion)
                         }}
                         coordinate={currentCoord}
                         pinColor={colorSelected}
@@ -221,11 +266,8 @@ const Location: React.FC = () => {
             </View>
 
             <View style={Styles.itemsContainer} >
-            <Text style={Styles.itemTitle} >My Locations</Text>
-            <Text
-                //style={Styles.itemTitle}
-            >(press to focus; long press to delete)</Text>
-                <ScrollView
+            <Text style={Styles.itemTitle} >My Locations <Text style={Styles.itemTitleObs} >(press to focus; long press to delete)</Text></Text>
+            <ScrollView
                     horizontal
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ paddingHorizontal: 20 }}
@@ -262,16 +304,7 @@ const Location: React.FC = () => {
                                     key={mark.id}
                                     style={{ ...Styles.item, backgroundColor: colors[((mark.id ? mark.id : 0) - 1) % colors.length] }}
                                     delayLongPress={750}
-                                    onPress={() => setRegion(oldRegion => {
-                                        const newRegion: Region = {
-                                            latitude: mark.coords?.latitude,
-                                            longitude: mark.coords?.longitude,
-                                            latitudeDelta: oldRegion.latitudeDelta,
-                                            longitudeDelta: oldRegion.longitudeDelta
-                                        }
-
-                                        return newRegion
-                                    })}
+                                    onPress={() => handleLocationSelected(mark)}
                                     onLongPress={() => removeMarker(mark.id ? mark.id : 0)}
                                 >
                                     <Text style={Styles.itemText} >{mark.city}</Text>

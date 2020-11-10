@@ -60,7 +60,13 @@ const Styles = StyleSheet.create({
         fontWeight: '700',
         fontSize: 16,
         letterSpacing: 1,
-        color: '#505050'
+        color: '#505050',
+    },
+    itemTitleObs: {
+        marginTop: -4,
+        fontSize: 8,
+        fontWeight: '300',
+
     },
     itemText: {
         fontSize: 20,

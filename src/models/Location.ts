@@ -1,4 +1,4 @@
-import { selectDB, insertDB } from '../database'
+import { selectDB, insertDB, execSql } from '../database'
 
 const tableName = 'geolocation'
 
@@ -67,5 +67,17 @@ export const AddGeoLocationDB = async (props: GeoLocation): Promise<GeoLocation>
         props.id = idInserted
     //
     return props
+
+}
+
+export const DeleteGeoLocationDB = async (id: number): Promise<boolean> => {
+    if (id < 1)
+        return false
+    //
+    const sql = `delete from ${tableName} where id = ${id}`
+
+    const response = await execSql(sql)
+
+    return response
 
 }
