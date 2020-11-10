@@ -10,13 +10,13 @@ const startDb = async (): Promise<WebSQLDatabase> => {
             //
             transaction.executeSql('create table if not exists coord (id integer primary key, latitude real, longitude real)')
             //
-            transaction.executeSql('create table if not exists geolocation (id integer primary key, coordid integer, ' +
+            transaction.executeSql('create table if not exists geolocation (id integer primary key, coordId integer, ' +
                 'road text, city_district text, place text, city text, county text, country text, formatted text, ' +
                 'currency_name text, currency_code text, flag text)')
             //
             transaction.executeSql('create table if not exists currencyrate (id integer primary key, currencyBase text, currencyCompare text, value real, timeAPI real)')
             //
-            transaction.executeSql('create table if not exists weather (id integer primary key, coordid integer, temperature real, ' +
+            transaction.executeSql('create table if not exists weather (id integer primary key, coordId integer, temperature real, ' +
                 'temp_min real, temp_max real, feel_like real, description text, iconCode text, iconUri text, timeAPI real)')
             //
             transaction.executeSql('create table if not exists forecast (id integer primary key, weatherId integer, type text, ' +

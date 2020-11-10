@@ -33,7 +33,7 @@ export const GetCoordByIdDB = async (idCoord: number): Promise<Coordinate> => {
 
 export const LoadGeoLocationDB = async (idCoord: number): Promise<GeoLocation> => {
 
-    const response = await selectDB(tableName, `coordid = ${idCoord}`) as GeoLocation[]
+    const response = await selectDB(tableName, `coordId = ${idCoord}`) as GeoLocation[]
 
     if (response.length == 0 || response.length > 1)
         return {} as GeoLocation
@@ -55,7 +55,7 @@ export const AddGeoLocationDB = async (props: GeoLocation): Promise<GeoLocation>
         return props
     //
     const sql = `insert into ${tableName} (` +
-        'coordid, road, city_district, place, city, county, country, formatted, currency_name, currency_code, flag ' +
+        'coordId, road, city_district, place, city, county, country, formatted, currency_name, currency_code, flag ' +
         ' ) values (' +
         `  ${props.coordId}, "${props.road}", "${props.city_district}", "${props.place}", ` +
         ` "${props.city}", "${props.county}", "${props.country}", "${props.formatted}", ` +

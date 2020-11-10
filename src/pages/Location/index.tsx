@@ -24,8 +24,8 @@ const Location: React.FC = () => {
     const [marks, setMarks] = useState<GeoLocation[]>([])
 
     const colors = [
-        'red',
-        'tomato',
+//        'red',
+//        'tomato',
         'orange',
         'yellow',
         'green',
@@ -44,26 +44,22 @@ const Location: React.FC = () => {
         'plum'
     ]
 
-    function LoadGeoLocationDB() {
+    function LoadGeoLocation() {
+
         LoadAllGeoLocationDB()
             .then(data => {
                 //
-                let newMarks = marks
+                let newMarks: GeoLocation[] = []
                 //
                 data.map(async (geo) => {
-                    console.log('\ngeo')
-                    console.log(geo)
-                    console.log('locationData')
-                    console.log(locationData)
-                    if (geo.coordId && locationData.coordId != geo.coordId) {
+
+                    if (geo.coordId && (locationData.coordId != geo.coordId)) {
                         geo.coords = await GetCoordByIdDB(geo.coordId)
-                        console.log('\npush')
-                        console.log(newMarks.push(geo))
-                        console.log('4')
+                        newMarks.push(geo)
+
                     }
                 })
-                console.log('\nnewMarks')
-                console.log(newMarks)
+                //
                 setMarks(newMarks)
             })
     }
@@ -80,7 +76,7 @@ const Location: React.FC = () => {
         if (locationData.coords)
             setCurrentCoord(locationData.coords)
         //
-        LoadGeoLocationDB()
+        LoadGeoLocation()
         //
     }, [isFocused])
 
@@ -188,7 +184,7 @@ const Location: React.FC = () => {
                             return (
                                 <Marker
                                     key={marker.id}
-                                    coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
+                                    coordinate={{ latitude: marker.coords.latitude, longitude: marker.coords.longitude }}
                                     pinColor={colors[((marker.id ? marker.id : 0) - 1) % colors.length]}
 
                                 />
@@ -219,14 +215,14 @@ const Location: React.FC = () => {
                             return (
                                 <TouchableOpacity
                                     key={mark.id}
-                                    style={Styles.item}
+                                    style={{...Styles.item, backgroundColor: colors[((mark.id ? mark.id : 0) - 1) % colors.length] }}
                                     delayLongPress={750}
                                     onLongPress={() => removeMarker(mark.id ? mark.id : 0)}
                                 >
-                                    <Text style={Styles.itemText} >Ireland</Text>
-                                    <Text style={Styles.descriptionText} >Dublin</Text>
+                                    <Text style={Styles.itemText} >{mark.country + ' ' + mark.flag}</Text>
+                                    <Text style={Styles.descriptionText} >{mark.city}</Text>
                                     <Text style={Styles.descriptionText} >Coords:</Text>
-                                    <Text style={Styles.descriptionText} >54.43, -6.96</Text>
+                                    <Text style={Styles.descriptionText} >{mark.coords?.latitude.toFixed(2) + ', ' + mark.coords?.longitude.toFixed(2)}</Text>
                                 </TouchableOpacity>
                             )
                         })
