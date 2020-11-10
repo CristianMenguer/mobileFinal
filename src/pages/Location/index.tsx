@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
-import MapView, { Marker } from 'react-native-maps'
+import MapView, { Marker, Region } from 'react-native-maps'
 import { Entypo as Icon } from '@expo/vector-icons'
-import * as Updates from 'expo-updates'
 
 import Loader from '../../components/Loader'
 import useLocation from '../../hooks/location'
@@ -21,11 +20,24 @@ const Location: React.FC = () => {
     const { setLoading } = useAllData()
 
     const [currentCoord, setCurrentCoord] = useState({} as Coordinate)
+    const [currentGeoLocation, setCurrentGeoLocation] = useState({} as GeoLocation)
     const [marks, setMarks] = useState<GeoLocation[]>([])
+    const [region, setRegion] = useState<Region>(() => {
+        console.log('initial')
+        return {
+            longitude: 0,
+            latitude: 0,
+            latitudeDelta: 0.014,
+            longitudeDelta: 0.014
+        } as Region
+    })
+
+    const colorSelected = '#FF0000bb'
 
     const colors = [
-//        'red',
-//        'tomato',
+        //    'red',
+        //    'tomato',
+
         'orange',
         'yellow',
         'green',
@@ -49,15 +61,21 @@ const Location: React.FC = () => {
         LoadAllGeoLocationDB()
             .then(data => {
                 //
-                let newMarks: GeoLocation[] = []
+                let newMarks = marks
                 //
                 data.map(async (geo) => {
 
-                    if (geo.coordId && (locationData.coordId != geo.coordId)) {
+                    if (geo.coordId && locationData.coordId == geo.coordId) {
                         geo.coords = await GetCoordByIdDB(geo.coordId)
-                        newMarks.push(geo)
-
+                        setCurrentGeoLocation(geo)
                     }
+                    //
+                    else
+                        if (geo.coordId && newMarks.filter(mark => mark.id == geo.id).length == 0) {
+                            geo.coords = await GetCoordByIdDB(geo.coordId)
+                            newMarks.push(geo)
+
+                        }
                 })
                 //
                 setMarks(newMarks)
@@ -69,10 +87,15 @@ const Location: React.FC = () => {
         if (!isFocused)
             return
         //
-        //console.log(locationData)
-        //
         showToast('Drag and drop the red pointer to change the location!')
         //
+        const newRegion: Region = {
+            latitudeDelta: 0.014,
+            longitudeDelta: 0.014,
+            latitude: locationData.coords?.latitude ? locationData.coords?.latitude : 0,
+            longitude: locationData.coords?.longitude ? locationData.coords?.longitude : 0,
+        }
+        setRegion(newRegion)
         if (locationData.coords)
             setCurrentCoord(locationData.coords)
         //
@@ -138,7 +161,6 @@ const Location: React.FC = () => {
                     text: 'Yes',
                     onPress: async () => {
                         showToast('App is reloading...', 'center', 'long')
-                        //setTimeout(() => Updates.reloadAsync(), 1000)
                         setTimeout(() => setLoading(true), 1000)
                     }
                 }
@@ -147,6 +169,10 @@ const Location: React.FC = () => {
         )
 
     }
+
+    useEffect(() => {
+        console.log(region)
+    }, [region.latitude])
 
     if (!currentCoord || !currentCoord.latitude)
         return <Loader message={'Loading map...'} />
@@ -161,29 +187,27 @@ const Location: React.FC = () => {
                         latitudeDelta: 0.014,
                         longitudeDelta: 0.014
                     }}
-                    loadingEnabled={!currentCoord.latitude}
+                    // onRegionChange={newRegion => {
+                    //     console.log(newRegion)
+                    // }}
+                    onRegionChange={newRegion => setRegion.bind(newRegion)}
+                    region={region}
 
                 >
                     <Marker
                         draggable
-                        title={'Current'}
-                        description={'Drag to'}
                         onDragEnd={(e) => {
-                            setCurrentCoord({id: 0, ...e.nativeEvent.coordinate})
-                        }}
-
-                        onDragStart={(e) => {
-                            //console.log('dragStart: ')
-                            //console.log(e.nativeEvent.coordinate)
+                            setCurrentCoord({ id: 0, ...e.nativeEvent.coordinate })
                         }}
                         coordinate={currentCoord}
-                        pinColor={colors[0]}
+                        pinColor={colorSelected}
                     />
                     {
                         marks.map(marker => {
                             return (
                                 <Marker
                                     key={marker.id}
+                                    // @ts-ignore
                                     coordinate={{ latitude: marker.coords.latitude, longitude: marker.coords.longitude }}
                                     pinColor={colors[((marker.id ? marker.id : 0) - 1) % colors.length]}
 
@@ -197,7 +221,10 @@ const Location: React.FC = () => {
             </View>
 
             <View style={Styles.itemsContainer} >
-                <Text style={Styles.itemTitle} >My Locations</Text>
+            <Text style={Styles.itemTitle} >My Locations</Text>
+            <Text
+                //style={Styles.itemTitle}
+            >(press to focus; long press to delete)</Text>
                 <ScrollView
                     horizontal
                     showsVerticalScrollIndicator={false}
@@ -210,18 +237,45 @@ const Location: React.FC = () => {
                         </TouchableOpacity>
                     </View>
 
+                    <TouchableOpacity
+                        style={{ ...Styles.item, backgroundColor: colorSelected }}
+                        onPress={() => setRegion(oldRegion => {
+                            const newRegion: Region = {
+                                latitude: currentGeoLocation.coords?.latitude,
+                                longitude: currentGeoLocation.coords?.longitude,
+                                latitudeDelta: oldRegion.latitudeDelta,
+                                longitudeDelta: oldRegion.longitudeDelta
+                            }
+
+                            return newRegion
+                        })}
+                    >
+                        <Text style={Styles.itemText} >{currentGeoLocation.city}</Text>
+                        <Text style={Styles.itemText} >{currentGeoLocation.flag}</Text>
+                        <Text style={Styles.descriptionText} >{currentGeoLocation.coords?.latitude.toFixed(2) + ', ' + currentGeoLocation.coords?.longitude.toFixed(2)}</Text>
+                    </TouchableOpacity>
+
                     {
                         marks.map(mark => {
                             return (
                                 <TouchableOpacity
                                     key={mark.id}
-                                    style={{...Styles.item, backgroundColor: colors[((mark.id ? mark.id : 0) - 1) % colors.length] }}
+                                    style={{ ...Styles.item, backgroundColor: colors[((mark.id ? mark.id : 0) - 1) % colors.length] }}
                                     delayLongPress={750}
+                                    onPress={() => setRegion(oldRegion => {
+                                        const newRegion: Region = {
+                                            latitude: mark.coords?.latitude,
+                                            longitude: mark.coords?.longitude,
+                                            latitudeDelta: oldRegion.latitudeDelta,
+                                            longitudeDelta: oldRegion.longitudeDelta
+                                        }
+
+                                        return newRegion
+                                    })}
                                     onLongPress={() => removeMarker(mark.id ? mark.id : 0)}
                                 >
-                                    <Text style={Styles.itemText} >{mark.country + ' ' + mark.flag}</Text>
-                                    <Text style={Styles.descriptionText} >{mark.city}</Text>
-                                    <Text style={Styles.descriptionText} >Coords:</Text>
+                                    <Text style={Styles.itemText} >{mark.city}</Text>
+                                    <Text style={Styles.itemText} >{mark.flag}</Text>
                                     <Text style={Styles.descriptionText} >{mark.coords?.latitude.toFixed(2) + ', ' + mark.coords?.longitude.toFixed(2)}</Text>
                                 </TouchableOpacity>
                             )
