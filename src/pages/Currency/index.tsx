@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Dispatch, SetStateAction } from 'react'
-import { Text, View, Image, TextInput } from 'react-native'
+import { Text, View, Image, TextInput, Keyboard } from 'react-native'
 
 import useLocation from '../../hooks/location'
 import useCurrency from '../../hooks/currency'
@@ -18,10 +18,17 @@ const Currency: React.FC = () => {
     const [secondValue, setSecondValue] = useState('0')
     const [rateToUSD, setRateToUSD] = useState<number>(0)
 
+    function handleInputFocus() {
+        if (!currencyData.value || currencyData.value <= 0) {
+            showToast('Sorry, currency not supported!', 'centre')
+            setTimeout(() => Keyboard.dismiss(), 500)
+        }
+    }
+
     function handleInputChange(value: string, setThis: Dispatch<SetStateAction<string>>, setOther: Dispatch<SetStateAction<string>>, isUSD: boolean = false) {
 
         if (!currencyData.value || currencyData.value <= 0) {
-            showToast('Currency not supported!', 'centre')
+            showToast('Sorry, currency not supported!', 'centre')
             setThis('0.00')
             setOther('0.00')
             return
@@ -37,16 +44,15 @@ const Currency: React.FC = () => {
             if (value[value.length - 1] === '.') {
                 setThis(value)
             } else
-            //
-            if (value[value.length - 1] === '0' && value.includes('.')) {
-                setThis(value)
-            }
-            else
-            {
-                const numberFormatted = parseFloat(value)
-                setThis(numberFormatted.toString())
-                setOther((numberFormatted * (isUSD ? 1 / rateToUSD : rateToUSD)).toFixed(2).toString())
-            }
+                //
+                if (value[value.length - 1] === '0' && value.includes('.')) {
+                    setThis(value)
+                }
+                else {
+                    const numberFormatted = parseFloat(value)
+                    setThis(numberFormatted.toString())
+                    setOther((numberFormatted * (isUSD ? 1 / rateToUSD : rateToUSD)).toFixed(2).toString())
+                }
 
     }
 
@@ -87,6 +93,7 @@ const Currency: React.FC = () => {
                     onChangeText={props => handleInputChange(props, setFirstValue, setSecondValue)}
                     placeholder={'EUR'}
                     placeholderTextColor={'green'}
+                    onFocus={() => handleInputFocus()}
 
                 />
                 <Text style={Styles.text} >Converting to USD</Text>
@@ -97,6 +104,7 @@ const Currency: React.FC = () => {
                     onChangeText={props => handleInputChange(props, setSecondValue, setFirstValue, true)}
                     placeholder={'USD'}
                     placeholderTextColor={'blue'}
+                    onFocus={() => handleInputFocus()}
                 />
 
             </View>
