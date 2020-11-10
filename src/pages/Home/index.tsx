@@ -42,7 +42,7 @@ const Home: React.FC = () => {
             return
         //
         if (locationData?.country)
-            setLocation(`${locationData.city ? locationData.city : locationData.county}, ${locationData.country}`)
+            setLocation(`${locationData.city ? locationData.city : locationData.county}, ${locationData.country} ${locationData.flag}`)
         //
         if (weatherData?.description) {
             setTemperature(`${weatherData.description} - ${weatherData.temperature}`)

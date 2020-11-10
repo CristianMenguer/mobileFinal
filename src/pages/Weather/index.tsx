@@ -7,6 +7,7 @@ import useWeather from '../../hooks/weather'
 
 import Styles from './style'
 import Loader from '../../components/Loader'
+import { useIsFocused } from '@react-navigation/native'
 
 const Weather: React.FC = () => {
 
@@ -22,7 +23,9 @@ const Weather: React.FC = () => {
         weatherData.temp_max = forecastDaily[0].max_temp
     }, [])
 
-    if (currentDate === '' || forecastHourly.length < 1 || forecastDaily.length < 1)
+    if (currentDate === '' ||
+    //forecastHourly.length < 1 ||
+    forecastDaily.length < 1)
         return <Loader message='Loading Weather Information' />
     //
     return (

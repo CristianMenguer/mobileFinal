@@ -17,6 +17,7 @@ export const CURRENCY_TYPES = [
     'ISK',
     'JPY',
     'KRW',
+    'MKD',
     'MXN',
     'MYR',
     'NOK',

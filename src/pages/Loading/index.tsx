@@ -8,18 +8,17 @@ import useWeather from '../../hooks/weather'
 import Loader from '../../components/Loader'
 import useCurrency from '../../hooks/currency'
 import { AddCoordsDB } from '../../models/Location'
-import { SetInfo } from '../../services/InfoStorage'
+import { DeleteInfo, SetInfo } from '../../services/InfoStorage'
 import { dropTablesDb } from '../../database'
 
 const Loading: React.FC = () => {
-
 
     const isFocused = useIsFocused()
     const [message, setMessagee] = useState('')
 
     const { setLoading, loadCoord, loadGeoLocation, loadWeather, loadDailyWeather, loadHourlyWeather, loadCurrencyData } = useAllData()
 
-    const { setCoords, locationData, setGeoData } = useLocation()
+    const { setCoords, setGeoData } = useLocation()
     const { setWeatherCoords, setWeatherData, weatherData, setDaily, setHourly } = useWeather()
     const { SetCurrencyData } = useCurrency()
 
@@ -42,7 +41,9 @@ const Loading: React.FC = () => {
     }, [isFocused])
 
     async function loadData() {
-        //await dropTablesDb()
+
+        // await dropTablesDb()
+        // await DeleteInfo('CurrentCoord')
 
         setMessage('Loading last/current location!')
         //
@@ -65,7 +66,10 @@ const Loading: React.FC = () => {
 
         setMessage('App Coordinates set. Loading Geo Location info!')
 
-        const geoResp = await loadGeoLocation(coords.id)
+        const geoResp = await loadGeoLocation(coords)
+
+        geoResp.coords = coords
+        geoResp.coordId = coords.id
 
         setGeoData(geoResp)
 

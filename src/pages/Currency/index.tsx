@@ -1,22 +1,31 @@
 import React, { useState, useEffect, Dispatch, SetStateAction } from 'react'
 import { Text, View, Image, TextInput } from 'react-native'
-import { useIsFocused } from '@react-navigation/native'
 
 import useLocation from '../../hooks/location'
 import useCurrency from '../../hooks/currency'
 
 import Styles from './style'
+import { showToast } from '../../services/ShowToast'
+import { useIsFocused } from '@react-navigation/native'
 
 const Currency: React.FC = () => {
 
     const { locationData } = useLocation()
     const { currencyData } = useCurrency()
+    const isFocused = useIsFocused()
 
     const [firstValue, setFirstValue] = useState('0')
     const [secondValue, setSecondValue] = useState('0')
     const [rateToUSD, setRateToUSD] = useState<number>(0)
 
     function handleInputChange(value: string, setThis: Dispatch<SetStateAction<string>>, setOther: Dispatch<SetStateAction<string>>, isUSD: boolean = false) {
+
+        if (!currencyData.value || currencyData.value <= 0) {
+            showToast('Currency not supported!', 'centre')
+            setThis('0.00')
+            setOther('0.00')
+            return
+        }
 
         value = value.replace(/[^\d.]/g, '')
 
@@ -42,12 +51,24 @@ const Currency: React.FC = () => {
     }
 
     useEffect(() => {
+        if (!currencyData.value || currencyData.value <= 0)
+            return
+        //
         const numberFormatted = parseFloat(currencyData.value.toFixed(2).toString())
         setFirstValue('1.00')
         setSecondValue(numberFormatted.toString())
         setRateToUSD(numberFormatted)
         //
     }, [])
+
+    useEffect(() => {
+        if (!isFocused)
+            return
+        //
+        if (!currencyData.value || currencyData.value <= 0)
+            showToast('Currency not supported!', 'centre')
+
+    }, [isFocused])
 
     return (
         <>

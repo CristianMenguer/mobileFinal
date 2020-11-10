@@ -28,6 +28,7 @@ export const GetGurrencyRate = async (currencyCode: string, currencyCompare: str
     //
     try {
         const response = await axios.get(url)
+
         const rate: CurrencyData = {
             id: 0,
             currencyBase: currencyCode,

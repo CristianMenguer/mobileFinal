@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, Image, ScrollView, TouchableOpacity } from 'react-native'
-import MapView, { Marker, MarkerAnimated } from 'react-native-maps'
-import Toast from 'react-native-tiny-toast'
+import { Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native'
+import { useIsFocused } from '@react-navigation/native'
+import MapView, { Marker } from 'react-native-maps'
 import { Entypo as Icon } from '@expo/vector-icons'
+import * as Updates from 'expo-updates'
 
 import Loader from '../../components/Loader'
 import useLocation from '../../hooks/location'
+import { SetInfo } from '../../services/InfoStorage'
 
 import Styles from './style'
-import { Alert } from 'react-native'
+import { AddCoordsDB, GetCoordByIdDB, LoadAllGeoLocationDB } from '../../models/Location'
+import { showToast } from '../../services/ShowToast'
+import useAllData from '../../hooks/allData'
 
 const Location: React.FC = () => {
 
-    //import path from 'path'
-    //const tmpFolder = path.resolve(__dirname, '..', '..', 'tmp')
-
+    const isFocused = useIsFocused()
     const { locationData } = useLocation()
+    const { setLoading } = useAllData()
 
-    const [coord, setCoord] = useState({} as Coordinate)
-    const [marks, setMarks] = useState<Address[]>([])
+    const [currentCoord, setCurrentCoord] = useState({} as Coordinate)
+    const [marks, setMarks] = useState<GeoLocation[]>([])
 
     const colors = [
         'red',
@@ -41,10 +44,45 @@ const Location: React.FC = () => {
         'plum'
     ]
 
+    function LoadGeoLocationDB() {
+        LoadAllGeoLocationDB()
+            .then(data => {
+                //
+                let newMarks = marks
+                //
+                data.map(async (geo) => {
+                    console.log('\ngeo')
+                    console.log(geo)
+                    console.log('locationData')
+                    console.log(locationData)
+                    if (geo.coordId && locationData.coordId != geo.coordId) {
+                        geo.coords = await GetCoordByIdDB(geo.coordId)
+                        console.log('\npush')
+                        console.log(newMarks.push(geo))
+                        console.log('4')
+                    }
+                })
+                console.log('\nnewMarks')
+                console.log(newMarks)
+                setMarks(newMarks)
+            })
+    }
+
     useEffect(() => {
-        console.log(locationData)
-        setCoord(locationData.coords)
-    }, [])
+        //
+        if (!isFocused)
+            return
+        //
+        //console.log(locationData)
+        //
+        showToast('Drag and drop the red pointer to change the location!')
+        //
+        if (locationData.coords)
+            setCurrentCoord(locationData.coords)
+        //
+        LoadGeoLocationDB()
+        //
+    }, [isFocused])
 
     function removeMarker(id: number) {
 
@@ -74,33 +112,47 @@ const Location: React.FC = () => {
 
     }
 
-    function addMarker() {
-        const size = marks.length
-        let newCoord: Address = {
-            id: size + 1,
-            coords: {
-                latitude: locationData.coords.latitude + (size * 0.0005),
-                longitude: (locationData.coords.longitude) + (size * 0.0005)
-            }
+    async function addMarker() {
+        if (currentCoord.id && currentCoord.id > 0) {
+            showToast('Erro ao salvar. Location already saved!')
+            return
         }
-        let newMarks = []
-        for (const item of marks)
-            newMarks.push(item)
+
+        const savedCoords = await AddCoordsDB({ latitude: currentCoord.latitude, longitude: currentCoord.longitude })
         //
-        newMarks.push(newCoord)
-        setMarks(newMarks)
-        Toast.show('Current Location saved!', {
-            duration: Toast.duration.SHORT,
-            animationDuration: 500,
-            containerStyle: {
-                width: '75%',
-                borderRadius: 100,
-                backgroundColor: '#555'
-            }
+        if (!savedCoords.id || savedCoords.id < 1) {
+            showToast('Erro ao salvar. Please, try again!')
+            return
+        }
+        //
+        await SetInfo({
+            key: 'CurrentCoord',
+            value: JSON.stringify(savedCoords)
         })
+
+        Alert.alert(
+            'Saved Location',
+            'New location saved. Would you like to reload the app with this new location?',
+            [
+                {
+                    text: 'No',
+                    onPress: () => console.log('No')
+                },
+                {
+                    text: 'Yes',
+                    onPress: async () => {
+                        showToast('App is reloading...', 'center', 'long')
+                        //setTimeout(() => Updates.reloadAsync(), 1000)
+                        setTimeout(() => setLoading(true), 1000)
+                    }
+                }
+            ],
+            { cancelable: false }
+        )
+
     }
 
-    if (!coord || !coord.latitude)
+    if (!currentCoord || !currentCoord.latitude)
         return <Loader message={'Loading map...'} />
 
     return (
@@ -108,12 +160,12 @@ const Location: React.FC = () => {
             <View style={Styles.mapContainer} >
                 <MapView style={Styles.map}
                     initialRegion={{
-                        latitude: coord.latitude,
-                        longitude: coord.longitude,
+                        latitude: currentCoord.latitude,
+                        longitude: currentCoord.longitude,
                         latitudeDelta: 0.014,
                         longitudeDelta: 0.014
                     }}
-                    loadingEnabled={!coord.latitude}
+                    loadingEnabled={!currentCoord.latitude}
 
                 >
                     <Marker
@@ -121,25 +173,23 @@ const Location: React.FC = () => {
                         title={'Current'}
                         description={'Drag to'}
                         onDragEnd={(e) => {
-                            console.log('gradEnd: ')
-                            //console.log(e.nativeEvent.coordinate)
+                            setCurrentCoord({id: 0, ...e.nativeEvent.coordinate})
                         }}
 
                         onDragStart={(e) => {
-                            console.log('dragStart: ')
+                            //console.log('dragStart: ')
                             //console.log(e.nativeEvent.coordinate)
                         }}
-                        coordinate={coord}
+                        coordinate={currentCoord}
                         pinColor={colors[0]}
                     />
                     {
                         marks.map(marker => {
                             return (
                                 <Marker
-                                    draggable={true}
                                     key={marker.id}
-                                    coordinate={{ ...marker.coords }}
-                                    pinColor={colors[(marker.id - 1) % 18]}
+                                    coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
+                                    pinColor={colors[((marker.id ? marker.id : 0) - 1) % colors.length]}
 
                                 />
                             )
@@ -171,11 +221,12 @@ const Location: React.FC = () => {
                                     key={mark.id}
                                     style={Styles.item}
                                     delayLongPress={750}
-                                    onLongPress={() => removeMarker(mark.id)}
+                                    onLongPress={() => removeMarker(mark.id ? mark.id : 0)}
                                 >
-                                    <Text style={Styles.itemText} >Dublin</Text>
-                                    <Text style={Styles.descriptionText} >Lat: 54.43</Text>
-                                    <Text style={Styles.descriptionText} >Lng: -6.96</Text>
+                                    <Text style={Styles.itemText} >Ireland</Text>
+                                    <Text style={Styles.descriptionText} >Dublin</Text>
+                                    <Text style={Styles.descriptionText} >Coords:</Text>
+                                    <Text style={Styles.descriptionText} >54.43, -6.96</Text>
                                 </TouchableOpacity>
                             )
                         })

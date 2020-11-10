@@ -1,19 +1,14 @@
-import React, { useRef, useEffect } from 'react'
-import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
+import React from 'react'
+import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Feather as Icon, AntDesign } from '@expo/vector-icons'
 
-import useAllData from './../hooks/allData'
 
 import Home from './../pages/Home'
 import Location from './../pages/Location'
 import Currency from './../pages/Currency'
 import Github from './../pages/Github'
 import Weather from './../pages/Weather'
-import Loading from './../pages/Loading'
-
-import LoadingRoute from './loading.routes'
-import MainRoute from './main.routes'
 
 interface TabBarIconProps {
     color: string
@@ -57,34 +52,36 @@ const githubOptions = {
     ),
 }
 
-const loadingOptions = {
-    tabBarVisible: false,
-    tabBarLabel: 'Loading',
-    tabBarIcon: ({ color, size }: TabBarIconProps) => (
-        <Icon name="download" color={color} size={size} ></Icon>
-    ),
-}
-
-const Routes: React.FC = () => {
-
-    const navigationRef = useRef<NavigationContainerRef>(null)
-
-    const { isLoading } = useAllData()
-
-    useEffect(() => {
-        // console.log('isLoading: ' + isLoading)
-        if (!isLoading && navigationRef)
-            navigationRef?.current?.navigate('Home')
-        //
-    }, [isLoading, navigationRef])
+const MainRoute: React.FC = () => {
 
     //
+    return (
 
-    if (isLoading)
-        return <LoadingRoute />
-    //
-    return <MainRoute />
+        <NavigationContainer  >
+            <Tab.Navigator
+                initialRouteName={'Home'}
+                tabBarOptions={{
+                    activeTintColor: '#7a7a7a',
+                    inactiveTintColor: '#C5C5C5',
+                    //inactiveBackgroundColor: '#EBEEF2',
+                    labelPosition: 'below-icon',
+                }}
+            >
 
+                <Tab.Screen name="Location"
+                    component={Location} options={locationOptions} />
+                <Tab.Screen name="Weather"
+                    component={Weather} options={weatherOptions} />
+                <Tab.Screen name="Home"
+                    component={Home} options={homeOptions} />
+                <Tab.Screen name="Currency"
+                    component={Currency} options={currencyOptions} />
+                <Tab.Screen name="Github"
+                    component={Github} options={githubOptions} />
+
+            </Tab.Navigator>
+        </NavigationContainer>
+    )
 }
 
-export default Routes
+export default MainRoute

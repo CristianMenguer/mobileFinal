@@ -1,6 +1,6 @@
 interface GeoLocation {
     id?: number
-    coordsId?: number
+    coordId?: number
     coords?: Coordinate
     road: string
     city_district: string
@@ -11,4 +11,5 @@ interface GeoLocation {
     formatted: string
     currency_name: string
     currency_code: string
+    flag: string
 }

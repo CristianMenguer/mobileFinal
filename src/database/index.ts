@@ -12,7 +12,7 @@ const startDb = async (): Promise<WebSQLDatabase> => {
             //
             transaction.executeSql('create table if not exists geolocation (id integer primary key, coordid integer, ' +
                 'road text, city_district text, place text, city text, county text, country text, formatted text, ' +
-                'currency_name text, currency_code text)')
+                'currency_name text, currency_code text, flag text)')
             //
             transaction.executeSql('create table if not exists currencyrate (id integer primary key, currencyBase text, currencyCompare text, value real, timeAPI real)')
             //

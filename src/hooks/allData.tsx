@@ -13,7 +13,7 @@ interface AllDataContextData {
     isLoading: boolean
     setLoading(newStatus: boolean): void
     loadCoord(): Promise<Coordinate>
-    loadGeoLocation(props: number): Promise<GeoLocation>
+    loadGeoLocation(props: Coordinate): Promise<GeoLocation>
     loadWeather(props: Coordinate): Promise<Weather>
     loadDailyWeather(weatherId: number, coords: Coordinate): Promise<Forecast[]>
     loadHourlyWeather(weatherId: number, coords: Coordinate): Promise<Forecast[]>
@@ -60,15 +60,16 @@ export const AllDataProvider: React.FC = ({ children }) => {
         return {} as Coordinate
     }, [])
 
-    const loadGeoLocation = useCallback(async (props: number) => {
+    const loadGeoLocation = useCallback(async (props: Coordinate) => {
 
-        let geoLocation = await LoadGeoLocationDB(props)
+        let geoLocation = await LoadGeoLocationDB(props.id ? props.id : 0)
 
         if (!geoLocation || !geoLocation.id || geoLocation.id < 1) {
 
-            geoLocation = await getGeoDataApi()
+            geoLocation = await getGeoDataApi(props)
             if (!!geoLocation) {
-                geoLocation.coordsId = props
+                geoLocation.coordId = props.id
+                geoLocation.coords = props
                 geoLocation = await AddGeoLocationDB(geoLocation)
             }
             //
@@ -95,7 +96,8 @@ export const AllDataProvider: React.FC = ({ children }) => {
 
         if (!rates || !rates.id || rates.id < 1 || !rates.timeAPI || ((new Date().getTime() - rates.timeAPI) > (60000 * 1440))) {
             rates = await GetCurrencyDataApi(currencyBase, 'USD')
-            if (!!rates)
+
+            if (!!rates && rates.value > 0)
                 rates = await AddCurrencyRateDB(rates)
             //
         }

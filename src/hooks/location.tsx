@@ -6,7 +6,7 @@ import { getLocationPermission } from '../services/Permissions'
 interface LocationContextData {
     setCoords(coords: Coordinate): Promise<void>
     setGeoData(props: GeoLocation): void
-    getGeoDataApi(): Promise<GeoLocation>
+    getGeoDataApi(props: Coordinate): Promise<GeoLocation>
     locationData: GeoLocation
 }
 
@@ -19,24 +19,41 @@ export const LocationProvider: React.FC = ({ children }) => {
     const setCoords = useCallback(async (props: Coordinate) => {
         let newData = locationData
         newData.coords = props
-        setLocationData({...newData})
+        setLocationData({ ...newData })
         //
     }, [])
 
-    const getGeoDataApi = useCallback(async () => {
+    const getGeoDataApi = useCallback(async (props: Coordinate) => {
 
-        const response = await GetGeo({ ...locationData.coords })
+        const response = await GetGeo({ latitude: props.latitude, longitude: props.longitude })
         //
         if (!response)
             return locationData
         //
+        let city = 'City not found!'
+        if (response.components.town)
+            city = response.components.town
+        else if (response.components.city)
+            city = response.components.city
+        else if (response.components.city_district)
+            city = response.components.city_district
+        else if (response.components.village)
+            city = response.components.village
+        else if (response.components.road)
+            city = response.components.road
+        else if (response.components.suburb)
+            city = response.components.suburb
+        else if (response.components.state)
+            city = response.components.state
+        //
         let newData = locationData
         newData.formatted = response.formatted
-        newData.city = response.components.city
+        newData.city = city
         newData.county = response.components.county
         newData.country = response.components.country
         newData.currency_name = response.annotations.currency.name
         newData.currency_code = response.annotations.currency.iso_code
+        newData.flag = response.annotations.flag
         setGeoData(newData)
         //
         return newData
@@ -47,7 +64,7 @@ export const LocationProvider: React.FC = ({ children }) => {
         newData.formatted = props.formatted
         newData.id = props.id
         newData.coords = props.coords
-        newData.coordsId = props.coordsId
+        newData.coordId = props.coordId
         newData.city = props.city
         newData.county = props.county
         newData.country = props.country

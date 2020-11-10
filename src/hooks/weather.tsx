@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useState, useContext, useEffect } from 'react'
-import { GetWeather, GetWeatherDaily, GetWeatherHourly, GetWeatherIcon } from '../services/WeatherApi'
+import { GetWeather, GetWeatherDaily, GetWeatherHourly, GetWeatherIcon, GetWeatherHourlyIcon } from '../services/WeatherApi'
 
 interface WeatherContextData {
     setWeatherCoords(coords: Coordinate): void
@@ -129,18 +129,20 @@ export const WeatherProvider: React.FC = ({ children }) => {
             predict.pop()
         //
         for (let i = 0; i < response.length; i++) {
+            const date = new Date(response[i].dt * 1000)
+            //
             const newForecast = {
                 id: 0,
                 type: 'hourly',
-                valid_date: (i === 0 ? 'Now' : response[i].datetime.substring(11, 13) + 'h'),
+                valid_date: (i === 0 ? 'Now' : date.getHours().toString() + 'h'),
                 temp: response[i].temp,
-                pop: response[i].pop,
-                description: response[i].weather.description,
-                iconCode: response[i].weather.icon,
-                iconUri: GetWeatherIcon(response[i].weather.icon),
+                pop: (response[i].pop * 100),
+                description: response[i].weather[0].description,
+                iconCode: response[i].weather[0].icon,
+                iconUri: GetWeatherHourlyIcon(response[i].weather[0].icon),
                 timeAPI: new Date().getTime(),
-                max_feel_like: 0,
-                min_feel_like: 0,
+                max_feel_like: response[i].feels_like,
+                min_feel_like: response[i].feels_like,
                 max_temp: 0,
                 min_temp: 0,
                 weatherId: 0,
