@@ -22,6 +22,13 @@ const Styles = StyleSheet.create({
         maxWidth: '70%',
 
     },
+    textName: {
+        textAlign: 'center',
+        maxWidth: '70%',
+        fontSize: 20,
+        fontWeight: '700',
+        marginVertical: 8,
+    },
     logoWeather: {
         width: 80,
         height: 80,

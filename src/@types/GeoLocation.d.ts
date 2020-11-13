@@ -12,4 +12,5 @@ interface GeoLocation {
     currency_name: string
     currency_code: string
     flag: string
+    image_uri: string
 }

@@ -69,7 +69,14 @@ const Styles = StyleSheet.create({
 
     },
     itemText: {
-        fontSize: 20,
+        fontSize: 18,
+        justifyContent: 'center',
+        textAlign: 'center'
+
+    },
+    itemFlag: {
+        fontSize: 32,
+
     },
     itemIcon: {
         height: 80,
@@ -77,6 +84,30 @@ const Styles = StyleSheet.create({
     },
     descriptionText: {
         fontSize: 16,
+    },
+    mapMarker: {
+        width: 90,
+        height: 80,
+    },
+    mapMarkerContainer: {
+        width: 90,
+        height: 70,
+        flexDirection: 'column',
+        borderRadius: 8,
+        overflow: 'hidden',
+        alignItems: 'center'
+    },
+    mapMarkerImage: {
+        width: 90,
+        height: 45,
+        resizeMode: 'cover',
+    },
+
+    mapMarkerTitle: {
+        flex: 1,
+        color: '#000',
+        fontSize: 13,
+        lineHeight: 23,
     },
 
 })

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useIsFocused } from '@react-navigation/native'
 
-import { getLocationPermission } from './../../services/Permissions'
+import { getLocationPermission, getCameraPermission } from './../../services/Permissions'
 import useAllData from '../../hooks/allData'
 import useLocation from '../../hooks/location'
 import useWeather from '../../hooks/weather'
@@ -35,9 +35,12 @@ const Loading: React.FC = () => {
         //
         setMessage('Permission is necessary to continue!')
         //
-        getLocationPermission().then(data => {
-            setHasPermission(data)
-        })
+        getLocationPermission()
+            .then(responseLocation => {
+                if (responseLocation)
+                    getCameraPermission()
+                        .then(setHasPermission)
+            })
     }, [isFocused])
 
     async function loadData() {

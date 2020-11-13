@@ -9,6 +9,7 @@ import Loader from '../../components/Loader'
 import Styles from './style'
 import { DeleteInfo } from '../../services/InfoStorage'
 import useAllData from '../../hooks/allData'
+import { dropTablesDb } from '../../database'
 
 const Home: React.FC = () => {
 
@@ -23,18 +24,9 @@ const Home: React.FC = () => {
     const [logoWeather, setLogoWeather] = useState('https://icons.iconarchive.com/icons/dakirby309/windows-8-metro/128/Web-The-Weather-Channel-Metro-icon.png')
 
     async function resetData() {
-        function sleep(ms: number) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        await DeleteInfo('GeoLocation')
-        await DeleteInfo('Weather')
-        await DeleteInfo('CurrencyData')
-        await DeleteInfo('DailyWeather')
-        await DeleteInfo('HourlyWeather')
-        await DeleteInfo('Repositories')
-        setLoading(true)
-        await Updates.reloadAsync()
+        await dropTablesDb()
+        await DeleteInfo('CurrentCoord')
+        Updates.reloadAsync()
     }
 
     useEffect(() => {
@@ -62,7 +54,12 @@ const Home: React.FC = () => {
                         source={require('../../../assets/logo.jpg')}
                         style={Styles.logo}
                     />
-                    <Text style={Styles.text} >This React Native prototype was developed by Cristian Menguer using TypeScript.</Text>
+                    <View >
+                        <Text style={Styles.text} >This React Native prototype was developed by </Text>
+                        <Text style={Styles.textName} >Cristian Menguer</Text>
+                        <Text style={Styles.text} > using TypeScript.</Text>
+                    </View >
+
                     <Text style={Styles.text} >The purpose of this project is apply all the acquired knowledge in class
                 and further researches about Mobile Development.</Text>
                     <Text style={Styles.text} >Lecture: Mobile Development</Text>
@@ -75,7 +72,7 @@ const Home: React.FC = () => {
 
                 </View>
             </View>
-            {/* <TouchableOpacity onPress={() => resetData()} style={{
+            <TouchableOpacity onPress={() => resetData()} style={{
                 width: 210,
                 height: 60,
                 backgroundColor: '#04D361',
@@ -85,7 +82,7 @@ const Home: React.FC = () => {
                 alignItems: 'center',
             }} >
                 <Text >Reset Data</Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
         </>
     )
 }

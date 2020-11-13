@@ -55,11 +55,11 @@ export const AddGeoLocationDB = async (props: GeoLocation): Promise<GeoLocation>
         return props
     //
     const sql = `insert into ${tableName} (` +
-        'coordId, road, city_district, place, city, county, country, formatted, currency_name, currency_code, flag ' +
+        'coordId, road, city_district, place, city, county, country, formatted, currency_name, currency_code, flag, image_uri ' +
         ' ) values (' +
         `  ${props.coordId}, "${props.road}", "${props.city_district}", "${props.place}", ` +
         ` "${props.city}", "${props.county}", "${props.country}", "${props.formatted}", ` +
-        ` '${props.currency_name}', '${props.currency_code}', '${props.flag}' )`
+        ` '${props.currency_name}', '${props.currency_code}', '${props.flag}', '${props.image_uri}' )`
     //
     const idInserted = await insertDB(sql)
 
@@ -76,6 +76,18 @@ export const DeleteGeoLocationDB = async (id: number): Promise<boolean> => {
     //
     const sql = `delete from ${tableName} where id = ${id}`
 
+    const response = await execSql(sql)
+
+    return response
+
+}
+
+export const UpdateGeoLocationPhotoDB = async (image_uri: string, id: number): Promise<boolean> => {
+    if (!image_uri || image_uri === '' || !id || id < 1)
+        return false
+    //
+    const sql = `update ${tableName} set image_uri = '${image_uri}' where id = ${id} `
+    //
     const response = await execSql(sql)
 
     return response

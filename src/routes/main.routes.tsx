@@ -1,13 +1,13 @@
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { Feather as Icon, AntDesign } from '@expo/vector-icons'
+import { Feather as Icon } from '@expo/vector-icons'
 
 
 import Home from './../pages/Home'
 import Location from './../pages/Location'
 import Currency from './../pages/Currency'
-import Github from './../pages/Github'
+import Camera from './../pages/Camera'
 import Weather from './../pages/Weather'
 
 interface TabBarIconProps {
@@ -20,35 +20,35 @@ const Tab = createBottomTabNavigator()
 const locationOptions = {
     tabBarLabel: 'Location',
     tabBarIcon: ({ color, size }: TabBarIconProps) => (
-        <Icon name="map-pin" color={color} size={size} ></Icon>
+        <Icon name='map-pin' color={color} size={size} />
     ),
 }
 
 const weatherOptions = {
     tabBarLabel: 'Weather',
     tabBarIcon: ({ color, size }: TabBarIconProps) => (
-        <Icon name="cloud" color={color} size={size} ></Icon>
+        <Icon name='cloud' color={color} size={size} />
     ),
 }
 
 const homeOptions = {
     tabBarLabel: 'Home',
     tabBarIcon: ({ color, size }: TabBarIconProps) => (
-        <Icon name="home" color={color} size={size} ></Icon>
+        <Icon name='home' color={color} size={size} />
     ),
 }
 
 const currencyOptions = {
     tabBarLabel: 'Currency',
     tabBarIcon: ({ color, size }: TabBarIconProps) => (
-        <Icon name="dollar-sign" color={color} size={size} ></Icon>
+        <Icon name='dollar-sign' color={color} size={size} />
     ),
 }
 
-const githubOptions = {
-    tabBarLabel: 'Github',
+const cameraOptions = {
+    tabBarLabel: 'Camera',
     tabBarIcon: ({ color, size }: TabBarIconProps) => (
-        <AntDesign name="github" color={color} size={size} ></AntDesign>
+        <Icon name='camera' color={color} size={size} />
     ),
 }
 
@@ -68,16 +68,16 @@ const MainRoute: React.FC = () => {
                 }}
             >
 
-                <Tab.Screen name="Location"
+                <Tab.Screen name='Location'
                     component={Location} options={locationOptions} />
-                <Tab.Screen name="Weather"
+                <Tab.Screen name='Weather'
                     component={Weather} options={weatherOptions} />
-                <Tab.Screen name="Home"
+                <Tab.Screen name='Home'
                     component={Home} options={homeOptions} />
-                <Tab.Screen name="Currency"
+                <Tab.Screen name='Currency'
                     component={Currency} options={currencyOptions} />
-                <Tab.Screen name="Github"
-                    component={Github} options={githubOptions} />
+                <Tab.Screen name='Camera'
+                    component={Camera} options={cameraOptions} />
 
             </Tab.Navigator>
         </NavigationContainer>

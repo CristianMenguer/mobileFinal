@@ -54,6 +54,7 @@ export const LocationProvider: React.FC = ({ children }) => {
         newData.currency_name = response.annotations.currency.name
         newData.currency_code = response.annotations.currency.iso_code
         newData.flag = response.annotations.flag
+        newData.image_uri = ''
         setGeoData(newData)
         //
         return newData
@@ -70,6 +71,8 @@ export const LocationProvider: React.FC = ({ children }) => {
         newData.country = props.country
         newData.currency_name = props.currency_name
         newData.currency_code = props.currency_code
+        newData.flag = props.flag
+        newData.image_uri = props.image_uri
         setLocationData(newData)
         // setData(props)
     }, [])
