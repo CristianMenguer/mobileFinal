@@ -174,8 +174,8 @@ const Location: React.FC = () => {
 
     function handleLocationSelected(geo: GeoLocation) {
         setRegion({
-            latitude: geo.coords?.latitude,
-            longitude: geo.coords?.longitude,
+            latitude: geo.coords?.latitude ? geo.coords?.latitude : 0,
+            longitude: geo.coords?.longitude ? geo.coords?.longitude : 0,
             latitudeDelta: region.latitudeDelta,
             longitudeDelta: region.longitudeDelta
         })
@@ -215,8 +215,8 @@ const Location: React.FC = () => {
             <View style={Styles.mapContainer} >
                 <MapView style={Styles.map}
                     initialRegion={{
-                        latitude: locationData.coords.latitude,
-                        longitude: locationData.coords.longitude,
+                        latitude: locationData.coords?.latitude ? locationData.coords?.latitude : 0,
+                        longitude: locationData.coords?.longitude ? locationData.coords?.longitude : 0,
                         latitudeDelta: 0.014,
                         longitudeDelta: 0.014
                     }}
@@ -227,12 +227,12 @@ const Location: React.FC = () => {
                         const longitude = element.nativeEvent.coordinate.longitude
                         //
                         setNewCoord({ latitude, longitude })
-                        setRegion({
-                            latitude,
-                            longitude,
-                            latitudeDelta: region.latitudeDelta,
-                            longitudeDelta: region.longitudeDelta
-                        })
+                        // setRegion({
+                        //     latitude,
+                        //     longitude,
+                        //     latitudeDelta: region.latitudeDelta,
+                        //     longitudeDelta: region.longitudeDelta
+                        // })
                     }}
 
                 >
@@ -247,19 +247,19 @@ const Location: React.FC = () => {
                         marks.map(marker => {
                             return (
                                 <Marker
-                                    key={marker.id}
+                                    key={marker.id + marker.image_uri}
                                     // @ts-ignore
                                     coordinate={{ latitude: marker.coords.latitude, longitude: marker.coords.longitude }}
                                     pinColor={colors[((marker.id ? marker.id : 0) - 1) % colors.length]}
                                     style={Styles.mapMarker}
                                 >
-                                    <View style={{...Styles.mapMarkerContainer, backgroundColor: colors[((marker.id ? marker.id : 0) - 1) % colors.length]}} >
-                                    <Image
+                                    <View style={{ ...Styles.mapMarkerContainer, backgroundColor: colors[((marker.id ? marker.id : 0) - 1) % colors.length] }} >
+                                        <Image
                                             source={
                                                 marker.image_uri && marker.image_uri !== '' ?
-                                                {uri: marker.image_uri}
-                                                :
-                                                require('../../../assets/location.jpg')
+                                                    { uri: marker.image_uri }
+                                                    :
+                                                    require('../../../assets/location.jpg')
                                             }
 
                                             style={Styles.mapMarkerImage}

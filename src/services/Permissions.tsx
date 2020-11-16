@@ -1,17 +1,12 @@
 import * as Permissions from 'expo-permissions'
-import * as ImagePicker from 'expo-image-picker'
+import { Camera } from 'expo-camera'
 
-export async function getLocationPermission() {
+export async function getLocationPermission(): Promise<boolean> {
     const { status } = await Permissions.askAsync(Permissions.LOCATION)
-    return status == 'granted'
+    return status === 'granted'
 }
 
-export async function getStoragePermission() {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
-    return status == 'granted'
-}
-
-export async function getCameraPermission() {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync()
-    return status == 'granted'
+export async function getCameraPermission(): Promise<boolean> {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA)
+    return status === 'granted'
 }

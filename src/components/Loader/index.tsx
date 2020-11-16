@@ -16,7 +16,8 @@ const Loader: React.FC<LoaderProps> = ({ message }) => {
     useEffect(() => {
         let unmounted = false
 
-        setLoadingMessage('Loading.' + (counter > 0 ? '.' : '') + (counter > 1 ? '.' : ''))
+        const textMessage = (message && message.length > 0) ? message : 'Loading'
+        setLoadingMessage(textMessage + '.' + (counter > 0 ? '.' : '') + (counter > 1 ? '.' : ''))
         setTimeout(() => {
             if (!unmounted)
                 setCounter((counter + 1) % 3)

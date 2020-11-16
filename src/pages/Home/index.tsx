@@ -32,9 +32,13 @@ const Home: React.FC = () => {
     useEffect(() => {
         if (!isFocused)
             return
-        //
+        //s
         if (locationData?.country)
             setLocation(`${locationData.city ? locationData.city : locationData.county}, ${locationData.country} ${locationData.flag}`)
+        else if (locationData?.formatted)
+            setLocation(locationData.formatted)
+        else
+        setLocation('Location not found!')
         //
         if (weatherData?.description) {
             setTemperature(`${weatherData.description} - ${weatherData.temperature}`)
@@ -72,7 +76,7 @@ const Home: React.FC = () => {
 
                 </View>
             </View>
-            <TouchableOpacity onPress={() => resetData()} style={{
+            {/* <TouchableOpacity onPress={() => resetData()} style={{
                 width: 210,
                 height: 60,
                 backgroundColor: '#04D361',
@@ -82,7 +86,7 @@ const Home: React.FC = () => {
                 alignItems: 'center',
             }} >
                 <Text >Reset Data</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </>
     )
 }

@@ -70,7 +70,9 @@ export const insertDB = async (sql: string): Promise<number> => {
             })
 
         }, (error) => {
-            console.log(`> Database.index > insertDB: ${error}`)
+            console.log('> Database.index > insertDB:')
+            console.log(error)
+            console.log(sql)
             reject(0)
         })
     })
@@ -108,9 +110,10 @@ export const execSql = async (sql: string): Promise<boolean> => {
 export const selectDB = async (tableName: string, where: string = '') => {
     const db = await startDb()
 
+    const sql = `select * from ${tableName} ${where != '' ? 'where ' + where : ''}`
     return new Promise<Object[]>((resolve, reject) => {
         db.transaction((transaction) => {
-            transaction.executeSql(`select * from ${tableName} ${where != '' ? 'where ' + where : ''}`, [], (transaction, results) => {
+            transaction.executeSql(sql, [], (transaction, results) => {
                 let objs: Object[] = []
                 for (let index = 0; index < results.rows.length; index++)
                     objs.push(results.rows.item(index))
@@ -119,7 +122,9 @@ export const selectDB = async (tableName: string, where: string = '') => {
             })
 
         }, (error) => {
-            console.log(`> Database.index > select: ${error}`)
+            console.log('> Database.index > select:')
+            console.log(error)
+            console.log(sql)
             reject([])
         }, () => {
             resolve([])
@@ -129,10 +134,11 @@ export const selectDB = async (tableName: string, where: string = '') => {
 
 export const selectByIdDB = async (tableName: string, id: number) => {
     const db = await startDb()
+    const sql = `select * from ${tableName} where id = ${id}`
 
     return new Promise<Object>((resolve, reject) => {
         db.transaction((transaction) => {
-            transaction.executeSql(`select * from ${tableName} where id = ${id}`, [], (transaction, results) => {
+            transaction.executeSql(sql, [], (transaction, results) => {
                 if (results.rows.length > 0) {
                     resolve(results.rows.item(0))
                     //
@@ -140,7 +146,9 @@ export const selectByIdDB = async (tableName: string, id: number) => {
             })
 
         }, (error) => {
-            console.log(`> Database.index > select: ${error}`)
+            console.log('> Database.index > select:')
+            console.log(error)
+            console.log(sql)
             reject()
         })
     })

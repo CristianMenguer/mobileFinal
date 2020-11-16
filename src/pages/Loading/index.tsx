@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useIsFocused } from '@react-navigation/native'
+import * as Network from 'expo-network'
 
 import { getLocationPermission, getCameraPermission } from './../../services/Permissions'
 import useAllData from '../../hooks/allData'
@@ -19,10 +20,12 @@ const Loading: React.FC = () => {
     const { setLoading, loadCoord, loadGeoLocation, loadWeather, loadDailyWeather, loadHourlyWeather, loadCurrencyData } = useAllData()
 
     const { setCoords, setGeoData } = useLocation()
-    const { setWeatherCoords, setWeatherData, weatherData, setDaily, setHourly } = useWeather()
+    const { setWeatherCoords, setWeatherData, setDaily, setHourly } = useWeather()
     const { SetCurrencyData } = useCurrency()
 
-    const [hasPermission, setHasPermission] = useState(false)
+    const [hasLocationPermission, setLocationPermission] = useState(false)
+    const [hasCameraPermission, setCameraPermission] = useState(false)
+    const [hasNetwork, setHasNetwork] = useState(false)
 
     function setMessage(newMessage: string) {
         // console.log(`> Loading Page => Setting new Message: ${newMessage}`)
@@ -30,17 +33,27 @@ const Loading: React.FC = () => {
     }
 
     useEffect(() => {
-        if (!isFocused || hasPermission)
+        if (!isFocused)
             return
         //
-        setMessage('Permission is necessary to continue!')
+        if (!hasNetwork) {
+            setMessage('Waiting for network')
+            Network.getNetworkStateAsync()
+                .then(networkResponse => {
+                    if (networkResponse.isInternetReachable)
+                        setHasNetwork(networkResponse.isInternetReachable)
+                })
+        }
         //
-        getLocationPermission()
-            .then(responseLocation => {
-                if (responseLocation)
-                    getCameraPermission()
-                        .then(setHasPermission)
-            })
+        if (!hasLocationPermission) {
+            setMessage('Waiting for Location Permission')
+            getLocationPermission().then(setLocationPermission)
+        }
+        //
+        if (!hasCameraPermission) {
+            setMessage('Waiting for Camera Permission')
+            getCameraPermission().then(setCameraPermission)
+        }
     }, [isFocused])
 
     async function loadData() {
@@ -48,7 +61,7 @@ const Loading: React.FC = () => {
         // await dropTablesDb()
         // await DeleteInfo('CurrentCoord')
 
-        setMessage('Loading last/current location!')
+        setMessage('Loading last/current location')
         //
         let coords = await loadCoord()
 
@@ -63,11 +76,11 @@ const Loading: React.FC = () => {
             value: JSON.stringify(coords)
         })
 
-        setMessage('Location read. Setting App coordinates!')
+        setMessage('Location read. Setting App coordinates')
 
         setCoords(coords)
 
-        setMessage('App Coordinates set. Loading Geo Location info!')
+        setMessage('App Coordinates set. Loading Geo Location info')
 
         const geoResp = await loadGeoLocation(coords)
 
@@ -76,15 +89,15 @@ const Loading: React.FC = () => {
 
         setGeoData(geoResp)
 
-        setMessage('Geo Location set. Reading currency from location!')
+        setMessage('Geo Location set. Reading currency from location')
 
-        setMessage('Currency Base set. Loading currency rates!')
+        setMessage('Currency Base set. Loading currency rates')
 
         const currResp = await loadCurrencyData(geoResp.currency_code)
 
         SetCurrencyData(currResp)
 
-        setMessage('Currency Rates set. Starting loading weather info!')
+        setMessage('Currency Rates set. Starting loading weather info')
 
         setWeatherCoords(coords)
 
@@ -92,13 +105,13 @@ const Loading: React.FC = () => {
 
         setWeatherData(weatherResp)
 
-        setMessage('Loading Daily Weather!')
+        setMessage('Loading Daily Weather')
 
         const dailyResp = await loadDailyWeather(weatherResp.id, coords)
 
         setDaily(dailyResp)
 
-        setMessage('Loading Hourly Weather!')
+        setMessage('Loading Hourly Weather')
 
         const hourlyResp = await loadHourlyWeather(weatherResp.id, coords)
 
@@ -109,12 +122,12 @@ const Loading: React.FC = () => {
     }
 
     useEffect(() => {
-        if (!isFocused || !hasPermission)
+        if (!isFocused || !hasNetwork || !hasCameraPermission || !hasLocationPermission)
             return
         //
         loadData()
 
-    }, [isFocused, hasPermission])
+    }, [isFocused, hasCameraPermission, hasLocationPermission, hasNetwork])
 
     return <Loader message={message} />
 }

@@ -51,9 +51,9 @@ export const LocationProvider: React.FC = ({ children }) => {
         newData.city = city
         newData.county = response.components.county
         newData.country = response.components.country
-        newData.currency_name = response.annotations.currency.name
-        newData.currency_code = response.annotations.currency.iso_code
-        newData.flag = response.annotations.flag
+        newData.currency_name = response.annotations.currency?.name ? response.annotations.currency?.name : 'Not Found'
+        newData.currency_code = response.annotations.currency?.iso_code ? response.annotations.currency?.iso_code : 'USD'
+        newData.flag = response.annotations.flag ? response.annotations.flag : '🗺️'
         newData.image_uri = ''
         setGeoData(newData)
         //

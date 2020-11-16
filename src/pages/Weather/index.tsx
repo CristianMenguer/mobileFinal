@@ -15,17 +15,25 @@ const Weather: React.FC = () => {
     const { weatherData, forecastDaily, forecastHourly } = useWeather()
 
     const [currentDate, setCurrentDate] = useState('')
+    const [location, setLocation] = useState('')
 
     useEffect(() => setCurrentDate(new Date().toLocaleDateString()), [])
 
     useEffect(() => {
         weatherData.temp_min = forecastDaily[0].min_temp
         weatherData.temp_max = forecastDaily[0].max_temp
+        //
+        if (locationData?.country)
+            setLocation(`${locationData.city ? locationData.city : locationData.county}, ${locationData.country} ${locationData.flag}`)
+        else if (locationData?.formatted)
+            setLocation(locationData.formatted)
+        else
+            setLocation('Location not found!')
     }, [])
 
     if (currentDate === '' ||
-    //forecastHourly.length < 1 ||
-    forecastDaily.length < 1)
+        //forecastHourly.length < 1 ||
+        forecastDaily.length < 1)
         return <Loader message='Loading Weather Information' />
     //
     return (
@@ -34,14 +42,14 @@ const Weather: React.FC = () => {
                 <View style={Styles.container} >
                     <View style={Styles.location} >
                         <Icon name='map-marker-alt' size={20} />
-                        <Text style={Styles.locationText} >  {locationData.city ? locationData.city : locationData.county}</Text>
+                        <Text style={Styles.locationText} >  {location}</Text>
                     </View>
                     <Text style={Styles.dateText} >{currentDate}</Text>
                     <View style={Styles.currentTemp} >
                         <Image style={Styles.currentTempIcon} source={{ uri: weatherData.iconUri }} />
-                        <Text style={Styles.currentTempText} >{weatherData.temperature}℃</Text>
+                        <Text style={Styles.currentTempText} >{weatherData.temperature.toFixed(1)}℃</Text>
                     </View>
-                    <Text style={Styles.feelLikeText} >{weatherData.temp_min}℃ / {weatherData.temp_max}℃ Feels like {weatherData.feel_like}℃</Text>
+                    <Text style={Styles.feelLikeText} >{weatherData.temp_min.toFixed(1)}℃ / {weatherData.temp_max.toFixed(1)}℃ Feels like {weatherData.feel_like.toFixed(1)}℃</Text>
                     <Text style={Styles.descriptionText} >{weatherData.description}</Text>
 
                 </View>
@@ -60,9 +68,9 @@ const Weather: React.FC = () => {
                                     <Image source={{ uri: item.iconUri }} style={Styles.itemIcon} />
                                     <View style={Styles.itemPerc} >
                                         <Icon name='cloud-rain' size={18} />
-                                        <Text style={Styles.itemPercText} > {item.pop}%</Text>
+                                        <Text style={Styles.itemPercText} > {item.pop.toFixed(0)}%</Text>
                                     </View>
-                                    <Text style={Styles.descriptionText} >{item.temp}℃</Text>
+                                    <Text style={Styles.descriptionText} >{item.temp.toFixed(1)}℃</Text>
                                 </View>
                             ))
                         }
@@ -84,9 +92,9 @@ const Weather: React.FC = () => {
                                     <Image source={{ uri: item.iconUri }} style={Styles.itemIcon} />
                                     <View style={Styles.itemPerc} >
                                         <Icon name='cloud-rain' size={18} />
-                                        <Text style={Styles.itemPercText} > {item.pop}%</Text>
+                                        <Text style={Styles.itemPercText} > {item.pop.toFixed(0)}%</Text>
                                     </View>
-                                    <Text style={Styles.descriptionText} >{item.min_temp}℃ / {item.max_temp}℃</Text>
+                                    <Text style={Styles.descriptionText} >{item.min_temp.toFixed(0)}℃ / {item.max_temp.toFixed(0)}℃</Text>
                                 </View>
                             ))
                         }
