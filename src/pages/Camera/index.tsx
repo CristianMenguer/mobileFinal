@@ -10,6 +10,11 @@ import { UpdateGeoLocationPhotoDB } from '../../models/Location'
 import { showToast } from '../../services/ShowToast'
 import { sleep } from '../../services/Sleep'
 
+/**
+ * This is the Camera Page.
+ * In this page, a picture is taken and saved to the current location.
+*/
+
 // This interface is used to set the images url/path
 interface Source {
     uri: string
