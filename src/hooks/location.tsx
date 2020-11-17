@@ -1,8 +1,10 @@
-import React, { createContext, useCallback, useState, useContext, useEffect } from 'react'
+import React, { createContext, useCallback, useState, useContext } from 'react'
 import { GetGeo } from '../services/GeoApi'
-import { GetInfo, SetInfo } from '../services/InfoStorage'
-import { getLocationPermission } from '../services/Permissions'
 
+// This hook is used to keep all the location information and the calls to
+// get new location info from the API.
+
+// This is the interface of the return of this hook
 interface LocationContextData {
     setCoords(coords: Coordinate): Promise<void>
     setGeoData(props: GeoLocation): void
@@ -10,12 +12,15 @@ interface LocationContextData {
     locationData: GeoLocation
 }
 
+// This is the context of this hook
 const LocationContext = createContext<LocationContextData>({} as LocationContextData)
 
 export const LocationProvider: React.FC = ({ children }) => {
 
+    // This is the location object that will be accessed by the app
     const [locationData, setLocationData] = useState<GeoLocation>({} as GeoLocation)
 
+    // This function receives the new coordinates and set the one in this context
     const setCoords = useCallback(async (props: Coordinate) => {
         let newData = locationData
         newData.coords = props
@@ -23,6 +28,8 @@ export const LocationProvider: React.FC = ({ children }) => {
         //
     }, [])
 
+    // This function receives the coordinates and return the Geo Location Info
+    // from this specific coordinate calling the API
     const getGeoDataApi = useCallback(async (props: Coordinate) => {
 
         const response = await GetGeo({ latitude: props.latitude, longitude: props.longitude })
@@ -60,6 +67,7 @@ export const LocationProvider: React.FC = ({ children }) => {
         return newData
     }, [])
 
+    // This function receives the new object and set the one in this context
     const setGeoData = useCallback((props: GeoLocation) => {
         let newData = locationData
         newData.formatted = props.formatted
@@ -74,7 +82,6 @@ export const LocationProvider: React.FC = ({ children }) => {
         newData.flag = props.flag
         newData.image_uri = props.image_uri
         setLocationData(newData)
-        // setData(props)
     }, [])
 
     return (
@@ -84,6 +91,7 @@ export const LocationProvider: React.FC = ({ children }) => {
     )
 }
 
+// This function is exported and used to give access to the components in this hook
 function useLocation(): LocationContextData {
     const context = useContext(LocationContext)
 

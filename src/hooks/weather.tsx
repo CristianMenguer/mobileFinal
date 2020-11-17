@@ -1,6 +1,10 @@
-import React, { createContext, useCallback, useState, useContext, useEffect } from 'react'
+import React, { createContext, useCallback, useState, useContext } from 'react'
 import { GetWeather, GetWeatherDaily, GetWeatherHourly, GetWeatherIcon, GetWeatherHourlyIcon } from '../services/WeatherApi'
 
+// This hook is used to keep all the weather/forecast information and the calls to
+// get new weather/forecast info from the API.
+
+// This is the interface of the return of this hook
 interface WeatherContextData {
     setWeatherCoords(coords: Coordinate): void
     weatherData: Weather
@@ -15,14 +19,17 @@ interface WeatherContextData {
 
 }
 
+// This is the context of this hook
 const WeatherContext = createContext<WeatherContextData>({} as WeatherContextData)
 
 export const WeatherProvider: React.FC = ({ children }) => {
 
+    // These are the weather/forecast objects that will be accessed by the app
     const [weatherData, setWeatherDataa] = useState<Weather>({} as Weather)
     const [forecastDaily, setForecastDaily] = useState<Forecast[]>([] as Forecast[])
     const [forecastHourly, setForecastHourly] = useState<Forecast[]>([] as Forecast[])
 
+    // This function receives the new coordinates and set the one in this context
     const setWeatherCoords = useCallback(async (props: Coordinate) => {
         const newData = weatherData
         newData.coords = props
@@ -30,6 +37,7 @@ export const WeatherProvider: React.FC = ({ children }) => {
         //
     }, [])
 
+    // This function receives the new weather object and set the one in this context
     const setWeatherData = useCallback((props: Weather) => {
         const newData = weatherData
         newData.id = props.id
@@ -42,9 +50,11 @@ export const WeatherProvider: React.FC = ({ children }) => {
         newData.temp_max = props.temp_max
         newData.temp_min = props.temp_min
         newData.timeAPI = props.timeAPI
-        setWeatherDataa({...newData})
+        setWeatherDataa({ ...newData })
     }, [])
 
+    // This function receives the coordinates and return the Weather Info
+    // from this specific coordinate calling the API
     const getWeatherDataApi = useCallback(async (props: Coordinate) => {
 
         const response = await GetWeather({ latitude: props.latitude, longitude: props.longitude })
@@ -54,7 +64,7 @@ export const WeatherProvider: React.FC = ({ children }) => {
         //
         const newData = weatherData
         newData.id = 0,
-        newData.coords = props
+            newData.coords = props
         newData.coordsId = props.id
         newData.temperature = response.temp
         newData.temp_max = 0
@@ -70,14 +80,18 @@ export const WeatherProvider: React.FC = ({ children }) => {
         //
     }, [])
 
+    // This function receives the new daily forecast object and set the one in this context
     const setDaily = useCallback(async (props: Forecast[]) => {
         setForecastDaily(props)
     }, [])
 
+    // This function receives the new hourly forecast object and set the one in this context
     const setHourly = useCallback(async (props: Forecast[]) => {
         setForecastHourly(props)
     }, [])
 
+    // This function receives the coordinates and return the Daily Forecast
+    // Weather Info from this specific coordinate calling the API
     const getForecastDailyApi = useCallback(async (props: Coordinate) => {
 
         const response = await GetWeatherDaily({ latitude: props.latitude, longitude: props.longitude })
@@ -113,10 +127,12 @@ export const WeatherProvider: React.FC = ({ children }) => {
             //
             predict.push(newForecast)
         }
-        setForecastDaily({...predict})
+        setForecastDaily({ ...predict })
         return predict
     }, [])
 
+    // This function receives the coordinates and return the Hourly Forecast
+    // Weather Info from this specific coordinate calling the API
     const getForecastHourlyApi = useCallback(async (props: Coordinate) => {
 
         const response = await GetWeatherHourly({ latitude: props.latitude, longitude: props.longitude })
@@ -154,17 +170,31 @@ export const WeatherProvider: React.FC = ({ children }) => {
                 break
             //
         }
-        setForecastHourly({...predict})
+        setForecastHourly({ ...predict })
         return predict
     }, [])
 
     return (
-        <WeatherContext.Provider value={{ setWeatherCoords, weatherData, setWeatherData, getWeatherDataApi, getForecastDailyApi, getForecastHourlyApi, forecastDaily, forecastHourly, setHourly, setDaily }} >
+        <WeatherContext.Provider value={
+            {
+                setWeatherCoords,
+                weatherData,
+                setWeatherData,
+                getWeatherDataApi,
+                // @ts-ignore
+                getForecastDailyApi, getForecastHourlyApi,
+                forecastDaily,
+                forecastHourly,
+                setHourly,
+                setDaily
+            }
+        } >
             {children}
         </WeatherContext.Provider>
     )
 }
 
+// This function is exported and used to give access to the components in this hook
 function useWeather(): WeatherContextData {
     const context = useContext(WeatherContext)
 

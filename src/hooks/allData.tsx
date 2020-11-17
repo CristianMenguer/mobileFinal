@@ -1,5 +1,5 @@
-import React, { createContext, useCallback, useState, useContext, useEffect } from 'react'
-import { GetInfo, SetInfo } from '../services/InfoStorage'
+import React, { createContext, useCallback, useState, useContext } from 'react'
+import { GetInfo } from '../services/InfoStorage'
 import * as ExpoLocation from 'expo-location'
 import useLocation from './location'
 import useWeather from './weather'
@@ -9,6 +9,7 @@ import { AddCurrencyRateDB, LoadCurrencyRatesDB } from '../models/Currency'
 import { AddWeatherDB, LoadWeatherDB } from '../models/Weather'
 import { AddForecastDB, LoadForecastDB } from '../models/Forecast'
 
+// This is the interface of the return of this hook
 interface AllDataContextData {
     isLoading: boolean
     setLoading(newStatus: boolean): void
@@ -20,16 +21,24 @@ interface AllDataContextData {
     loadCurrencyData(props: string): Promise<CurrencyData>
 }
 
+// This is the context of this hook
 const AllDataContext = createContext<AllDataContextData>({} as AllDataContextData)
 
 export const AllDataProvider: React.FC = ({ children }) => {
 
+    // This is a boolean object that will be accessed by the app in order
+    // to know whether the app is still loading
     const [isLoading, setIsLoading] = useState(true)
 
+    // it declares the functions from the other contexts
     const { getGeoDataApi } = useLocation()
     const { getWeatherDataApi, getForecastDailyApi, getForecastHourlyApi } = useWeather()
     const { GetCurrencyDataApi } = useCurrency()
 
+    /**
+     * This function loads the coordinates from the AsyncStorage, if it is found, returns it.
+     * If it is not, gets from the device location and returns it.
+     */
     const loadCoord = useCallback(async () => {
 
         const locationStorage = await GetInfo('CurrentCoord')
@@ -60,6 +69,12 @@ export const AllDataProvider: React.FC = ({ children }) => {
         return {} as Coordinate
     }, [])
 
+    /**
+     * This function receives the coordinate and tries to retrieve from the database
+     * the Geo Location info.
+     * If it is not found, gets from the API and saves to the database.
+     * And then returns it.
+     */
     const loadGeoLocation = useCallback(async (props: Coordinate) => {
 
         let geoLocation = await LoadGeoLocationDB(props.id ? props.id : 0)
@@ -78,6 +93,12 @@ export const AllDataProvider: React.FC = ({ children }) => {
         return geoLocation
     }, [])
 
+    /**
+     * This function receives the coordinate and tries to retrieve from the database
+     * the Weather info.
+     * If it is not found or it is older than 30 minutes, gets from the API and saves to the database.
+     * And then returns it.
+     */
     const loadWeather = useCallback(async (props: Coordinate) => {
         let weather = await LoadWeatherDB(props.id ? props.id : 0)
 
@@ -91,6 +112,12 @@ export const AllDataProvider: React.FC = ({ children }) => {
         return weather
     }, [])
 
+    /**
+     * This function receives the currency base and tries to retrieve from the database
+     * the Currency info.
+     * If it is not found or it is older than 1 day, gets from the API and saves to the database.
+     * And then returns it.
+     */
     const loadCurrencyData = useCallback(async (currencyBase: string) => {
         let rates = await LoadCurrencyRatesDB(currencyBase)
 
@@ -105,6 +132,12 @@ export const AllDataProvider: React.FC = ({ children }) => {
         return rates
     }, [])
 
+    /**
+     * This function receives the coordinates and the weather id,
+     * and tries to retrieve from the database the Daily Forecast info.
+     * If it is not found or it is older than 30 minutes, gets from the API and saves to the database.
+     * And then returns it.
+     */
     const loadDailyWeather = useCallback(async (weatherId: number, coords: Coordinate) => {
         let dailyWeather = await LoadForecastDB(weatherId, 'daily')
 
@@ -119,6 +152,12 @@ export const AllDataProvider: React.FC = ({ children }) => {
         return dailyWeather
     }, [])
 
+    /**
+     * This function receives the coordinates and the weather id,
+     * and tries to retrieve from the database the Hourly Forecast info.
+     * If it is not found or it is older than 30 minutes, gets from the API and saves to the database.
+     * And then returns it.
+     */
     const loadHourlyWeather = useCallback(async (weatherId: number, coords: Coordinate) => {
         let hourlyWeather = await LoadForecastDB(weatherId, 'hourly')
 
@@ -133,6 +172,7 @@ export const AllDataProvider: React.FC = ({ children }) => {
         return hourlyWeather
     }, [])
 
+    // This function receive a boolean to set the variable isLoading
     const setLoading = useCallback(async (newStatus: boolean) => {
         setIsLoading(newStatus)
     }, [])
@@ -145,6 +185,7 @@ export const AllDataProvider: React.FC = ({ children }) => {
     )
 }
 
+// This function is exported and used to give access to the components in this hook
 function useAllData(): AllDataContextData {
     const context = useContext(AllDataContext)
 
