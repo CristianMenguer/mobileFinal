@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, Image, ScrollView, TouchableOpacity } from 'react-native'
+import { Text, View, Image, ScrollView } from 'react-native'
 import { FontAwesome5 as Icon } from '@expo/vector-icons'
 
 import useLocation from '../../hooks/location'
@@ -7,18 +7,28 @@ import useWeather from '../../hooks/weather'
 
 import Styles from './style'
 import Loader from '../../components/Loader'
-import { useIsFocused } from '@react-navigation/native'
+
+
+/**
+ * This is the Weather Page.
+ * It shows the current city and country.
+ * Then it shows the current weather.
+ * Right below it is possible to see the Hourly and Dayly forecast.
+ */
 
 const Weather: React.FC = () => {
 
+    // Get locationData and weatherData (and forecast data) from the hooks
     const { locationData } = useLocation()
     const { weatherData, forecastDaily, forecastHourly } = useWeather()
 
     const [currentDate, setCurrentDate] = useState('')
     const [location, setLocation] = useState('')
 
+    // Set the date once.
     useEffect(() => setCurrentDate(new Date().toLocaleDateString()), [])
 
+    // This method sets some of the variables that are shown on screen.
     useEffect(() => {
         weatherData.temp_min = forecastDaily[0].min_temp
         weatherData.temp_max = forecastDaily[0].max_temp
