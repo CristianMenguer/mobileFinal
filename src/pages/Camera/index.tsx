@@ -17,9 +17,10 @@ interface Source {
 
 const Camera: React.FC = () => {
 
-    //
+    // Get locationData from the hook
     const { locationData } = useLocation()
 
+    // variable to store the image shown on screen
     const [source, setSource] = useState<Source>(() => {
         const uri = locationData.image_uri && locationData.image_uri !== '' ?
             { uri: locationData.image_uri }
@@ -29,6 +30,14 @@ const Camera: React.FC = () => {
         return uri
     })
 
+    /**
+     * This function  is called when the button to take a picture is touched.
+     * Firstly it calls ImagePicker.launchCameraAsync to open the device camera.
+     * If a picture was taken, it is shown on screen and a confirmation dialog is
+     * also shown on screen asking if the user wants to save the picture and reload
+     * the app to apply the change. If 'Yes' is selected, it will save the new picture
+     * to current location in the database and the app will be reloaded.
+     */
     async function handleTakePicture() {
         const cameraResponse = await ImagePicker.launchCameraAsync({
             allowsEditing: true,

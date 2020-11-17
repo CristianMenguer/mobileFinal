@@ -1,5 +1,7 @@
 import { StyleSheet, Dimensions } from 'react-native'
 
+// This is the style file to the camera page
+
 const Styles = StyleSheet.create({
     container: {
         backgroundColor: '#F3F4F4',
@@ -19,6 +21,7 @@ const Styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    // Set the picture size to the same that is shown in the map
     photo: {
         borderRadius: 16,
         width: '95%',

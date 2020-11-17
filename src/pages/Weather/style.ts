@@ -1,5 +1,7 @@
 import { StyleSheet } from 'react-native'
 
+// This is the style file to the weather page
+
 const Styles = StyleSheet.create({
     container: {
         backgroundColor: '#F3F4F4',

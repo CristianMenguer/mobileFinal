@@ -1,6 +1,8 @@
 import React from 'react'
 import { StyleSheet } from 'react-native'
 
+// This is the style file to the home page
+
 const Styles = StyleSheet.create({
     fullContainer: {
         backgroundColor: '#FAFAFA',
