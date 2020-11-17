@@ -3,6 +3,10 @@ import axios from 'axios'
 const key = '997183acfd5f458c88bab53c9ccc89d7'
 const keyHourly = '78ac0698d453c617b5071fa0b600f529'
 
+/**
+ * This function receives latitude and longitude and calls the api,
+ * returning a Weather object
+ */
 export const GetWeather = async (coords: Omit<Coordinate, 'id'>) => {
     const baseURL = 'https://api.weatherbit.io/v2.0/current'
 
@@ -21,12 +25,14 @@ export const GetWeather = async (coords: Omit<Coordinate, 'id'>) => {
     return []
 }
 
+// This function receives an icon code and returns the link to the icon
 export const GetWeatherIcon = (code: string) => {
     const url = `https://www.weatherbit.io/static/img/icons/${code}.png`
 
     return url
 }
 
+// This function receives an icon code and returns the link to the icon
 export const GetWeatherHourlyIcon = (code: string) => {
     const url = `http://openweathermap.org/img/wn/${code}@2x.png`
 
@@ -34,6 +40,10 @@ export const GetWeatherHourlyIcon = (code: string) => {
     return url
 }
 
+/**
+ * This function receives latitude and longitude and calls the api,
+ * returning Daily Forecast objects
+ */
 export const GetWeatherDaily = async (coords: Omit<Coordinate, 'id'>) => {
     const baseURL = 'https://api.weatherbit.io/v2.0/forecast/daily'
 
@@ -52,6 +62,10 @@ export const GetWeatherDaily = async (coords: Omit<Coordinate, 'id'>) => {
     return []
 }
 
+/**
+ * This function receives latitude and longitude and calls the api,
+ * returning Hourly Forecast objects
+ */
 export const GetWeatherHourly = async (coords: Omit<Coordinate, 'id'>) => {
     const baseURL = 'https://api.openweathermap.org/data/2.5/onecall?exclude=current,minutely,daily,alerts&units=metric&'
 

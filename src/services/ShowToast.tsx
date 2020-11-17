@@ -1,5 +1,9 @@
 import Toast from 'react-native-tiny-toast'
 
+/**
+ * This function is used to facilitate the call of the
+ * component Toast from the library 'react-native-tiny-toast'
+ */
 export const showToast = async (message: string, toastPosition: string = 'bottom', toastDuration: string = 'short') => {
     let duration = Toast.duration.SHORT
     if (toastDuration == 'long')

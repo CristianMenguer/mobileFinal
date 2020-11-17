@@ -2,13 +2,16 @@ import axios from 'axios'
 
 const baseURL = 'https://api.exchangeratesapi.io/latest'
 
+/**
+ * This function receives a base currency and calls the api,
+ * returning all the objects returned from the API
+ */
 export const GetGurrencyRates = async (currencyCode: string) => {
     if (!currencyCode)
         return null
     //
     const url = `${baseURL}?base=${currencyCode}`
     //
-    // console.log('url currency: ' + url)
     try {
         const response = await axios.get(url)
         return response
@@ -20,6 +23,10 @@ export const GetGurrencyRates = async (currencyCode: string) => {
     return null
 }
 
+/**
+ * This function receives two currencies and calls the api,
+ * returning rate between them
+ */
 export const GetGurrencyRate = async (currencyCode: string, currencyCompare: string = 'USD'): Promise<CurrencyData> => {
     if (!currencyCode)
         return {} as CurrencyData
