@@ -13,10 +13,28 @@ import Styles from './style'
 import { AddCoordsDB, DeleteGeoLocationDB, GetCoordByIdDB, LoadAllGeoLocationDB } from '../../models/Location'
 import { showToast } from '../../services/ShowToast'
 
+/**
+ * This is the Location Page.
+ * In this page a map is shown with all the locations saved
+ * in the database. The markers on the map contain the name
+ * of the city and the picture saved to that location.
+ * If there is no picture, a default picture is shown instead.
+ * After a longPress on the map, a new marker is set,
+ * being possible to save this location and reload the app
+ * with information about this new location.
+ * Below the map there is a list (horizontal) of the locations saved.
+ * If one of them is touched, the map 'goes' to this location and
+ * asks the user to reload the app with the new location.
+ * After a longPress on one of the locations,
+ * the user is asked if they desire to delete it.
+ */
+
 const Location: React.FC = () => {
 
     // Hook to get the current focus state of the screen. Returns a true if screen is focused.
     const isFocused = useIsFocused()
+
+    // Get locationData from the hook
     const { locationData } = useLocation()
 
     const [newCoord, setNewCoord] = useState({} as Coordinate)
@@ -32,10 +50,10 @@ const Location: React.FC = () => {
 
     const colorCurrent = '#FF0000bb'
 
+    // These are the colors used to the locations
     const colors = [
         //    'red',
         //    'tomato',
-
         'orange',
         'yellow',
         'green',
@@ -54,6 +72,9 @@ const Location: React.FC = () => {
         'plum'
     ]
 
+    /**
+     * This function loads all the locations from the database
+     */
     function LoadGeoLocation() {
 
         LoadAllGeoLocationDB()
@@ -74,6 +95,10 @@ const Location: React.FC = () => {
             })
     }
 
+    /**
+     * This method is called when this page is focused.
+     * It initialises the variables and calls the function LoadLocation.
+     */
     useEffect(() => {
         //
         if (!isFocused)
@@ -95,6 +120,10 @@ const Location: React.FC = () => {
         //
     }, [isFocused])
 
+    /**
+     * This function is called when the user longPress any location.
+     * It will delete from the database and from this page.
+     */
     function removeMarker(geo: GeoLocation) {
 
         if (!geo || !geo.id || geo.id < 1)
@@ -131,6 +160,12 @@ const Location: React.FC = () => {
 
     }
 
+    /**
+     * This function is called when the button "Add Current Location" is touched.
+     * Firstly, it saves in the database and set the AsyncStorage.
+     * Then it asks if the user wants to reload the app with information
+     * from the new location.
+     */
     async function addMarker() {
         if (newCoord.id && newCoord.id > 0) {
             showToast('Erro ao salvar. Location already saved!')
@@ -173,6 +208,12 @@ const Location: React.FC = () => {
 
     }
 
+    /**
+     * This function is called when a location is select from the list.
+     * It brings the map to the selected position (region) and asks
+     * if the user wants to reload the app with information
+     * from this location.
+     */
     function handleLocationSelected(geo: GeoLocation) {
         setRegion({
             latitude: geo.coords?.latitude ? geo.coords?.latitude : 0,
@@ -228,12 +269,6 @@ const Location: React.FC = () => {
                         const longitude = element.nativeEvent.coordinate.longitude
                         //
                         setNewCoord({ latitude, longitude })
-                        // setRegion({
-                        //     latitude,
-                        //     longitude,
-                        //     latitudeDelta: region.latitudeDelta,
-                        //     longitudeDelta: region.longitudeDelta
-                        // })
                     }}
 
                 >
@@ -309,13 +344,8 @@ const Location: React.FC = () => {
                             )
                         })
                     }
-
-
-
                 </ScrollView>
             </View>
-
-
         </View >
     )
 }
