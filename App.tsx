@@ -6,6 +6,9 @@ import Routes from './src/routes'
 
 import Styles from './src/style/global'
 
+// This file wraps the whole app inside the global style,
+// the providers to use the hooks and calls the router index
+
 const App: React.FC = () => {
     return (
         <View style={Styles.container} >
