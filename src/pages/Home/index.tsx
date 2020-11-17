@@ -13,6 +13,7 @@ import { dropTablesDb } from '../../database'
 
 const Home: React.FC = () => {
 
+    // Hook to get the current focus state of the screen. Returns a true if screen is focused.
     const isFocused = useIsFocused()
 
     const { locationData } = useLocation()

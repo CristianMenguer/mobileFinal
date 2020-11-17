@@ -12,26 +12,41 @@ import { AddCoordsDB } from '../../models/Location'
 import { DeleteInfo, SetInfo } from '../../services/InfoStorage'
 import { dropTablesDb } from '../../database'
 
+/**
+ * This is the loading page.
+ * It is called when the app starts to load all the information
+ * necessary to use the app.
+ */
+
 const Loading: React.FC = () => {
 
+    // Hook to get the current focus state of the screen. Returns a true if screen is focused.
     const isFocused = useIsFocused()
+
+    // @message stores the message that is sent to the Loader component
     const [message, setMessagee] = useState('')
 
+    // The following 4 lines make the use of the exported functions in the hooks be possible
     const { setLoading, loadCoord, loadGeoLocation, loadWeather, loadDailyWeather, loadHourlyWeather, loadCurrencyData } = useAllData()
-
     const { setCoords, setGeoData } = useLocation()
     const { setWeatherCoords, setWeatherData, setDaily, setHourly } = useWeather()
     const { SetCurrencyData } = useCurrency()
 
+    // Variables used to control the permissions and access to the internet
     const [hasLocationPermission, setLocationPermission] = useState(false)
     const [hasCameraPermission, setCameraPermission] = useState(false)
     const [hasNetwork, setHasNetwork] = useState(false)
 
+    // This function sets the 'message'
     function setMessage(newMessage: string) {
         // console.log(`> Loading Page => Setting new Message: ${newMessage}`)
         setMessagee(newMessage.replace('. ', '.\n'))
     }
 
+    /**
+     * This method is called everytime the page is focused.
+     * It asks for permissions and test the internet connection
+     */
     useEffect(() => {
         if (!isFocused)
             return
@@ -56,6 +71,11 @@ const Loading: React.FC = () => {
         }
     }, [isFocused])
 
+    /**
+     * This function is the most important to the load process.
+     * It works with the 'useAllData()' context to get all information from
+     * the database or api's and setting the state in the hooks.
+     */
     async function loadData() {
 
         // await dropTablesDb()
@@ -63,8 +83,10 @@ const Loading: React.FC = () => {
 
         setMessage('Loading last/current location')
         //
+        // Get the last/current coordinate
         let coords = await loadCoord()
 
+        // If got, saves to the database and AsyncStorage
         if (!coords.id || coords.id < 1)
             coords = await AddCoordsDB(coords)
         //
@@ -82,6 +104,7 @@ const Loading: React.FC = () => {
 
         setMessage('App Coordinates set. Loading Geo Location info')
 
+        // Get the GeoLocation from database/api
         const geoResp = await loadGeoLocation(coords)
 
         geoResp.coords = coords
@@ -93,6 +116,7 @@ const Loading: React.FC = () => {
 
         setMessage('Currency Base set. Loading currency rates')
 
+        // Get Currency from database/api
         const currResp = await loadCurrencyData(geoResp.currency_code)
 
         SetCurrencyData(currResp)
@@ -101,18 +125,21 @@ const Loading: React.FC = () => {
 
         setWeatherCoords(coords)
 
+        // Get Weather from database/api
         const weatherResp = await loadWeather(coords)
 
         setWeatherData(weatherResp)
 
         setMessage('Loading Daily Weather')
 
+        // Get Daily Forecast from database/api
         const dailyResp = await loadDailyWeather(weatherResp.id, coords)
 
         setDaily(dailyResp)
 
         setMessage('Loading Hourly Weather')
 
+        // Get Hourly Forecast from database/api
         const hourlyResp = await loadHourlyWeather(weatherResp.id, coords)
 
         setHourly(hourlyResp)
@@ -121,6 +148,7 @@ const Loading: React.FC = () => {
 
     }
 
+    // Once permissions are granted and app has internet connection, it calls loadData method
     useEffect(() => {
         if (!isFocused || !hasNetwork || !hasCameraPermission || !hasLocationPermission)
             return

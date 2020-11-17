@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { Text, TextInput, TouchableOpacity, View, Image, ScrollView, Alert, Keyboard } from 'react-native'
+import React, { useState } from 'react'
+import { Text, TouchableOpacity, View, Image, Alert } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
-import { useIsFocused } from '@react-navigation/native'
 import * as Updates from 'expo-updates'
 import { MaterialIcons as Icon } from '@expo/vector-icons'
 
@@ -11,14 +10,14 @@ import { UpdateGeoLocationPhotoDB } from '../../models/Location'
 import { showToast } from '../../services/ShowToast'
 import { sleep } from '../../services/Sleep'
 
+// This interface is used to set the images url/path
 interface Source {
     uri: string
 }
 
 const Camera: React.FC = () => {
 
-    const isFocused = useIsFocused()
-
+    //
     const { locationData } = useLocation()
 
     const [source, setSource] = useState<Source>(() => {
@@ -29,12 +28,6 @@ const Camera: React.FC = () => {
         //
         return uri
     })
-
-    useEffect(() => {
-        if (!isFocused)
-            return
-        //
-    }, [isFocused])
 
     async function handleTakePicture() {
         const cameraResponse = await ImagePicker.launchCameraAsync({

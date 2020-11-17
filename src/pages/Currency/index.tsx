@@ -12,6 +12,8 @@ const Currency: React.FC = () => {
 
     const { locationData } = useLocation()
     const { currencyData } = useCurrency()
+
+    // Hook to get the current focus state of the screen. Returns a true if screen is focused.
     const isFocused = useIsFocused()
 
     const [firstValue, setFirstValue] = useState('0')
