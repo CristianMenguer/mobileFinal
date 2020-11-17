@@ -1,7 +1,8 @@
-import { execSql, selectDB, insertDB } from '../database'
+import { selectDB, insertDB } from '../database'
 
 const tableName = 'currencyrate'
 
+// This function receives the currency base, retrieves the rate from the database and returns it.
 export const LoadCurrencyRatesDB = async (currencyBase: string): Promise<CurrencyData> => {
 
     const response = await selectDB(tableName, `currencyBase = '${currencyBase}'`) as CurrencyData[]
@@ -13,6 +14,8 @@ export const LoadCurrencyRatesDB = async (currencyBase: string): Promise<Currenc
 
 }
 
+// This function receives a currency object and saves it to the database and returns the object saved
+// with the new ID.
 export const AddCurrencyRateDB = async (props: CurrencyData): Promise<CurrencyData> => {
     if (!props || (props.id && props.id > 0))
         return props

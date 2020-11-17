@@ -2,6 +2,8 @@ import { selectDB, insertDB } from '../database'
 
 const tableName = 'forecast'
 
+// This function receives the weather id and the type, and retrieves the forecast objects
+// from the database and returns them.
 export const LoadForecastDB = async (idWeather: number, type: string): Promise<Forecast[]> => {
 
     const response = await selectDB(tableName, `weatherId = ${idWeather} and type = '${type}'`) as Forecast[]
@@ -13,6 +15,8 @@ export const LoadForecastDB = async (idWeather: number, type: string): Promise<F
 
 }
 
+// This function receives a forecast object and saves it to the database and returns the object saved
+// with the new ID.
 export const AddForecastDB = async (props: Forecast): Promise<Forecast> => {
     if (!props || (props.id && props.id > 0))
         return props
