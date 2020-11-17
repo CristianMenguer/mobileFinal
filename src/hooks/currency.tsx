@@ -1,6 +1,5 @@
 import React, { createContext, useCallback, useState, useContext, useEffect } from 'react'
 import { GetGurrencyRate } from '../services/CurrencyApi'
-import { CURRENCY_TYPES } from '../constants/Currency'
 
 interface CurrencyContextData {
     SetCurrencyData(props: CurrencyData): void

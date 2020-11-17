@@ -1,3 +1,4 @@
+//Interface used in the whole app to store current GeoLocation info
 interface GeoLocation {
     id?: number
     coordId?: number

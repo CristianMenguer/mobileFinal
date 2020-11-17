@@ -1,6 +1,6 @@
-import React from 'react'
 import { StyleSheet } from 'react-native'
 
+// This class has the 'css' of the component Loader
 const Styles = StyleSheet.create({
     container: {
         flex: 1,

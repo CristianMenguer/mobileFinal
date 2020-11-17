@@ -1,3 +1,4 @@
+//Interface used in the whole app to Forecast, daily or hourly
 interface Forecast {
     id?: number
     weatherId?: number

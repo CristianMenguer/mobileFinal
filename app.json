@@ -1,40 +1,41 @@
 {
-    "expo": {
-        "name": "Travel Pal",
-        "slug": "mobileFinal",
-        "version": "1.0.0",
-        "orientation": "portrait",
-        "icon": "./assets/icon.png",
-        "privacy": "unlisted",
-        "splash": {
-            "image": "./assets/splash.png",
-            "resizeMode": "contain",
-            "backgroundColor": "#ffffff"
-        },
-        "updates": {
-            "fallbackToCacheTimeout": 0
-        },
-        "assetBundlePatterns": [
-            "**/*"
-        ],
-        "ios": {
-            "supportsTablet": true
-        },
-        "web": {
-            "favicon": "./assets/favicon.png"
-        },
-        "android": {
-            "package": "menguer.cristian.mobileFinal",
-            "config": {
-                "googleMaps": {
-                    "apiKey": "AIzaSyAo7Aw8NgtFqTs1ZPoOd58sE5pHGSwrR3Y"
-                }
-            },
-            "permissions": ["ACCESS_FINE_LOCATION", "CAMERA"]
-        },
-        "description": "App developed by Cristian Menguer for study purposes",
-        "owner": "Cristian Menguer",
-        "platforms": ["android"],
-        "githubUrl": "https://github.com/CristianMenguer/mobileFinal"
-    }
+  "expo": {
+    "name": "Travel Pal",
+    "slug": "mobileFinal",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "privacy": "unlisted",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "android": {
+      "package": "menguer.cristian.mobileFinal",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAo7Aw8NgtFqTs1ZPoOd58sE5pHGSwrR3Y"
+        }
+      },
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "CAMERA"
+      ]
+    },
+    "description": "App developed by Cristian Menguer for study purposes",
+    "platforms": [
+      "android"
+    ],
+    "githubUrl": "https://github.com/CristianMenguer/mobileFinal"
+  }
 }

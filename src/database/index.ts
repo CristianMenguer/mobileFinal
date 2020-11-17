@@ -1,10 +1,13 @@
 import * as SQLite from 'expo-sqlite'
-import { SQLVoidCallback, WebSQLDatabase } from 'expo-sqlite'
 
-const startDb = async (): Promise<WebSQLDatabase> => {
+// This class has all iterations that the app has with the SQLite database
+// All the functions are promises, returning error if it doesn't succeed
+
+// This function starts the database creating it and also all the tables if they don't exist
+const startDb = async (): Promise<SQLite.WebSQLDatabase> => {
     const db = SQLite.openDatabase('./2020087.db')
 
-    return new Promise<WebSQLDatabase>((resolve, reject) => {
+    return new Promise<SQLite.WebSQLDatabase>((resolve, reject) => {
         db.transaction((transaction) => {
             transaction.executeSql('create table if not exists repository (id integer primary key, description text, full_name text, avatar_url text, login text)')
             //
@@ -33,10 +36,11 @@ const startDb = async (): Promise<WebSQLDatabase> => {
     })
 }
 
-export const dropTablesDb = async (): Promise<WebSQLDatabase> => {
+// This function drops all the tables from the database
+export const dropTablesDb = async (): Promise<SQLite.WebSQLDatabase> => {
     const db = SQLite.openDatabase('./2020087.db')
 
-    return new Promise<WebSQLDatabase>((resolve, reject) => {
+    return new Promise<SQLite.WebSQLDatabase>((resolve, reject) => {
         db.transaction((transaction) => {
             transaction.executeSql('drop table repository')
             transaction.executeSql('drop table coord')
@@ -53,6 +57,7 @@ export const dropTablesDb = async (): Promise<WebSQLDatabase> => {
     })
 }
 
+// This function receives an insert sql and executes it, returning the id of the object inserted
 export const insertDB = async (sql: string): Promise<number> => {
     const db = await startDb()
 
@@ -78,6 +83,7 @@ export const insertDB = async (sql: string): Promise<number> => {
     })
 }
 
+// This function receives a sql command and executes it, returning true if it succeeds
 export const execSql = async (sql: string): Promise<boolean> => {
     const db = await startDb()
 
@@ -107,6 +113,8 @@ export const execSql = async (sql: string): Promise<boolean> => {
     })
 }
 
+// This function receives the name of the table and a where clause and executes the command,
+// returning an array with the result of the select
 export const selectDB = async (tableName: string, where: string = '') => {
     const db = await startDb()
 
@@ -132,6 +140,7 @@ export const selectDB = async (tableName: string, where: string = '') => {
     })
 }
 
+// This function receives the name of the table and an ID, returning the specific object
 export const selectByIdDB = async (tableName: string, id: number) => {
     const db = await startDb()
     const sql = `select * from ${tableName} where id = ${id}`

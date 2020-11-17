@@ -1,3 +1,4 @@
+//Interface used in the whole app to store current weather info
 interface Weather {
     id: number
     coordsId?: number
