@@ -1,35 +1,32 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, Image, TouchableOpacity, Alert } from 'react-native'
+import { Text, View, Image } from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
-import * as Updates from 'expo-updates'
 
 import useLocation from '../../hooks/location'
 import useWeather from '../../hooks/weather'
 import Loader from '../../components/Loader'
 import Styles from './style'
-import { DeleteInfo } from '../../services/InfoStorage'
-import useAllData from '../../hooks/allData'
-import { dropTablesDb } from '../../database'
+
+/**
+ * This is the Home Page.
+ * This page shows information about the project and
+ * the current city, country and weather.
+ */
 
 const Home: React.FC = () => {
 
     // Hook to get the current focus state of the screen. Returns a true if screen is focused.
     const isFocused = useIsFocused()
 
+    // Get locationData and weatherData from the hooks
     const { locationData } = useLocation()
     const { weatherData } = useWeather()
-    const { setLoading } = useAllData()
 
     const [location, setLocation] = useState('')
     const [temperature, setTemperature] = useState('')
     const [logoWeather, setLogoWeather] = useState('https://icons.iconarchive.com/icons/dakirby309/windows-8-metro/128/Web-The-Weather-Channel-Metro-icon.png')
 
-    async function resetData() {
-        await dropTablesDb()
-        await DeleteInfo('CurrentCoord')
-        Updates.reloadAsync()
-    }
-
+    // This method sets the variables that are shown on screen.
     useEffect(() => {
         if (!isFocused)
             return
@@ -48,8 +45,13 @@ const Home: React.FC = () => {
         //
     }, [isFocused, locationData, weatherData])
 
+    /**
+     * It is probably never used. It is just to make sure that everything
+     * was right in the Loading Page, as this is the first page shown
+     * after the Loading process.
+    */
     if (location === '' || temperature === '')
-        return <Loader message='Loading Location and Temperature' />
+        return <Loader message='No Location and Temperature Data' />
     //
     return (
         <>
@@ -77,17 +79,6 @@ const Home: React.FC = () => {
 
                 </View>
             </View>
-            {/* <TouchableOpacity onPress={() => resetData()} style={{
-                width: 210,
-                height: 60,
-                backgroundColor: '#04D361',
-                borderRadius: 5,
-                borderWidth: 0,
-                justifyContent: 'center',
-                alignItems: 'center',
-            }} >
-                <Text >Reset Data</Text>
-            </TouchableOpacity> */}
         </>
     )
 }
