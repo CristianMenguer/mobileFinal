@@ -5,6 +5,12 @@ import { Feather as Icon } from '@expo/vector-icons'
 
 import Loading from './../pages/Loading'
 
+/**
+ * This component will exclusively call the Loading page.
+ * The menu will not appear and the user will have to wait until
+ * all information is loaded.
+ */
+
 interface TabBarIconProps {
     color: string
     size: number

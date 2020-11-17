@@ -10,12 +10,20 @@ import Currency from './../pages/Currency'
 import Camera from './../pages/Camera'
 import Weather from './../pages/Weather'
 
+/**
+ * This component is the main menu.
+ * After all data is loaded and ready, it appears
+ * with all the options to the user.
+ */
+
 interface TabBarIconProps {
     color: string
     size: number
 }
 
 const Tab = createBottomTabNavigator()
+
+// These consts are specific to each option in the menu
 
 const locationOptions = {
     tabBarLabel: 'Location',
