@@ -112,7 +112,7 @@ const Currency: React.FC = () => {
                     source={require('../../../assets/moneyIcon.png')}
                     style={Styles.logo}
                 />
-                <Text style={Styles.textLocation} >You are in Ireland </Text>
+                <Text style={Styles.textLocation} >You are in {locationData.country} </Text>
                 <Text style={Styles.text} >Your currency is {locationData.currency_name} ({locationData.currency_code})</Text>
                 <Text style={Styles.text} >1.00 {locationData.currency_code} = {rateToUSD.toFixed(2)} USD </Text>
                 <TextInput

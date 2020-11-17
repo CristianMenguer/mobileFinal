@@ -283,7 +283,7 @@ const Location: React.FC = () => {
                         marks.map(marker => {
                             return (
                                 <Marker
-                                    key={marker.id + marker.image_uri}
+                                    key={marker.id}
                                     // @ts-ignore
                                     coordinate={{ latitude: marker.coords.latitude, longitude: marker.coords.longitude }}
                                     pinColor={colors[((marker.id ? marker.id : 0) - 1) % colors.length]}
@@ -300,7 +300,7 @@ const Location: React.FC = () => {
 
                                             style={Styles.mapMarkerImage}
                                         />
-                                        <Text style={Styles.mapMarkerTitle} >{marker.city}</Text>
+                                        <Text style={Styles.mapMarkerTitle} >{marker.city.substr(0, 10)}</Text>
                                     </View>
                                 </Marker>
                             )

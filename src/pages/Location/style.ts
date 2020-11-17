@@ -110,6 +110,7 @@ const Styles = StyleSheet.create({
         color: '#000',
         fontSize: 13,
         lineHeight: 23,
+        maxWidth: 85,
     },
 
 })
