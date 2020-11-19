@@ -2,7 +2,7 @@
     "expo": {
         "name": "Travel Pal",
         "slug": "mobileFinal",
-        "version": "2.0.0",
+        "version": "1.0.1",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "privacy": "unlisted",
@@ -22,6 +22,7 @@
         },
         "android": {
             "package": "menguer.cristian.mobileFinal",
+            "versionCode": 2,
             "config": {
                 "googleMaps": {
                     "apiKey": "AIzaSyAo7Aw8NgtFqTs1ZPoOd58sE5pHGSwrR3Y"
