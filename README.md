@@ -50,5 +50,12 @@ git clone https://github.com/cristianmenguer/mobileFinal.git
 cd mobileFinal
 ```
 
-3. Run `yarn` to install dependencies.
-4. Run `yarn start` to start Expo.
+3. Run yarn to install dependencies
+```
+yarn
+```
+
+4. Then start the app
+```
+yarn start
+```
