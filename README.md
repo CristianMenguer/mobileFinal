@@ -72,7 +72,7 @@ yarn start
 
 ## Expo Project
 
-Scan this QrCode to open the project on your device
+Scan this QrCode to open the project in your device
 
 <p align="center">
     <img alt="QrCode" src="https://github.com/CristianMenguer/mobileFinal/blob/master/assets/qrcode.png">
