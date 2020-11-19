@@ -40,7 +40,15 @@ A Typescript and Expo app built to study mobile development!
 
 ## Getting started
 
-1. Clone this repo using `git clone https://github.com/cristianmenguer/mobileFinal.git`.
-2. Move to the appropriate directory: `cd mobileFinal`.
+1. Clone this repo
+```
+git clone https://github.com/cristianmenguer/mobileFinal.git
+```
+
+2. Move to the appropriate directory
+```
+cd mobileFinal
+```
+
 3. Run `yarn` to install dependencies.
 4. Run `yarn start` to start Expo.
