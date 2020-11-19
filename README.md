@@ -16,6 +16,8 @@
   </a>
 </p>
 
+
+
 <h2 align="center">A Typescript Mobile App developed for study purposes in CCT - Mobile Development course</h2>
 
 <hr />
