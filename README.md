@@ -32,6 +32,9 @@ A Typescript and Expo app built to study mobile development!
 
 ## Technologies
 
+- [Expo SDK](https://github.com/expo/expo) - universal set of amazing libraries (such as `expo-updates`) which are needed for building sustainable apps
+- [React Native](https://reactnative.dev/) - Create native apps for Android and iOS using React
+- [Typescript](https://www.typescriptlang.org/) - strict syntactical superset of JavaScript
 
 ## Requirements
 
