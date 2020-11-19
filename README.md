@@ -16,7 +16,9 @@
   </a>
 </p>
 
+![Home Screen](https://github.com/CristianMenguer/mobileFinal/blob/master/assets/Home.jpg)
 
+<br />
 
 <h2 align="center">A Typescript Mobile App developed for study purposes in CCT - Mobile Development course</h2>
 
@@ -27,6 +29,7 @@
 * [Technologies](#technologies)
 * [Requirements](#requirements)
 * [Getting started](#getting-started)
+* [Expo Project](#expo-project)
 
 ## General info
 
@@ -64,3 +67,9 @@ yarn
 ```
 yarn start
 ```
+
+## Expo Project
+
+Scan this QrCode to open the project on your device
+
+![QrCode](https://github.com/CristianMenguer/mobileFinal/blob/master/assets/qrcode.png)
