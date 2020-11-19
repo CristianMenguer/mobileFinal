@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-    ![Home Screen](https://github.com/CristianMenguer/mobileFinal/blob/master/assets/Home.jpg)
+    <img alt="Home Screen" src="https://github.com/CristianMenguer/mobileFinal/blob/master/assets/Home.jpg">
 </p>
 
 <br />
