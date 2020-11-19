@@ -75,5 +75,5 @@ yarn start
 Scan this QrCode to open the project on your device
 
 <p align="center">
-    ![QrCode](https://github.com/CristianMenguer/mobileFinal/blob/master/assets/qrcode.png)
+    <img alt="QrCode" src="https://github.com/CristianMenguer/mobileFinal/blob/master/assets/qrcode.png">
 </p>
