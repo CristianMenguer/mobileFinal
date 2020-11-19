@@ -16,9 +16,9 @@
   </a>
 </p>
 
-<div align="center">
+<p align="center">
     ![Home Screen](https://github.com/CristianMenguer/mobileFinal/blob/master/assets/Home.jpg)
-</div>
+</p>
 
 <br />
 
@@ -74,6 +74,6 @@ yarn start
 
 Scan this QrCode to open the project on your device
 
-<div align="center">
+<p align="center">
     ![QrCode](https://github.com/CristianMenguer/mobileFinal/blob/master/assets/qrcode.png)
-</div>
+</p>
