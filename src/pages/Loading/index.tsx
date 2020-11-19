@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Alert } from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
 import * as Network from 'expo-network'
 
@@ -9,7 +10,7 @@ import useWeather from '../../hooks/weather'
 import Loader from '../../components/Loader'
 import useCurrency from '../../hooks/currency'
 import { AddCoordsDB } from '../../models/Location'
-import { DeleteInfo, SetInfo } from '../../services/InfoStorage'
+import { DeleteInfo, GetInfo, SetInfo } from '../../services/InfoStorage'
 import { dropTablesDb } from '../../database'
 
 /**
@@ -81,10 +82,39 @@ const Loading: React.FC = () => {
         // await dropTablesDb()
         // await DeleteInfo('CurrentCoord')
 
-        setMessage('Loading last/current location')
+        // It will wait until the user answer if they want to load the
+        // last location saved or the current one
+        const AsyncAlert = (): Promise<string> => {
+            return new Promise((resolve, reject) => {
+                Alert.alert(
+                    'Choose Location',
+                    'Would you like to load your current or last location saved?',
+                    [
+                        {
+                            text: 'Current',
+                            onPress: () => resolve('current')
+                        },
+                        {
+                            text: 'Last',
+                            onPress: () => resolve('last')
+                        }
+                    ],
+                    { cancelable: false }
+                )
+            })
+        }
+
+        let loadFrom = 'current'
+
+        const locationStorage = await GetInfo('CurrentCoord')
+        //
+        if (!!locationStorage)
+            loadFrom = await AsyncAlert()
+
+        setMessage(`Loading ${loadFrom} location`)
         //
         // Get the last/current coordinate
-        let coords = await loadCoord()
+        let coords = await loadCoord(loadFrom)
 
         // If got, saves to the database and AsyncStorage
         if (!coords.id || coords.id < 1)

@@ -13,7 +13,7 @@ import { AddForecastDB, LoadForecastDB } from '../models/Forecast'
 interface AllDataContextData {
     isLoading: boolean
     setLoading(newStatus: boolean): void
-    loadCoord(): Promise<Coordinate>
+    loadCoord(loadFrom: string): Promise<Coordinate>
     loadGeoLocation(props: Coordinate): Promise<GeoLocation>
     loadWeather(props: Coordinate): Promise<Weather>
     loadDailyWeather(weatherId: number, coords: Coordinate): Promise<Forecast[]>
@@ -39,18 +39,20 @@ export const AllDataProvider: React.FC = ({ children }) => {
      * This function loads the coordinates from the AsyncStorage, if it is found, returns it.
      * If it is not, gets from the device location and returns it.
      */
-    const loadCoord = useCallback(async () => {
+    const loadCoord = useCallback(async (loadFrom: string = 'last') => {
 
-        const locationStorage = await GetInfo('CurrentCoord')
-        //
-        if (!!locationStorage) {
-            const { id, latitude, longitude } = JSON.parse(locationStorage)
-            return {
-                id,
-                latitude,
-                longitude
-            } as Coordinate
+        if (loadFrom === 'last') {
+            const locationStorage = await GetInfo('CurrentCoord')
             //
+            if (!!locationStorage) {
+                const { id, latitude, longitude } = JSON.parse(locationStorage)
+                return {
+                    id,
+                    latitude,
+                    longitude
+                } as Coordinate
+                //
+            }
         }
         //
         const locationDevice = await ExpoLocation.getCurrentPositionAsync({

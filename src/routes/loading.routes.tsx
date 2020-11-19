@@ -36,11 +36,7 @@ const LoadingRoute: React.FC = () => {
         <NavigationContainer ref={navigationRef} >
             <Tab.Navigator
                 initialRouteName={'Loading'}
-                tabBarOptions={{
-                    activeTintColor: '#7a7a7a',
-                    inactiveTintColor: '#C5C5C5',
-                    labelPosition: 'below-icon',
-                }}
+
             >
 
                     <Tab.Screen name="Loading"

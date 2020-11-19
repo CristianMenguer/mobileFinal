@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Dimensions } from 'react-native'
 
 // This is the style file to the weather page
 
@@ -14,8 +14,10 @@ const Styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 8,
+        maxWidth: (Dimensions.get('window').width * 0.85),
     },
     locationText: {
+        textAlign: 'center',
         fontSize: 28,
     },
     dateText: {

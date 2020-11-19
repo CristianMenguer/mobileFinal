@@ -73,7 +73,9 @@ const MainRoute: React.FC = () => {
                     inactiveTintColor: '#C5C5C5',
                     //inactiveBackgroundColor: '#EBEEF2',
                     labelPosition: 'below-icon',
+
                 }}
+
             >
 
                 <Tab.Screen name='Location'
