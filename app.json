@@ -22,7 +22,7 @@
         },
         "android": {
             "package": "menguer.cristian.mobileFinal",
-            "versionCode": 5,
+            "versionCode": 7,
             "config": {
                 "googleMaps": {
                     "apiKey": "AIzaSyAo7Aw8NgtFqTs1ZPoOd58sE5pHGSwrR3Y"

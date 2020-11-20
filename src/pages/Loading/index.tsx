@@ -10,9 +10,7 @@ import useWeather from '../../hooks/weather'
 import Loader from '../../components/Loader'
 import useCurrency from '../../hooks/currency'
 import { AddCoordsDB } from '../../models/Location'
-import { DeleteInfo, GetInfo, SetInfo } from '../../services/InfoStorage'
-import { dropTablesDb } from '../../database'
-import { showToast } from '../../services/ShowToast'
+import { GetInfo, SetInfo } from '../../services/InfoStorage'
 
 /**
  * This is the loading page.
@@ -41,7 +39,7 @@ const Loading: React.FC = () => {
 
     // This function sets the 'message'
     function setMessage(newMessage: string) {
-        console.log(`> Loading Page => Setting new Message: ${newMessage}`)
+        //console.log(`> Loading Page => Setting new Message: ${newMessage}`)
         setMessagee(newMessage.replace('. ', '.\n'))
     }
 
