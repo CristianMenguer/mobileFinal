@@ -12,6 +12,7 @@ import useCurrency from '../../hooks/currency'
 import { AddCoordsDB } from '../../models/Location'
 import { DeleteInfo, GetInfo, SetInfo } from '../../services/InfoStorage'
 import { dropTablesDb } from '../../database'
+import { showToast } from '../../services/ShowToast'
 
 /**
  * This is the loading page.
@@ -40,37 +41,50 @@ const Loading: React.FC = () => {
 
     // This function sets the 'message'
     function setMessage(newMessage: string) {
-        // console.log(`> Loading Page => Setting new Message: ${newMessage}`)
+        console.log(`> Loading Page => Setting new Message: ${newMessage}`)
         setMessagee(newMessage.replace('. ', '.\n'))
     }
 
     /**
-     * This method is called everytime the page is focused.
-     * It asks for permissions and test the internet connection
+     * These following methods iare called everytime the page is focused.
+     * They ask for permissions and test the internet connection
      */
     useEffect(() => {
         if (!isFocused)
             return
         //
         if (!hasNetwork) {
-            setMessage('Waiting for network')
+            setMessage('Waiting for internet connection')
             Network.getNetworkStateAsync()
                 .then(networkResponse => {
                     if (networkResponse.isInternetReachable)
                         setHasNetwork(networkResponse.isInternetReachable)
                 })
         }
+
+    }, [isFocused])
+
+    useEffect(() => {
+        if (!isFocused || !hasNetwork)
+            return
         //
         if (!hasLocationPermission) {
             setMessage('Waiting for Location Permission')
             getLocationPermission().then(setLocationPermission)
         }
+
+    }, [isFocused, hasNetwork])
+
+    useEffect(() => {
+        if (!isFocused || !hasNetwork || !hasLocationPermission)
+            return
         //
         if (!hasCameraPermission) {
             setMessage('Waiting for Camera Permission')
             getCameraPermission().then(setCameraPermission)
         }
-    }, [isFocused])
+
+    }, [isFocused, hasNetwork, hasLocationPermission])
 
     /**
      * This function is the most important to the load process.
