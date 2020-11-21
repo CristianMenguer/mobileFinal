@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-    <img alt="Home Screen" src="https://github.com/CristianMenguer/mobileFinal/blob/master/assets/screens.gif">
+    <img alt="Home Screen" width="350" src="https://github.com/CristianMenguer/mobileFinal/blob/master/assets/screens.gif">
 </p>
 
 <br />
