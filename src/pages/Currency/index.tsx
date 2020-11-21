@@ -59,7 +59,7 @@ const Currency: React.FC = () => {
         value = value.replace(/[^\d.]/g, '')
 
         if (!value || value === '') {
-            setThis('0.00')
+            setThis('')
             setOther('0.00')
         } else
             //
@@ -123,6 +123,7 @@ const Currency: React.FC = () => {
                     placeholder={'EUR'}
                     placeholderTextColor={'green'}
                     onFocus={() => handleInputFocus()}
+                    onBlur={() => setFirstValue(parseFloat('0' + firstValue).toFixed(2))}
 
                 />
                 <Text style={Styles.text} >Converting to USD</Text>
@@ -134,8 +135,8 @@ const Currency: React.FC = () => {
                     placeholder={'USD'}
                     placeholderTextColor={'blue'}
                     onFocus={() => handleInputFocus()}
+                    onBlur={() => setSecondValue(parseFloat('0' + secondValue).toFixed(2))}
                 />
-
             </View>
         </>
     )

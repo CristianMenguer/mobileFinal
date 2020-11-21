@@ -337,7 +337,7 @@ const Location: React.FC = () => {
                                     onPress={() => handleLocationSelected(mark)}
                                     onLongPress={() => removeMarker(mark)}
                                 >
-                                    <Text style={Styles.itemText} >{mark.city}</Text>
+                                    <Text style={Styles.itemText} >{mark.city.substr(0, 15)}</Text>
                                     <Text style={Styles.itemFlag} >{mark.flag}</Text>
                                     <Text style={Styles.descriptionText} >{mark.coords?.latitude.toFixed(2) + ', ' + mark.coords?.longitude.toFixed(2)}</Text>
                                 </TouchableOpacity>
