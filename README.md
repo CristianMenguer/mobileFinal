@@ -77,3 +77,11 @@ Scan this QrCode to open the project in your device
 <p align="center">
     <img alt="QrCode" src="https://github.com/CristianMenguer/mobileFinal/blob/master/assets/qrcode.png">
 </p>
+
+## Play Store
+
+Scan this QrCode to open the project in the Google Play Store
+
+<p align="center">
+    <img alt="QrCode" src="https://github.com/CristianMenguer/mobileFinal/blob/master/assets/playStore.png">
+</p>
