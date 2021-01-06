@@ -3,21 +3,21 @@
 <br />
 
 <p align="center">
-  <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/cristianmenguer/mobileFinal?color=red">
+  <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/cristianmenguer/travel-pal-app?color=red">
 
-  <img alt="Repository size" src="https://img.shields.io/github/repo-size/cristianmenguer/mobileFinal?color=blue">
+  <img alt="Repository size" src="https://img.shields.io/github/repo-size/cristianmenguer/travel-pal-app?color=blue">
 
-  <a href="https://github.com/cristianmenguer/mobileFinal/commits/master">
-    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/cristianmenguer/mobileFinal?color=orange">
+  <a href="https://github.com/cristianmenguer/travel-pal-app/commits/master">
+    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/cristianmenguer/travel-pal-app?color=orange">
   </a>
 
-  <a href="https://github.com/cristianmenguer/mobileFinal/issues">
-    <img alt="Repository issues" src="https://img.shields.io/github/issues/cristianmenguer/mobileFinal?color=green">
+  <a href="https://github.com/cristianmenguer/travel-pal-app/issues">
+    <img alt="Repository issues" src="https://img.shields.io/github/issues/cristianmenguer/travel-pal-app?color=green">
   </a>
 </p>
 
 <p align="center">
-    <img alt="Home Screen" width="350" src="https://github.com/CristianMenguer/mobileFinal/blob/master/assets/screens.gif">
+    <img alt="Home Screen" width="350" src="https://github.com/CristianMenguer/travel-pal-app/blob/master/assets/screens.gif">
 </p>
 
 <br />
@@ -52,12 +52,12 @@ A Typescript and Expo app built to study mobile development!
 
 1. Clone this repo
 ```
-git clone https://github.com/cristianmenguer/mobileFinal.git
+git clone https://github.com/cristianmenguer/travel-pal-app.git
 ```
 
 2. Move to the appropriate directory
 ```
-cd mobileFinal
+cd travel-pal-app
 ```
 
 3. Run yarn to install dependencies
@@ -75,7 +75,7 @@ yarn start
 Scan this QrCode to open the project in your device
 
 <p align="center">
-    <img alt="QrCode" width='200' height='200' src="https://github.com/CristianMenguer/mobileFinal/blob/master/assets/qrcode.png">
+    <img alt="QrCode" width='200' height='200' src="https://github.com/CristianMenguer/travel-pal-app/blob/master/assets/qrcode.png">
 </p>
 
 ## Play Store
@@ -83,5 +83,5 @@ Scan this QrCode to open the project in your device
 Scan this QrCode to open the project in the Google Play Store
 
 <p align="center">
-    <img alt="QrCode" src="https://github.com/CristianMenguer/mobileFinal/blob/master/assets/playStore.png">
+    <img alt="QrCode" src="https://github.com/CristianMenguer/travel-pal-app/blob/master/assets/playStore.png">
 </p>
